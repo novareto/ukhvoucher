@@ -1,9 +1,0 @@
-[fanstatic.libraries]
-ukhvoucher = ukhvoucher.resources:library
-
-[paste.app_factory]
-app = ukhvoucher.wsgi:router
-
-[pytest11]
-ukhvoucher_fixtures = ukhvoucher.tests.fixtures
-
