@@ -1,0 +1,9 @@
+<div>
+  <h1>Vouchers</h1>
+  <ul>
+    <li tal:repeat="voucher iter(context)">
+      <a href=""  tal:attributes="href view.url(voucher)"
+	 tal:content="'%s' % voucher.oid" />
+    </li>
+  </ul>
+</div>

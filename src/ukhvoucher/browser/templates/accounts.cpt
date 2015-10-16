@@ -1,0 +1,9 @@
+<div>
+  <h1>Accounts</h1>
+  <ul>
+    <li tal:repeat="account iter(context)">
+      <a href=""  tal:attributes="href view.url(account)"
+	 tal:content="'%s (%s)' % (account.email, account.oid)" />
+    </li>
+  </ul>
+</div>

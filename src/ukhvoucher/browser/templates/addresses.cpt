@@ -1,0 +1,9 @@
+<div>
+  <h1>Addresses</h1>
+  <ul>
+    <li tal:repeat="address iter(context)">
+      <a href=""  tal:attributes="href view.url(address)"
+	 tal:content="'%s' % address.oid" />
+    </li>
+  </ul>
+</div>

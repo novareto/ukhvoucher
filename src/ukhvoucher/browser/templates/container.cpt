@@ -1,0 +1,23 @@
+<div>
+  <h1 tal:content="context.__label__" />
+  <table class="table table-bordered table-striped">
+    <theader>
+      <tr>
+	<th tal:repeat="col view.columns" tal:content="col" />
+      </tr>
+    </theader>
+    <tbody>
+      <tr tal:repeat="content iter(context)">
+	<td tal:repeat="value view.listing(content)">
+	  <a href=""
+	     tal:omit-tag="value[0] != 'oid'"
+	     tal:attributes="href view.url(content)">
+	    <span class="glyphicon glyphicon-link"
+		  tal:omit-tag="value[0] != 'oid'">&nbsp;</span>
+	    <span tal:content="value[1]" />
+	  </a>
+	</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

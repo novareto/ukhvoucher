@@ -1,0 +1,18 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:grok="http://namespaces.zope.org/grok">
+
+  <include package="uvclight" />
+  <include package="ul.auth" />
+  <include package="ukhtheme.uvclight" />
+  <include package="cromlech.dawnlight" file="consumers.zcml" />
+  <include package="dolmen.menu" />
+  <include package="dolmen.clockwork" />
+  <include package="dolmen.forms.crud" />
+
+  <include package="zope.i18n" />
+  <include package="zope.i18n" file="meta.zcml" />
+  
+  <grok:grok package="." />
+
+</configure>
