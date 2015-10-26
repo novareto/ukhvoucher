@@ -4,6 +4,7 @@
 
 from ul.auth import Principal
 from ukhvoucher import models
+from ukhvoucher.interfaces import IKG1, IKG2, IKG3
 from cromlech.sqlalchemy import get_session
 
 
@@ -24,11 +25,11 @@ class ExternalPrincipal(Principal):
             def createCategory(category):
                 cat = set()
                 if category.kat1:
-                    cat.add('kat1')
+                    cat.add(IKG1)
                 if category.kat2:
-                    cat.add('kat2')
+                    cat.add(IKG2)
                 if category.kat3:
-                    cat.add('kat3')
+                    cat.add(IKG3)
                 if category.kat4:
                     cat.add('kat4')
                 if category.kat5:
@@ -37,3 +38,11 @@ class ExternalPrincipal(Principal):
             return createCategory(category)
         else:  # LEGACY
             pass
+
+    def getVouchers(self, cat=None):
+        session = get_session('ukhvoucher')
+        query = session.query(models.Voucher).filter(
+            models.Voucher.user_id == self.id)
+        if cat:
+            query = query.filter(models.Voucher.cat == cat)
+        return query.all()

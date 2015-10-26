@@ -14,9 +14,6 @@ class UserRootIndex(uvclight.Page):
     uvclight.context(UserRoot)
     require('users.access')
 
-    def update(self):
-        import pdb; pdb.set_trace() 
-
     template = uvclight.get_template('userroot.cpt', __file__)
 
 

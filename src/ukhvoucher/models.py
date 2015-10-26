@@ -88,6 +88,7 @@ class Voucher(Base, Location):
     oid = Column('oid', String, primary_key=True)
     creation_date = Column('creation_date', DateTime)
     status = Column('status', String)
+    cat = Column('cat', String)
     user_id = Column('user_id', String, ForeignKey('accounts.oid'))
     invoice_id = Column('invoice_id', ForeignKey('invoices.oid'))
 

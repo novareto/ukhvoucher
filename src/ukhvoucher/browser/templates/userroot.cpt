@@ -1,4 +1,28 @@
-<div tal:define="address request.principal.getAddress(); categories request.principal.getCategory()" class="well">
+<div tal:define="vouchers request.principal.getVouchers(); address request.principal.getAddress(); categories request.principal.getCategory()">
+  <div class="well">
   <span tal:content="address.name1"/>
   <span tal:content="categories"/>
+  <span tal:content="vouchers"/>
+</div>
+<p class="lead"> Gutscheine für 1. Hilfe </p>
+<p> Sie können für folgende Kontingentgruppen Gutscheine anfordern </p>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default" tal:repeat="cat categories">
+    <div class="panel-heading" role="tab" id="headingOne" tal:attributes="id string:heading${cat.getName()}">
+      <h4 class="panel-title">
+        <a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" tal:attributes="href string:#collapse${cat.getName()}">
+          <span tal:content="cat.getDoc()"/>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" tal:attributes="id string:collapse${cat.getName()}">
+      <div class="panel-body" tal:define="cat_vouchers request.principal.getVouchers(cat.getName())">
+        <div tal:condition="cat_vouchers">
+          Sie haben in dieser Kontingentgruppe <span tal:content="len(cat_vouchers)" /> Gutscheine!
+        </div>
+        <a tal:condition="not: cat_vouchers" href="" tal:attributes="href string:${view.application_url()}/${cat.getName().lower()}form"> Gutschein anfordern </a>
+      </div>
+    </div>
+  </div>
+</div>
 </div>

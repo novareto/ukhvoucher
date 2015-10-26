@@ -186,3 +186,34 @@ class IVoucher(Interface):
         source=get_source('invoices'),
         required=True,
     )
+
+
+
+class IKG1(Interface):
+    u"""Verwaltung, Büro"""
+
+    mitarbeiter = schema.Int(
+        title=_(u"Employees"),
+    )
+
+    standorte = schema.Int(
+        title=_(u"Deparment"),
+    )
+
+
+class IKG2(Interface):
+    u"""Andere Betriebe"""
+
+    mitarbeiter = schema.Int(
+        title=_(u"Employees"),
+    )
+
+    standorte = schema.Int(
+        title=_(u"Deparment"),
+    )
+
+
+class IKG3(Interface):
+    u"""Kinderbetreuungseinrichtungen"""
+
+
