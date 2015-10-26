@@ -14,6 +14,9 @@ class UserRootIndex(uvclight.Page):
     uvclight.context(UserRoot)
     require('users.access')
 
+    def update(self):
+        import pdb; pdb.set_trace() 
+
     @property
     def panels(self):
         for id in uvclight.traversable.bind().get(self.context):

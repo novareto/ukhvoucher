@@ -38,9 +38,11 @@ class AdminUsers(GlobalUtility):
 
     def log_in(self, request, username, password, **kws):
         session = get_session('ukhvoucher')
-        user = session.query(Account).get(username)
-        if user.password == password:
-            return user
+        user = session.query(Account).filter(Account.oid == username)
+        if user.count():
+            user = user.one()
+            if user.password == password:
+                return user
         return None
 
 
@@ -124,11 +126,13 @@ class User(SQLPublication, SecurePublication):
         pass
 
     def principal_factory(self, username):
-        principal = SecurePublication.principal_factory(self, username)
-        if principal is not unauthenticated_principal:
+        from .components import ExternalPrincipal
+        if username:
+            principal = ExternalPrincipal(id=username)
             principal.permissions = set(('users.access',))
             principal.roles = set()
-        return principal
+            return principal
+        return unauthenticated_principal
 
     def site_manager(self, request):
         return Site(UserRoot(request, self.name))

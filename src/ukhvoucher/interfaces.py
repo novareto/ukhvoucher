@@ -4,10 +4,8 @@ import grokcore.component as grok
 from . import VOCABULARIES
 from ukhtheme.uvclight import IDGUVRequest
 from ukhvoucher import _
-from uvc.content.interfaces import IContent
 from zope import schema
 from zope.interface import Interface, Attribute
-from zope.location import ILocation
 from zope.schema.interfaces import IContextSourceBinder
 
 
@@ -50,7 +48,7 @@ class IModelContainer(Interface):
 
     model = Attribute(u'Model')
 
-    
+
 class IAccount(Interface):
 
     oid = schema.TextLine(
@@ -76,7 +74,7 @@ class IAccount(Interface):
         description=u"Bitte vergeben Sie ein Passwort.",
         required=True,
     )
-    
+
 
 class ICategory(Interface):
 
@@ -111,11 +109,47 @@ class ICategory(Interface):
         required=True,
     )
 
-    
+
 class IAddress(Interface):
 
-    address = schema.TextLine(
-        title=_(u"Address"),
+    oid = schema.TextLine(
+        title=_(u"Unique user identifier"),
+        description=_(u"Internal identifier of the user"),
+        required=True,
+    )
+
+    name1 = schema.TextLine(
+        title=_(u"Address Name1"),
+        required=True,
+    )
+
+    name2 = schema.TextLine(
+        title=_(u"Address Name2"),
+        required=True,
+    )
+
+    name3 = schema.TextLine(
+        title=_(u"Address Name3"),
+        required=True,
+    )
+
+    street = schema.TextLine(
+        title=_(u"Address Street"),
+        required=True,
+    )
+
+    number = schema.TextLine(
+        title=_(u"Address Number"),
+        required=True,
+    )
+
+    zip_code = schema.TextLine(
+        title=_(u"Address Zip"),
+        required=True,
+    )
+
+    city = schema.TextLine(
+        title=_(u"Adress City"),
         required=True,
     )
 
@@ -135,7 +169,7 @@ class IVoucher(Interface):
         title=_(u"Creation date"),
         required=True,
     )
-    
+
     status = schema.TextLine(
         title=_(u"Status"),
         required=True,

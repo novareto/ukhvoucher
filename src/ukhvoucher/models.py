@@ -8,7 +8,7 @@ import uvclight
 from cromlech.sqlalchemy import get_session
 from dolmen.sqlcontainer import SQLContainer
 from sqlalchemy import *
-from sqlalchemy.orm import relation, backref, relationship
+from sqlalchemy.orm import relationship
 from uvc.content.interfaces import IContent
 from zope.interface import implementer
 from zope.location import Location
@@ -20,16 +20,21 @@ class Address(Base, Location):
     __tablename__ = 'addresses'
     __schema__ = IAddress
     __label__ = u"Address"
-    
-    # complete me
+
     oid = Column('oid', Integer, primary_key=True, autoincrement=True)
-    address = Column('name', String)
+    name1 = Column('name1', String)
+    name2 = Column('name2', String)
+    name3 = Column('name3', String)
+    street = Column('street', String)
+    number = Column('number', String)
+    zip_code = Column('zip', String)
+    city = Column('city', String)
     user_id = Column('user_id', String, ForeignKey('accounts.oid'))
 
     @property
     def title(self):
         return "Address %s for user %s" % (self.oid, self.user_id)
-    
+
 
 @implementer(IModel, IIdentified, ICategory)
 class Category(Base, Location):
@@ -49,7 +54,7 @@ class Category(Base, Location):
     def title(self):
         return "Category %s" % self.oid
 
-    
+
 @implementer(IModel, IIdentified, IAccount)
 class Account(Base, Location):
 
@@ -94,7 +99,7 @@ class Voucher(Base, Location):
     def title(self):
         return "Voucher %s for user %s" % (self.oid, self.user_id)
 
-    
+
 @implementer(IModel, IIdentified, IInvoice)
 class Invoice(Base, Location):
 
@@ -107,8 +112,8 @@ class Invoice(Base, Location):
     @property
     def title(self):
         return "Invoice %s" % self.oid
-    
-    
+
+
 @implementer(IContent, IModelContainer)
 class Accounts(SQLContainer):
     __label__ = u"Accounts"
@@ -119,7 +124,7 @@ class Accounts(SQLContainer):
 
     def key_reverse(self, obj):
         return str(obj.oid)
-    
+
 
 @implementer(IContent, IModelContainer)
 class Addresses(SQLContainer):
@@ -152,7 +157,7 @@ class Invoices(SQLContainer):
     model = Invoice
     listing_attrs = uvclight.Fields(Invoice.__schema__).select(
         'oid')
-    
+
     def key_reverse(self, obj):
         return str(obj.oid)
 
@@ -164,6 +169,6 @@ class Categories(SQLContainer):
     model = Category
     listing_attrs = uvclight.Fields(Category.__schema__).select(
         'oid', 'kat1', 'kat2', 'kat3', 'kat4', 'kat5')
-    
+
     def key_reverse(self, obj):
         return str(obj.oid)
