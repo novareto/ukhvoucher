@@ -1,1 +1,4 @@
-root for the user.
+<div tal:define="address request.principal.getAddress(); categories request.principal.getCategory()" class="well">
+  <span tal:content="address.name1"/>
+  <span tal:content="categories"/>
+</div>

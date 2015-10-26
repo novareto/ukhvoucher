@@ -17,12 +17,6 @@ class UserRootIndex(uvclight.Page):
     def update(self):
         import pdb; pdb.set_trace() 
 
-    @property
-    def panels(self):
-        for id in uvclight.traversable.bind().get(self.context):
-            panel = getattr(self.context, id)
-            yield {'title': panel.__label__,
-                   'url': self.url(panel)}
     template = uvclight.get_template('userroot.cpt', __file__)
 
 
