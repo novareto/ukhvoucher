@@ -71,7 +71,8 @@ class KGBaseForm(uvclight.Form):
 
 class IKG1Form(KGBaseForm):
     _iface = IKG1
-
+    label = u"KG1"
+    
     def calculate(self, mitarbeiter, standorte):
         if standorte <= 1:
             standorte = 2
@@ -80,7 +81,8 @@ class IKG1Form(KGBaseForm):
 
 class IKG2Form(KGBaseForm):
     _iface = IKG2
-
+    label = u"KG2"
+    
     def calculate(self, mitarbeiter, standorte):
         if standorte <= 1:
             standorte = 2

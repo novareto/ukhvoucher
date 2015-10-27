@@ -6,6 +6,8 @@ from ..apps import AdminRoot, UserRoot
 from ..interfaces import IModel, IModelContainer
 from ..interfaces import IAdminLayer, IUserLayer
 from ..models import Accounts, Account, Addresses, Address, Vouchers, Voucher
+from zope.component import getMultiAdapter
+from zope.interface import Interface
 
 
 class UserRootIndex(uvclight.Page):
@@ -16,6 +18,26 @@ class UserRootIndex(uvclight.Page):
 
     template = uvclight.get_template('userroot.cpt', __file__)
 
+    def update(self):
+        self.categories = self._categories
+
+    @property
+    def _categories(self):
+        for cat in self.request.principal.getCategory():
+            name = cat.getName()
+            form = getMultiAdapter((self.context, self.request), Interface,
+                                   name=name.lower() + 'form')
+            form.update()
+            form.updateForm()
+            yield {
+                'name': name,
+                'doc': cat.getDoc(),
+                'url': '%s/%sform' % (self.application_url(), name.lower()),
+                'vouchers': self.request.principal.getVouchers(),
+                'form': form,
+                }
+
+    
 
 class AdminRootIndex(uvclight.Page):
     uvclight.name('index')
