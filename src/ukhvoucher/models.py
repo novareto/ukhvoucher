@@ -109,6 +109,7 @@ class Invoice(Base, Location):
     __label__ = u"Invoice"
 
     oid = Column('oid', String, primary_key=True)
+    description = Column('description', String)
 
     @property
     def title(self):

@@ -156,6 +156,16 @@ class IAddress(Interface):
 
 class IInvoice(Interface):
 
+    oid = schema.TextLine(
+        title=_(u"Unique user identifier"),
+        description=_(u"Internal identifier of the user"),
+        required=True,
+    )
+
+    description = schema.TextLine(
+        title=_('Beschreibung'),
+    )
+
     vouchers = schema.Set(
         value_type=schema.Choice(source=get_source('vouchers')),
         title=_(u"Vouchers"),
