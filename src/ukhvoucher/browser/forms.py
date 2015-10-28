@@ -21,7 +21,12 @@ from ul.auth import require
 from ..interfaces import IVouchersCreation
 from ..interfaces import IModel, IModelContainer, IAdminLayer
 from ..interfaces import IAccount, IVoucher, IInvoice, IAddress
-from .. import _
+from .. import _, resources
+
+
+MULTI = set((
+    "vouchers",
+))
 
 
 @menuentry(AddMenu, order=10)
@@ -35,8 +40,15 @@ class CreateModel(Form):
 
     @property
     def fields(self):
-        return Fields(self.context.model.__schema__)
+        fields = Fields(self.context.model.__schema__)
+        for field in fields:
+            if field.identifier in MULTI:
+                field.mode = 'multiselect'
+        return fields
 
+    def update(self):
+        resources.ukhvouchers.need()
+    
     @property
     def action_url(self):
         return self.request.path
@@ -85,6 +97,9 @@ class EditModel(Form):
     def action_url(self):
         return self.request.path
 
+    def update(self):
+        resources.ukhvouchers.need()
+
     @action(_(u'Update'))
     def handle_save(self):
         data, errors = self.extractData()
@@ -119,6 +134,9 @@ class AskForVouchers(Form):
     @property
     def action_url(self):
         return self.request.path
+
+    def update(self):
+        resources.ukhvouchers.need()
 
     @action(_(u'Demand'))
     def handle_save(self):

@@ -1,0 +1,6 @@
+$(document).ready(function() {
+    $('select').chosen({
+	placeholder_text_multiple: 'Parcourir',
+	placeholder_text_single: 'Parcourir',
+    });
+})

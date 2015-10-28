@@ -98,7 +98,7 @@ class Voucher(Base, Location):
 
     @property
     def title(self):
-        return "Voucher %s for user %s" % (self.oid, self.user_id)
+        return self.oid
 
 
 @implementer(IModel, IIdentified, IInvoice)
