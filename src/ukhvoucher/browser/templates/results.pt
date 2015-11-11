@@ -1,0 +1,28 @@
+<div>
+  <hr />
+  <h3>Results</h3>
+  <table class="table table-bordered table-striped"
+	 tal:condition="component.results">
+    <theader>
+      <tr>
+      	<th tal:repeat="col view.columns" tal:content="col" />
+      </tr>
+    </theader>
+    <tbody>
+      <tr tal:repeat="content iter(component.results)">
+        <td tal:repeat="value view.listing(content)">
+          <a href=""
+             tal:omit-tag="value[0] != 'oid'"
+             tal:attributes="href view.url(content)">
+            <span class="glyphicon glyphicon-link"
+                  tal:omit-tag="value[0] != 'oid'">&nbsp;</span>
+            <span tal:content="value[1]" />
+          </a>
+	</td>
+      </tr>
+    </tbody>
+  </table>
+  <div tal:condition="not component.results">
+    <em>No results</em>
+  </div>
+</div>

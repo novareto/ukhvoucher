@@ -1,0 +1,25 @@
+<form tal:attributes="action component.target">
+  <div class="well">
+    <div class="row">
+      <div class="col-md-2">
+	<h4 class="pull-right">
+	  <span class="glyphicon glyphicon-search"></span>
+	  <span i18n:translate="">Search : <span i18n:name="item_type"
+	  tal:content="context.model.__label__" /></span>
+	</h4>
+      </div>
+      <div class="col-md-8">
+	<input type="text" tal:attributes="name component.attribute"
+	       class="form-control" />
+	<input type="hidden" name="action.search" value="Search" />
+      </div>
+      <div class="col-md-2">
+	<span class="input-group-btn">
+	  <button class="btn btn-default" type="submit">
+            <span class="glyphicon glyphicon-share-alt"></span>
+	  </button>
+	</span>
+      </div>
+    </div>
+  </div>
+</form>

@@ -8,7 +8,7 @@ import uvclight
 from cromlech.sqlalchemy import get_session
 from dolmen.sqlcontainer import SQLContainer
 from sqlalchemy import *
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from uvc.content.interfaces import IContent
 from zope.interface import implementer
 from zope.location import Location
@@ -35,6 +35,10 @@ class Address(Base, Location):
     def title(self):
         return "Address %s for user %s" % (self.oid, self.user_id)
 
+    # search attributes
+    search_attr = "name1"
+    searchable_attrs = ("oid", "name1", "street", 'zip_code', 'city')
+
 
 @implementer(IModel, IIdentified, ICategory)
 class Category(Base, Location):
@@ -54,6 +58,11 @@ class Category(Base, Location):
     def title(self):
         return "Category %s" % self.oid
 
+    # search attributes
+    search_attr = "oid"
+    searchable_attrs = ("oid",)
+
+    
 
 @implementer(IModel, IIdentified, IAccount)
 class Account(Base, Location):
@@ -77,6 +86,10 @@ class Account(Base, Location):
         session = get_session('ukhvoucher')
         return session.query(Category).filter(Category.oid == self.oid).all()
 
+    # search attributes
+    search_attr = "email"
+    searchable_attrs = ("oid", "email", "name")
+
 
 @implementer(IModel, IIdentified, IVoucher)
 class Voucher(Base, Location):
@@ -94,11 +107,16 @@ class Voucher(Base, Location):
 
     # relations
     user = relationship('Account')
-    invoice = relationship('Invoice', backref='vouchers')
+    invoice = relationship(
+        'Invoice', backref=backref('vouchers', collection_class=set))
 
     @property
     def title(self):
         return self.oid
+
+    # search attributes
+    search_attr = "oid"
+    searchable_attrs = ("oid", "status", "user_id")
 
 
 @implementer(IModel, IIdentified, IInvoice)
@@ -114,6 +132,9 @@ class Invoice(Base, Location):
     @property
     def title(self):
         return "Invoice %s" % self.oid
+
+    search_attr = "oid"
+    searchable_attrs = ("oid", "description")
 
 
 @implementer(IContent, IModelContainer)
@@ -149,7 +170,7 @@ class Vouchers(SQLContainer):
         'oid', 'status', 'user_id')
 
     def key_reverse(self, obj):
-        return str(obj.oid)
+        return 'Voucher %s' % obj.oid
 
 
 @implementer(IContent, IModelContainer)
