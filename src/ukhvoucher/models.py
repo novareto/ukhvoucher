@@ -112,7 +112,7 @@ class Voucher(Base, Location):
 
     @property
     def title(self):
-        return self.oid
+        return "Gutschein %s" % self.oid
 
     # search attributes
     search_attr = "oid"
@@ -155,7 +155,7 @@ class Addresses(SQLContainer):
 
     model = Address
     listing_attrs = uvclight.Fields(Address.__schema__).select(
-        'oid', 'user_id')
+        'oid', 'user_id', 'name1', 'name2', 'zip_code', 'city')
 
     def key_reverse(self, obj):
         return str(obj.oid)
@@ -179,7 +179,7 @@ class Invoices(SQLContainer):
 
     model = Invoice
     listing_attrs = uvclight.Fields(Invoice.__schema__).select(
-        'oid')
+        'oid', 'description')
 
     def key_reverse(self, obj):
         return str(obj.oid)

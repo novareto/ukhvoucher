@@ -30,8 +30,9 @@ class CalculateInsert(Action):
             session = get_session('ukhvoucher')
             now = datetime.datetime.now()
             principal = form.request.principal
-            oid = int(session.query(max(Voucher.oid)).one()[0]) + 1
-            if not oid:
+            try:
+                oid = int(session.query(max(Voucher.oid)).one()[0]) + 1
+            except:
                 oid = 0
             for i in range(amount):
                 oid += 1 
