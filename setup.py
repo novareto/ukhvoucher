@@ -21,6 +21,7 @@ setup(name='ukhvoucher',
           "ul.auth",
           "cromlech.sqlalchemy",
           "ukhtheme.uvclight",
+          "reportlab",
       ],
       entry_points={
          'fanstatic.libraries': [
