@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import uvclight
-from ..interfaces import IAccount
+
+
 from .views import ModelIndex
+from ..interfaces import IAccount
+from zope.interface import Interface
 from ukhtheme.uvclight.viewlets import BelowContent
 
 
@@ -21,3 +24,19 @@ class Categories(uvclight.Viewlet):
             return u"No categories"
         return "Categories: %s" % ', '.join(
             (kat[0] for kat in values if kat[1]))
+
+
+from uvc.entities.browser.menus import IPersonalMenu
+
+class Username(uvclight.MenuItem):
+    uvclight.context(Interface)
+    uvclight.menu(IPersonalMenu)
+    id = "username"
+    action = ""
+    submenu = None
+
+    @property
+    def title(self):
+        return u"Sie sind angemeldet als: %s" % self.request.principal.title
+
+

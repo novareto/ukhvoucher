@@ -35,6 +35,7 @@ class CreateModel(Form):
     context(IModelContainer)
     layer(IAdminLayer)
     require('manage.vouchers')
+    title(u'Objekt hinzufügen')
 
     dataValidators = []
 
