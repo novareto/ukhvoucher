@@ -69,12 +69,4 @@ class ContainerIndex(uvclight.Page):
         for col in self.context.listing_attrs:
             yield col.identifier, getattr(
                 item, col.identifier, col.defaultValue)
-
-
-class ModelIndex(uvclight.Page):
-    uvclight.name('index')
-    uvclight.layer(IAdminLayer)
-    uvclight.context(IModel)
-    require('manage.vouchers')
-
-    template = uvclight.get_template('model.cpt', __file__)
+    

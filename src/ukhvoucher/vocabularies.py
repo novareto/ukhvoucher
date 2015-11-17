@@ -27,9 +27,16 @@ def invoices(context):
 @grok.provider(IContextSourceBinder)
 def vouchers(context):    
     session = get_session('ukhvoucher')
-    items = [SimpleTerm(item, token=item.oid, title=item.title)
-             for item in session.query(Voucher).all()]
-    return SimpleVocabulary(items)
+    items = []
+    disabled = []
+    for item in session.query(Voucher).all():
+        if item.invoice is None:
+            items.append(SimpleTerm(item, token=item.oid, title=item.title))
+        else:
+            disabled.append(SimpleTerm(item, token=item.oid, title=item.title))
+    vocabulary = SimpleVocabulary(items)
+    vocabulary.disabled_items = disabled
+    return vocabulary
 
 
 @grok.provider(IContextSourceBinder)

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import uvclight
 from datetime import datetime
 from cromlech.sqlalchemy import get_session
 from dolmen.forms.base.markers import NO_VALUE
@@ -24,7 +25,9 @@ from ..interfaces import IAccount, IVoucher, IInvoice, IAddress
 from .. import _, resources
 
 
-MULTI = set((
+MULTI = set()
+
+MULTI_DISABLED = set((
     "vouchers",
 ))
 
@@ -45,6 +48,8 @@ class CreateModel(Form):
         for field in fields:
             if field.identifier in MULTI:
                 field.mode = 'multiselect'
+            elif field.identifier in MULTI_DISABLED:
+                field.mode = 'multidisabled'
         return fields
 
     def update(self):
@@ -92,7 +97,7 @@ class EditModel(Form):
 
     @property
     def fields(self):
-        return Fields(self.context.model.__schema__)
+        return Fields(self.context.__schema__)
 
     @property
     def action_url(self):
@@ -168,3 +173,22 @@ class AskForVouchers(Form):
     def handle_cancel(self):
         self.redirect(self.url(self.context))
         return SUCCESS
+
+
+class ModelIndex(uvclight.Form):
+    uvclight.name('index')
+    uvclight.layer(IAdminLayer)
+    uvclight.context(IModel)
+    require('manage.vouchers')
+    mode = 'display'
+
+    ignoreContent = False
+    ignoreRequest = True
+
+    @property
+    def label(self):
+        return self.context.title
+
+    @property
+    def fields(self):
+        return Fields(self.context.__schema__)

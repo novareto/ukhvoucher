@@ -3,10 +3,14 @@
 import uvclight
 
 
-from .views import ModelIndex
+from .forms import ModelIndex
 from ..interfaces import IAccount
 from zope.interface import Interface
 from ukhtheme.uvclight.viewlets import BelowContent
+from uvc.entities.browser.menus import IPersonalMenu
+from dolmen.menu import Entry, menu
+from uvc.design.canvas import menus
+from ..interfaces import IAdminLayer
 
 
 class Categories(uvclight.Viewlet):
@@ -26,8 +30,6 @@ class Categories(uvclight.Viewlet):
             (kat[0] for kat in values if kat[1]))
 
 
-from uvc.entities.browser.menus import IPersonalMenu
-
 class Username(uvclight.MenuItem):
     uvclight.context(Interface)
     uvclight.menu(IPersonalMenu)
@@ -40,3 +42,43 @@ class Username(uvclight.MenuItem):
         return u"Sie sind angemeldet als: %s" % self.request.principal.title
 
 
+class VouchersEntry(Entry):
+    uvclight.context(Interface)
+    menu(menus.NavigationMenu)
+    uvclight.layer(IAdminLayer)
+    uvclight.title('Vouchers')
+
+    attribute = 'vouchers'
+
+    @property
+    def url(self):
+        site = uvclight.url(self.request, uvclight.getSite())
+        return '%s/%s' % (site, self.attribute)
+
+    @property
+    def action(self):
+        return self.url
+
+    @property
+    def selected(self):
+        return self.request.url.startswith(self.url)
+
+
+class InvoicesEntry(VouchersEntry):
+    uvclight.title('Invoices')
+    attribute = 'invoices'
+
+
+class AddressesEntry(VouchersEntry):
+    uvclight.title('Addresses')
+    attribute = 'addresses'
+
+
+class CategoriesEntry(VouchersEntry):
+    uvclight.title('Categories')
+    attribute = 'categories'
+
+
+class AccountsEntry(VouchersEntry):
+    uvclight.title('Accounts')
+    attribute = 'accounts'
