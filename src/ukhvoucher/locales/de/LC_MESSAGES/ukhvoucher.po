@@ -15,5 +15,101 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: ukhvoucher\n"
 
-msgid ""
-msgstr ""
+msgid "Unique identifier"
+msgstr "Eindeutiger Schlüssel"
+
+msgid "Fullname"
+msgstr "Vor- und Zuname"
+
+msgid "Please give your Fullname here"
+msgstr "Bitte tragen Sie hier Ihren Vor- und Zunamen ein"
+
+msgid "E-Mail"
+msgstr "E-Mail"
+
+msgid "Password for observation access"
+msgstr "Passwort"
+
+msgid "Unique user identifier"
+msgstr "Eindeutiger Schlüssel"
+
+msgid "Internal identifier of the user"
+msgstr "Eindeutiger Schlüssel für den Benutzer"
+
+msgid "Kat 1"
+msgstr "Kategorie 1"
+
+msgid "Kat 2"
+msgstr "Kategorie 2"
+
+msgid "Kat 3"
+msgstr "Kategorie 3"
+
+msgid "Kat 4"
+msgstr "Kategorie 4"
+
+msgid "Kat 5"
+msgstr "Kategorie 5"
+
+msgid "Kat 6"
+msgstr "Kategorie 6"
+
+msgid "Address Name1"
+msgstr "Name"
+
+msgid "Address Name2"
+msgstr "Name 2"
+
+msgid "Address Name3"
+msgstr "Name 3"
+
+msgid "Address Number"
+msgstr "Hausnummer"
+
+msgid "Address Street"
+msgstr "Strasse"
+
+msgid "Address Zip"
+msgstr "Postleitzahl"
+
+msgid "Address City"
+msgstr "Ort"
+
+msgid "Vouchers"
+msgstr "Gutscheine"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Unique Invoice identifier"
+msgstr "Rechnungsnummer"
+
+msgid "Internal identifier of the invoice"
+msgstr "Rechnungsnummer"
+
+msgid "Creation date"
+msgstr "Erstellungsdatum"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "User id"
+msgstr "Benutzer"
+
+msgid "Invoice id"
+msgstr "Rechnungsnummer"
+
+msgid "Search : "
+msgstr "Suche"
+
+msgid "Invoice"
+msgstr "Rechnung"
+
+msgid "Account"
+msgstr "Benutzer"
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "Vouchers"
+msgstr "Gutscheine"

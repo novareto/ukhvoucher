@@ -23,8 +23,9 @@ from ..interfaces import IModel, IModelContainer, IAdminLayer
 from ..interfaces import IAccount, IVoucher, IInvoice, IAddress
 from .. import _, resources
 
+MULTI = set()
 
-MULTI = set((
+MULTI_DISABLED = set((
     "vouchers",
 ))
 
@@ -45,6 +46,8 @@ class CreateModel(Form):
         for field in fields:
             if field.identifier in MULTI:
                 field.mode = 'multiselect'
+            elif field.identifier in MULTI_DISABLED:
+                field.mode = 'multidisabled'
         return fields
 
     def update(self):
@@ -92,7 +95,7 @@ class EditModel(Form):
 
     @property
     def fields(self):
-        return Fields(self.context.model.__schema__)
+        return Fields(self.context.__schema__)
 
     @property
     def action_url(self):

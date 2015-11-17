@@ -1,7 +1,4 @@
-<h1>Admin</h1>
-<ul>
-  <li tal:repeat="panel view.panels">
-    <a href="" tal:attributes="href panel.url"
-       tal:content="panel.title" />
-  </li>
-</ul>
+<h1>Gutscheinverwaltung UKH</h1>
+<div>
+
+</div>
