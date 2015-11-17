@@ -10,6 +10,7 @@ from cromlech.sqlalchemy import get_session
 
 class ExternalPrincipal(Principal):
 
+
     def getAddress(self):
         session = get_session('ukhvoucher')
         address = session.query(models.Address).get(self.id)
@@ -38,6 +39,7 @@ class ExternalPrincipal(Principal):
             return createCategory(category)
         else:  # LEGACY
             pass
+        return []
 
     def getVouchers(self, cat=None):
         session = get_session('ukhvoucher')

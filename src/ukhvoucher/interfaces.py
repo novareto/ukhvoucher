@@ -125,12 +125,12 @@ class IAddress(Interface):
 
     name2 = schema.TextLine(
         title=_(u"Address Name2"),
-        required=True,
+        required=False,
     )
 
     name3 = schema.TextLine(
         title=_(u"Address Name3"),
-        required=True,
+        required=False,
     )
 
     street = schema.TextLine(
@@ -149,7 +149,7 @@ class IAddress(Interface):
     )
 
     city = schema.TextLine(
-        title=_(u"Adress City"),
+        title=_(u"Address City"),
         required=True,
     )
 
@@ -157,8 +157,8 @@ class IAddress(Interface):
 class IInvoice(Interface):
 
     oid = schema.TextLine(
-        title=_(u"Unique user identifier"),
-        description=_(u"Internal identifier of the user"),
+        title=_(u"Unique Invoice identifier"),
+        description=_(u"Internal identifier of the invoice"),
         required=True,
     )
 

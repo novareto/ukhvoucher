@@ -75,6 +75,7 @@ class Admin(SQLPublication, SecurePublication):
         if principal is not unauthenticated_principal:
             principal.permissions = set(('manage.vouchers',))
             principal.roles = set()
+            principal.title = "Administrator"
         return principal
 
     def site_manager(self, request):

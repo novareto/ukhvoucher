@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import uvclight
-
-
 from .forms import ModelIndex
 from ..interfaces import IAccount
 from zope.interface import Interface
@@ -10,7 +8,8 @@ from ukhtheme.uvclight.viewlets import BelowContent
 from uvc.entities.browser.menus import IPersonalMenu
 from dolmen.menu import Entry, menu
 from uvc.design.canvas import menus
-from ..interfaces import IAdminLayer
+from uvc.entities.browser.menus import IPersonalMenu, INavigationMenu
+from ..interfaces import IAdminLayer, IUserLayer
 
 
 class Categories(uvclight.Viewlet):
@@ -42,18 +41,18 @@ class Username(uvclight.MenuItem):
         return u"Sie sind angemeldet als: %s" % self.request.principal.title
 
 
-class VouchersEntry(Entry):
+class BaseNavMenu(uvclight.MenuItem):
     uvclight.context(Interface)
-    menu(menus.NavigationMenu)
+    uvclight.menu(INavigationMenu)
     uvclight.layer(IAdminLayer)
-    uvclight.title('Vouchers')
+    uvclight.baseclass()
 
-    attribute = 'vouchers'
+    attribute = ""
+    title = "Startseite"
 
     @property
     def url(self):
-        site = uvclight.url(self.request, uvclight.getSite())
-        return '%s/%s' % (site, self.attribute)
+        return "%s/%s" % (self.view.application_url(), self.attribute)
 
     @property
     def action(self):
@@ -64,21 +63,38 @@ class VouchersEntry(Entry):
         return self.request.url.startswith(self.url)
 
 
-class InvoicesEntry(VouchersEntry):
-    uvclight.title('Invoices')
-    attribute = 'invoices'
+class Startseite(BaseNavMenu):
+    uvclight.order(1)
+    attribute = "/"
+    title = "Startseite"
 
 
-class AddressesEntry(VouchersEntry):
-    uvclight.title('Addresses')
-    attribute = 'addresses'
+class MenuInvoice(BaseNavMenu):
+    uvclight.order(2)
+    attribute = "invoices"
+    title = "Rechnung"
 
 
-class CategoriesEntry(VouchersEntry):
-    uvclight.title('Categories')
-    attribute = 'categories'
+class MenuAccounts(BaseNavMenu):
+    uvclight.order(3)
+    attribute = "accounts"
+    title = "Benutzer"
 
 
-class AccountsEntry(VouchersEntry):
-    uvclight.title('Accounts')
-    attribute = 'accounts'
+class MenuAddresses(BaseNavMenu):
+    uvclight.order(3)
+    attribute = "addresses"
+    title = "Adressen"
+
+
+class MenuKategorien(BaseNavMenu):
+    uvclight.order(4)
+    attribute = "categories"
+    title = "Katgorien"
+
+
+class MenuVouchers(BaseNavMenu):
+    uvclight.order(5)
+    attribute = "vouchers"
+    title = "Gutscheine"
+

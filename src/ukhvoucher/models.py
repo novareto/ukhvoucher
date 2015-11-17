@@ -3,6 +3,7 @@
 from . import Base
 from .interfaces import IVoucher, IInvoice, IAddress, IAccount, ICategory
 from .interfaces import IModel, IModelContainer, IIdentified
+from . import _
 
 import uvclight
 from cromlech.sqlalchemy import get_session
@@ -19,7 +20,7 @@ class Address(Base, Location):
 
     __tablename__ = 'addresses'
     __schema__ = IAddress
-    __label__ = u"Address"
+    __label__ = _(u"Address")
 
     oid = Column('oid', Integer, primary_key=True, autoincrement=True)
     name1 = Column('name1', String)
@@ -45,7 +46,7 @@ class Category(Base, Location):
 
     __tablename__ = 'categories'
     __schema__ = ICategory
-    __label__ = u"Category"
+    __label__ = _(u"Category")
 
     oid = Column('oid', String, primary_key=True)
     kat1 = Column('kat1', Boolean)
@@ -62,14 +63,13 @@ class Category(Base, Location):
     search_attr = "oid"
     searchable_attrs = ("oid",)
 
-    
 
 @implementer(IModel, IIdentified, IAccount)
 class Account(Base, Location):
 
     __tablename__ = 'accounts'
     __schema__ = IAccount
-    __label__ = u"Account"
+    __label__ = _(u"Account")
     model = Address
 
     oid = Column('oid', String, primary_key=True)
@@ -96,7 +96,7 @@ class Voucher(Base, Location):
 
     __tablename__ = 'vouchers'
     __schema__ = IVoucher
-    __label__ = u"Voucher"
+    __label__ = _(u"Vouchers")
 
     oid = Column('oid', String, primary_key=True)
     creation_date = Column('creation_date', DateTime)
@@ -124,7 +124,7 @@ class Invoice(Base, Location):
 
     __tablename__ = 'invoices'
     __schema__ = IInvoice
-    __label__ = u"Invoice"
+    __label__ = _(u"Invoice")
 
     oid = Column('oid', String, primary_key=True)
     description = Column('description', String)
@@ -139,7 +139,7 @@ class Invoice(Base, Location):
 
 @implementer(IContent, IModelContainer)
 class Accounts(SQLContainer):
-    __label__ = u"Accounts"
+    __label__ = _(u"Accounts")
 
     model = Account
     listing_attrs = uvclight.Fields(Account.__schema__).select(
@@ -151,7 +151,7 @@ class Accounts(SQLContainer):
 
 @implementer(IContent, IModelContainer)
 class Addresses(SQLContainer):
-    __label__ = u"Addresses"
+    __label__ = _(u"Addresses")
 
     model = Address
     listing_attrs = uvclight.Fields(Address.__schema__).select(
@@ -163,7 +163,7 @@ class Addresses(SQLContainer):
 
 @implementer(IContent, IModelContainer)
 class Vouchers(SQLContainer):
-    __label__ = u"Vouchers"
+    __label__ = _(u"Vouchers")
 
     model = Voucher
     listing_attrs = uvclight.Fields(Voucher.__schema__).select(

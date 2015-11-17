@@ -25,7 +25,7 @@ def invoices(context):
 
 
 @grok.provider(IContextSourceBinder)
-def vouchers(context):    
+def vouchers(context):
     session = get_session('ukhvoucher')
     items = []
     disabled = []

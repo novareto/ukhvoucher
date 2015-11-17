@@ -5,9 +5,10 @@ from ul.auth import require
 from ..apps import AdminRoot, UserRoot
 from ..interfaces import IModel, IModelContainer
 from ..interfaces import IAdminLayer, IUserLayer
-from ..models import Accounts, Account, Addresses, Address, Vouchers, Voucher
 from zope.component import getMultiAdapter
 from zope.interface import Interface
+from zope.i18n import translate
+from ..resources import ukhvouchers
 
 
 class UserRootIndex(uvclight.Page):
@@ -37,7 +38,6 @@ class UserRootIndex(uvclight.Page):
                 'form': form,
                 }
 
-    
 
 class AdminRootIndex(uvclight.Page):
     uvclight.name('index')
@@ -49,9 +49,12 @@ class AdminRootIndex(uvclight.Page):
     def panels(self):
         for id in uvclight.traversable.bind().get(self.context):
             panel = getattr(self.context, id)
-            yield {'title': panel.__label__,
+            yield {'title': translate(panel.__label__, context=self.request),
                    'url': self.url(panel)}
     template = uvclight.get_template('adminroot.cpt', __file__)
+
+    def update(self):
+        ukhvouchers.need()
 
 
 class ContainerIndex(uvclight.Page):
@@ -69,4 +72,3 @@ class ContainerIndex(uvclight.Page):
         for col in self.context.listing_attrs:
             yield col.identifier, getattr(
                 item, col.identifier, col.defaultValue)
-    
