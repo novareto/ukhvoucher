@@ -3,7 +3,7 @@
 import uvclight
 
 
-from .views import ModelIndex
+from .forms import ModelIndex
 from ..interfaces import IAccount
 from zope.interface import Interface
 from ukhtheme.uvclight.viewlets import BelowContent
@@ -46,45 +46,53 @@ class BaseNavMenu(uvclight.MenuItem):
     uvclight.layer(IAdminLayer)
     uvclight.baseclass()
 
-    id = ""
+    attribute = ""
     title = "Startseite"
 
     @property
+    def url(self):
+        return "%s/%s" % (self.view.application_url(), self.attribute)
+
+    @property
     def action(self):
-        return "%s/%s" % (self.view.application_url(), self.id)
+        return self.url
+
+    @property
+    def selected(self):
+        return self.request.url.startswith(self.url)
 
 
 class Startseite(BaseNavMenu):
     uvclight.order(1)
-    id = "/"
+    attribute = "/"
     title = "Startseite"
 
 
 class MenuInvoice(BaseNavMenu):
     uvclight.order(2)
-    id = "invoices"
+    attribute = "invoices"
     title = "Rechnung"
 
 
 class MenuAccounts(BaseNavMenu):
     uvclight.order(3)
-    id = "accounts"
+    attribute = "accounts"
     title = "Benutzer"
 
 
 class MenuAddresses(BaseNavMenu):
     uvclight.order(3)
-    id = "addresses"
+    attribute = "addresses"
     title = "Adressen"
 
 
 class MenuKategorien(BaseNavMenu):
     uvclight.order(4)
-    id = "categories"
+    attribute = "categories"
     title = "Katgorien"
 
 
 class MenuVouchers(BaseNavMenu):
     uvclight.order(5)
-    id = "vouchers"
+    attribute = "vouchers"
     title = "Gutscheine"

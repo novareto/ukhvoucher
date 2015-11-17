@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import uvclight
+
 from datetime import datetime
 from cromlech.sqlalchemy import get_session
 from dolmen.forms.base.markers import NO_VALUE
@@ -22,6 +24,7 @@ from ..interfaces import IVouchersCreation
 from ..interfaces import IModel, IModelContainer, IAdminLayer
 from ..interfaces import IAccount, IVoucher, IInvoice, IAddress
 from .. import _, resources
+
 
 MULTI = set()
 
@@ -120,6 +123,21 @@ class EditModel(Form):
     def handle_cancel(self):
         self.redirect(self.url(self.context))
         return SUCCESS
+
+
+class ModelIndex(uvclight.Form):
+    uvclight.name('index')
+    uvclight.layer(IAdminLayer)
+    uvclight.context(IModel)
+    require('manage.vouchers')
+    mode = 'display'
+
+    ignoreContent = False
+    ignoreRequest = True
+
+    @property
+    def fields(self):
+        return Fields(self.context.__schema__)
 
 
 @menuentry(IDocumentActions, order=10)
