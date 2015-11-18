@@ -2,7 +2,6 @@
 		 address request.principal.getAddress();
      vouchers request.principal.getVouchers();
 		 categories request.principal.getCategory()">
-  <span tal:content="vouchers"/>
   <p class="lead"> Gutscheine für 1. Hilfe </p>
   <p> Sie können für folgende Kontingentgruppen Gutscheine anfordern </p>
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -10,24 +9,32 @@
       <div class="panel-heading" role="tab" id="headingOne" tal:attributes="id string:heading${cat['name']}">
         <h4 class="panel-title">
           <a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" tal:attributes="href string:#collapse${cat['name']}">
-            <span tal:content="cat['doc']"/>
+              <span tal:content="cat['doc']"> </span> 
           </a> 
         </h4>
+            <div tal:define="cat_vouchers request.principal.getVouchers(cat['name'])">
+              <p tal:condition="cat_vouchers"> Sie haben in dieser Kontigentgruppe <span tal:content="len(cat_vouchers)" /> Gutscheine. </p>
+	            <button tal:condition="not: cat_vouchers" type="button" class="btn btn-primary btn-lg" data-toggle="modal" tal:attributes="data-target '#' + cat['name']"> Gutschein anfordern </button>
+            </div>
       </div>
       <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" tal:attributes="id string:collapse${cat['name']}">
         <div class="panel-body" tal:define="cat_vouchers request.principal.getVouchers(cat['name'])">
           <div tal:condition="cat_vouchers">
-            Sie haben in dieser Kontingentgruppe
-            <span tal:content="len(cat_vouchers)" /> Gutscheine!
+            <table class="table">
+              <tr>
+                <th> Gutschein id </th>
+                <th> Datum </th>
+                <th> Status </th>
+              </tr>
+              <tr tal:repeat="voucher cat_vouchers">
+                <td tal:content="voucher.oid"></td>
+                <td tal:content="voucher.creation_date"></td>
+                <td tal:content="voucher.status"></td>
+              </tr>
+            </table>
           </div>
 
 	  <!-- Button trigger modal -->
-	  <button tal:condition="not: cat_vouchers"
-		  type="button" class="btn btn-primary btn-lg"
-		  data-toggle="modal"
-		  tal:attributes="data-target '#' + cat['name']">
-	    Gutschein anfordern
-	  </button>
 
     <!-- Modal -->
     <div class="modal fade" tal:attributes="id cat['name']">

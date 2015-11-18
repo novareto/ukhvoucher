@@ -63,6 +63,12 @@ class IAccount(Interface):
         required=True,
     )
 
+    phone = schema.TextLine(
+        title=_(u"Phone"),
+        description=u"Bitte geben Sie hier Ihre Telefonnummer für Rückfragen an.",
+        required=True,
+    )
+
     email = schema.TextLine(
         title=_(u"E-Mail"),
         description=u"Ihre E-Mailadresse benötigen Sie später beim Login.",
@@ -174,6 +180,12 @@ class IInvoice(Interface):
 
 
 class IVoucher(Interface):
+
+    oid = schema.TextLine(
+        title=_(u"Unique Invoice identifier"),
+        description=_(u"Internal identifier of the invoice"),
+        required=True,
+    )
 
     creation_date = schema.Datetime(
         title=_(u"Creation date"),

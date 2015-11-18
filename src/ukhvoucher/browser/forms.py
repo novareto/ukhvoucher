@@ -4,25 +4,20 @@ import uvclight
 
 from datetime import datetime
 from cromlech.sqlalchemy import get_session
-from dolmen.forms.base.markers import NO_VALUE
-from dolmen.forms.base.errors import Error
-from dolmen.forms.base import SuccessMarker
-from dolmen.forms.base import makeAdaptiveDataManager
-from dolmen.forms.base.utils import set_fields_data, apply_data_event
-from dolmen.forms.crud.actions import message
-from dolmen.menu import menuentry, order
+from dolmen.forms.base.utils import apply_data_event
+from dolmen.menu import menuentry
 
 from uvc.design.canvas.menus import AddMenu
-from uvc.design.canvas import IContextualActionsMenu, IPersonalMenu
+from uvc.design.canvas import IPersonalMenu
 from uvc.design.canvas import IDocumentActions
-from uvclight.form_components.fields import Captcha
-from uvclight import Form, EditForm, DeleteForm, Fields, SUCCESS, FAILURE
-from uvclight import action, layer, name, title, get_template, context
+from uvclight import Form, Fields, SUCCESS, FAILURE
+from uvclight import action, layer, name, title, context
 from ul.auth import require
 
 from ..interfaces import IVouchersCreation
 from ..interfaces import IModel, IModelContainer, IAdminLayer
-from ..interfaces import IAccount, IVoucher, IInvoice, IAddress
+from ..interfaces import IAccount
+from ..models import Voucher
 from .. import _, resources
 
 
@@ -55,7 +50,7 @@ class CreateModel(Form):
 
     def update(self):
         resources.ukhvouchers.need()
-    
+
     @property
     def action_url(self):
         return self.request.path
@@ -105,13 +100,13 @@ class EditModel(Form):
             elif field.identifier in MULTI_DISABLED:
                 field.mode = 'multidisabled'
         return fields
-            
-    @property
-    def action_url(self):
-        return self.request.path
 
     def update(self):
         resources.ukhvouchers.need()
+
+    @property
+    def action_url(self):
+        return self.request.path
 
     @action(_(u'Update'))
     def handle_save(self):
@@ -142,8 +137,13 @@ class ModelIndex(uvclight.Form):
     ignoreRequest = True
 
     @property
+    def label(self):
+        return self.context.title
+
+    @property
     def fields(self):
-        return Fields(self.context.__schema__)
+        fields = Fields(self.context.__schema__)
+        return fields
 
 
 @menuentry(IDocumentActions, order=10)
@@ -195,22 +195,3 @@ class AskForVouchers(Form):
     def handle_cancel(self):
         self.redirect(self.url(self.context))
         return SUCCESS
-
-
-class ModelIndex(uvclight.Form):
-    uvclight.name('index')
-    uvclight.layer(IAdminLayer)
-    uvclight.context(IModel)
-    require('manage.vouchers')
-    mode = 'display'
-
-    ignoreContent = False
-    ignoreRequest = True
-
-    @property
-    def label(self):
-        return self.context.title
-
-    @property
-    def fields(self):
-        return Fields(self.context.__schema__)

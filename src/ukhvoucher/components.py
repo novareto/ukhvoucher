@@ -10,6 +10,12 @@ from cromlech.sqlalchemy import get_session
 
 class ExternalPrincipal(Principal):
 
+    def __init__(self, id, title=u''):
+        self.id = id
+
+    @property
+    def title(self):
+        return self.getAddress().name1
 
     def getAddress(self):
         session = get_session('ukhvoucher')
