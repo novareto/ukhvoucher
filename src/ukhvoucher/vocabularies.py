@@ -28,12 +28,11 @@ def invoices(context):
 def vouchers(context):
     session = get_session('ukhvoucher')
     items = []
-    disabled = []
+    disabled = set()
     for item in session.query(Voucher).all():
-        if item.invoice is None:
-            items.append(SimpleTerm(item, token=item.oid, title=item.title))
-        else:
-            disabled.append(SimpleTerm(item, token=item.oid, title=item.title))
+        items.append(SimpleTerm(item, token=item.oid, title=item.title))
+        if item.invoice is not None:
+            disabled.add(item.oid)
     vocabulary = SimpleVocabulary(items)
     vocabulary.disabled_items = disabled
     return vocabulary

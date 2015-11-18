@@ -98,8 +98,14 @@ class EditModel(Form):
 
     @property
     def fields(self):
-        return Fields(self.context.__schema__)
-
+        fields = Fields(self.context.__schema__)
+        for field in fields:
+            if field.identifier in MULTI:
+                field.mode = 'multiselect'
+            elif field.identifier in MULTI_DISABLED:
+                field.mode = 'multidisabled'
+        return fields
+            
     @property
     def action_url(self):
         return self.request.path

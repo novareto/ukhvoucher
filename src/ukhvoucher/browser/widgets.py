@@ -18,12 +18,6 @@ class MultiSelectFieldWidget(MultiChoiceFieldWidget):
     grok.name('multidisabled')
     template = uvclight.get_template('disabled.cpt', __file__)
 
-    def disabledChoice(self):
-        current = self.inputValue()
-        base_id = self.htmlId()
+    def disabled(self, token):
         voc = self.component.valueField.vocabularyFactory(None)
-        for i, choice in enumerate(voc.disabled_items):
-            yield {'token': choice.token,
-                   'title': choice.title,
-                   'checked': choice.token in current,
-                   'id': base_id + '-' + str(i)}
+        return token in voc.disabled_items
