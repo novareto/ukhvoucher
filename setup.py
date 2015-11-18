@@ -22,6 +22,7 @@ setup(name='ukhvoucher',
           "cromlech.sqlalchemy",
           "ukhtheme.uvclight",
           "reportlab",
+          "pysqlite",
       ],
       entry_points={
          'fanstatic.libraries': [
