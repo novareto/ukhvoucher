@@ -2,7 +2,6 @@
 		 address request.principal.getAddress();
      vouchers request.principal.getVouchers();
 		 categories request.principal.getCategory()">
-  <span tal:content="vouchers"/>
   <p class="lead"> Gutscheine für 1. Hilfe </p>
   <p> Sie können für folgende Kontingentgruppen Gutscheine anfordern </p>
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">

@@ -175,6 +175,12 @@ class IInvoice(Interface):
 
 class IVoucher(Interface):
 
+    oid = schema.TextLine(
+        title=_(u"Unique Invoice identifier"),
+        description=_(u"Internal identifier of the invoice"),
+        required=True,
+    )
+
     creation_date = schema.Datetime(
         title=_(u"Creation date"),
         required=True,
