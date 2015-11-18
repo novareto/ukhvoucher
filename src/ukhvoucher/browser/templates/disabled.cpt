@@ -6,12 +6,7 @@
     <option value="#" selected="#"
             tal:repeat="choice widget.renderableChoice()"
             tal:attributes="value choice.token;
-                            selected choice.checked and 'selected' or None"
-            tal:content="choice.title" />
-    <option value="#" selected="#"
-            tal:repeat="choice widget.disabledChoice()"
-            tal:attributes="value choice.token;
-			    disabled 'disabled';
+			    disabled widget.disabled(choice.token);
                             selected choice.checked and 'selected' or None"
             tal:content="choice.title" />
   </select>

@@ -75,6 +75,7 @@ class Account(Base, Location):
     oid = Column('oid', String, primary_key=True)
     email = Column('email', String)
     name = Column('name', String)
+    phone = Column('name', String)
     password = Column('password', String)
 
     @property
@@ -98,7 +99,7 @@ class Voucher(Base, Location):
     __schema__ = IVoucher
     __label__ = _(u"Vouchers")
 
-    oid = Column('oid', String, primary_key=True)
+    oid = Column('oid', Integer, primary_key=True)
     creation_date = Column('creation_date', DateTime)
     status = Column('status', String)
     cat = Column('cat', String)
