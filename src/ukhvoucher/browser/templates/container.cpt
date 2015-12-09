@@ -9,13 +9,19 @@
     <tbody>
       <tr tal:repeat="content iter(context)">
 	<td tal:repeat="value view.listing(content)">
-	  <a href=""
-	     tal:omit-tag="value[0] != 'oid'"
-	     tal:attributes="href view.url(content)">
-	    <span class="glyphicon glyphicon-link"
-		  tal:omit-tag="value[0] != 'oid'">&nbsp;</span>
-	    <span tal:content="value[1]" />
-	  </a>
+	<tal:relation define="lister len(value[1]) > 1">
+	<ul tal:omit-tag="not lister">
+	  <li tal:omit-tag="not lister" tal:repeat="val value[1]">
+	    <a href=""
+	       tal:omit-tag="not val['link']"
+	       tal:attributes="href val['link']">
+	      <span class="glyphicon glyphicon-link"
+		    tal:omit-tag="not val['link']">
+	      </span><span tal:content="val['value']" />
+	    </a>
+	  </li>
+	</ul>
+ 	</tal:relation>
 	</td>
       </tr>
     </tbody>

@@ -9,6 +9,8 @@ from zope.component import getMultiAdapter
 from zope.interface import Interface
 from zope.i18n import translate
 from ..resources import ukhvouchers
+from sqlalchemy import inspect
+from zope.component.hooks import getSite
 
 
 class UserRootIndex(uvclight.Page):
@@ -72,7 +74,28 @@ class ContainerIndex(uvclight.Page):
     def update(self):
         self.columns = [field.title for field in self.context.listing_attrs]
 
+    def relation(self, id, value):
+        site = getSite()
+        if id == 'vouchers':
+            baseurl = self.url(site) + '/vouchers/'
+            for voucher in value:
+                yield voucher, baseurl + voucher.oid
+
     def listing(self, item):
+        details = inspect(item)
+        relations = details.mapper.relationships.keys()
+        itemurl = self.url(item)
+
         for col in self.context.listing_attrs:
-            yield col.identifier, getattr(
-                item, col.identifier, col.defaultValue)
+            value = getattr(item, col.identifier, col.defaultValue)
+            if col.identifier in relations:
+                relation = self.relation(col.identifier, value)
+                yield col.identifier, [{
+                    'value': rel.title,
+                    'link': link} for rel, link in relation]
+            else:
+                yield col.identifier, [{
+                    'value': value,
+                    'link': col.identifier == 'oid' and itemurl or ''}]
+                    
+                    

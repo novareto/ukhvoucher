@@ -180,7 +180,7 @@ class Invoices(SQLContainer):
 
     model = Invoice
     listing_attrs = uvclight.Fields(Invoice.__schema__).select(
-        'oid', 'description')
+        'oid', 'description', 'vouchers')
 
     def key_reverse(self, obj):
         return str(obj.oid)
