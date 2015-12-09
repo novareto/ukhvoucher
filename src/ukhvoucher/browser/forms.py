@@ -8,17 +8,18 @@ from dolmen.forms.base.utils import apply_data_event
 from dolmen.menu import menuentry
 
 from uvc.design.canvas.menus import AddMenu
-from uvc.design.canvas import IPersonalMenu
 from uvc.design.canvas import IDocumentActions
 from uvclight import Form, Fields, SUCCESS, FAILURE
 from uvclight import action, layer, name, title, context
 from ul.auth import require
+from dolmen.forms.base.components import _marker
 
 from ..interfaces import IVouchersCreation
-from ..interfaces import IModel, IModelContainer, IAdminLayer
+from ..interfaces import IModel, IModelContainer, IAdminLayer, IUserLayer
 from ..interfaces import IAccount
 from ..models import Voucher
 from .. import _, resources
+from ..apps import UserRoot
 
 
 MULTI = set()
@@ -144,6 +145,20 @@ class ModelIndex(uvclight.Form):
     def fields(self):
         fields = Fields(self.context.__schema__)
         return fields
+
+
+class EditAccount(uvclight.EditForm):
+    uvclight.name('edit_account')
+    uvclight.layer(IUserLayer)
+    uvclight.context(UserRoot)
+    require('users.access')
+
+    fields = Fields(IAccount).select('name', 'phone', 'email')
+
+    def __init__(self, context, request, content=_marker):
+        super(EditAccount, self).__init__(context, request)
+        content = self.request.principal.getAccount()
+        self.setContentData(content)
 
 
 @menuentry(IDocumentActions, order=10)

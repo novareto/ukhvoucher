@@ -75,7 +75,7 @@ class Account(Base, Location):
     oid = Column('oid', String, primary_key=True)
     email = Column('email', String)
     name = Column('name', String)
-    phone = Column('name', String)
+    phone = Column('phone', String)
     password = Column('password', String)
 
     @property
@@ -168,7 +168,7 @@ class Vouchers(SQLContainer):
 
     model = Voucher
     listing_attrs = uvclight.Fields(Voucher.__schema__).select(
-        'oid', 'status', 'user_id')
+        'oid', 'cat', 'status', 'user_id')
 
     def key_reverse(self, obj):
         return 'Voucher %s' % obj.oid

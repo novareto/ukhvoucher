@@ -3,64 +3,21 @@
 # cklinger@novareto.de
 
 import uvclight
-
-
-from reportlab.lib.pagesizes import letter
-from reportlab.graphics.barcode.common import I2of5
-from reportlab.lib.units import inch
-from reportlab.platypus import PageBreak, SimpleDocTemplate, Paragraph
-from reportlab.lib.styles import getSampleStyleSheet
-from tempfile import NamedTemporaryFile
-from ..interfaces import IUserLayer
-from ..apps import UserRoot
-
-
 import tempfile
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import cm
-from reportlab.lib.colors import black, blue
+import ukhvoucher
+
+
+from os import path
+from ..apps import UserRoot
 from time import gmtime, strftime
-
-from reportlab.graphics.barcode import code39, code128, code93
-from reportlab.graphics.barcode import eanbc, qr, usps
-from reportlab.graphics.shapes import Drawing
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.units import mm
-from reportlab.graphics import renderPDF
+from ..interfaces import IUserLayer
 
 
-
-
-
-
-styles = getSampleStyleSheet()
-
-
-#ADDRESS = """
-#<h2> %s </h2><br/>
-#<p> %s </p><br/>
-#<p> %s </p><br/>
-#<p> %s %s </p><br/>
-#<p> %s %s </p><br/>"""
-
-
-def printAddress(principal):
-    adr = principal.getAddress()
-    return adr
-
-VOUCHER = """
- <h2> Gutschein </h2><br/>
- <p> %s </p><br/>
- <p> %s </p><br/>
-"""
-
-
-def printVoucher(voucher):
-    return VOUCHER % (
-        voucher.oid,
-        voucher.creation_date.strftime('%d.%m.%Y %H:%M')
-    )
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import cm, mm
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.colors import black
+from reportlab.graphics.barcode import code39
 
 
 class PDF(uvclight.Page):
@@ -85,15 +42,12 @@ class PDF(uvclight.Page):
         schriftartfett = "Helvetica-Bold"
         datum = strftime("%d.%m.%Y", gmtime())
         principal = self.request.principal
-        adr = printAddress(principal)
+        adr = principal.getAddress()
         z1 = 1
         z2 = len(principal.getVouchers())
         for voucher in principal.getVouchers():
-
-            # Titel
             c.setFont(schriftart, 12)
-            ### Logo ###
-            bcp = '/home/kt/erstehilfe/ukhvoucher_project/src/ukhvoucher/src/ukhvoucher/static/logo_ukh.JPG'
+            bcp = '%s/static/logo_ukh.JPG' % path.dirname(ukhvoucher.__file__)
             c.drawImage(bcp, 15.5 * cm, 27.2 * cm, width=4.5 * cm, height=1.3 * cm)
             # Eigene Adresse
             c.setFont(schriftart, 9)
@@ -168,39 +122,3 @@ class PDF(uvclight.Page):
         c.save()
         tmp.seek(0)
         return tmp.read()
-
-
-
-        #doc = SimpleDocTemplate(NamedTemporaryFile(), pagesize=letter)
-        #parts = []
-        #principal = self.request.principal
-        #for voucher in principal.getVouchers():
-        #    parts.append(Paragraph(u"Ihre Gutscheine", styles['Heading1']))
-        #    parts.append(Paragraph(printAddress(principal), styles['Normal']))
-        #    parts.append(Paragraph(printVoucher(voucher), styles['Normal']))
-        #    parts.append(I2of5(voucher.oid, barWidth=inch * 0.02, checksum=0))
-        #    parts.append(PageBreak())
-        #
-        #doc.build(parts)
-        #pdf = doc.filename
-        #pdf.seek(0)
-        #return pdf.read()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

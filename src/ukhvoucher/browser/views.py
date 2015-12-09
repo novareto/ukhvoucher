@@ -21,6 +21,10 @@ class UserRootIndex(uvclight.Page):
 
     def update(self):
         self.categories = self._categories
+        account = self.request.principal.getAccount()
+        if account:
+            if account.phone == "" or account.name == "" or account.email == "":
+                self.redirect(self.url(self.context, 'edit_account'))
 
     @property
     def _categories(self):

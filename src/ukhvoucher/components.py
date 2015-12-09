@@ -25,6 +25,13 @@ class ExternalPrincipal(Principal):
         else:  # LEGACY
             pass
 
+    def getAccount(self):
+        session = get_session('ukhvoucher')
+        account = session.query(models.Account).get(self.id)
+        if account:
+            return account 
+
+
     def getCategory(self):
         session = get_session('ukhvoucher')
         category = session.query(models.Category).get(self.id)

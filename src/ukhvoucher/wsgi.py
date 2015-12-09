@@ -31,6 +31,7 @@ def router(conf, session_key, zcml, name):
 
     # We register our SQLengine under a given name
     dsn = "sqlite:////tmp/ukhvoucher.db"
+    dsn = "sqlite:////Users/ck/tmp/ukhvoucher.db"
     engine = create_and_register_engine(dsn, name)
 
     # We use a declarative base, if it exists we bind it and create
