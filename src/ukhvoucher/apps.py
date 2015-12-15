@@ -25,7 +25,7 @@ from uvclight.directives import traversable
 @implementer(ICredentials)
 class Access(GlobalUtility):
     name('admins')
-    
+
     def log_in(self, request, username, password, **kws):
         if username == "admin" and password == "admin":
             return True
@@ -38,10 +38,10 @@ class AdminUsers(GlobalUtility):
 
     def log_in(self, request, username, password, **kws):
         session = get_session('ukhvoucher')
-        user = session.query(Account).filter(Account.oid == username)
+        user = session.query(Account).filter(Account.login == username)
         if user.count():
             user = user.one()
-            if user.password == password:
+            if user.password.strip() == password:
                 return user
         return None
 
@@ -49,7 +49,7 @@ class AdminUsers(GlobalUtility):
 @implementer(IPublicationRoot)
 class AdminRoot(Location):
     traversable('categories', 'accounts', 'addresses', 'vouchers', 'invoices')
-    
+
     credentials = ('admins',)
 
     def getSiteManager(self):
@@ -61,12 +61,12 @@ class AdminRoot(Location):
         self.vouchers = Vouchers(self, 'vouchers', session_key)
         self.invoices = Invoices(self, 'invoices', session_key)
         self.categories = Categories(self, 'categories', session_key)
-        
+
 
 class Admin(SQLPublication, SecurePublication):
 
     layers = [IAdminLayer]
-    
+
     def setup_database(self, engine):
         pass
 

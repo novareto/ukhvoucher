@@ -18,19 +18,20 @@ from zope.location import Location
 @implementer(IModel, IIdentified, IAddress)
 class Address(Base, Location):
 
-    __tablename__ = 'addresses'
+    __tablename__ = 'z1ehradr_t'
     __schema__ = IAddress
     __label__ = _(u"Address")
+    __table_args__ = {"schema": "UKHINTERN"}
 
     oid = Column('oid', Integer, primary_key=True, autoincrement=True)
-    name1 = Column('name1', String)
-    name2 = Column('name2', String)
-    name3 = Column('name3', String)
-    street = Column('street', String)
-    number = Column('number', String)
-    zip_code = Column('zip', String)
-    city = Column('city', String)
-    user_id = Column('user_id', String, ForeignKey('accounts.oid'))
+    name1 = Column('iknam1', String(28))
+    name2 = Column('iknam2', String(28))
+    name3 = Column('iknam3', String(28))
+    street = Column('ikstr', String(46))
+    number = Column('ikhnr', String(3))
+    zip_code = Column('ikhplz', String(5))
+    city = Column('ikhort', String(24))
+    user_id = Column('user_id', Integer, ForeignKey('UKHINTERN.Z1EXT9AA.oid'))
 
     @property
     def title(self):
@@ -41,12 +42,43 @@ class Address(Base, Location):
     searchable_attrs = ("oid", "name1", "street", 'zip_code', 'city')
 
 
+class AddressEinrichtung(Base):
+    __tablename__ = 'z1ext9ac'
+    __table_args__ = {"schema": "UKHINTERN"}
+
+    oid = Column('enrrcd', String, primary_key=True)
+    mnr = Column('enrnum', String)
+    name1 = Column('iknam1', String(28))
+    name2 = Column('iknam2', String(28))
+    name3 = Column('iknam3', String(28))
+    street = Column('ikstr', String(46))
+    number = Column('ikhnr', String(3))
+    zip_code = Column('ikhplz', String(5))
+    city = Column('ikhort', String(24))
+
+
+class AddressTraeger(Base):
+    __tablename__ = 'z1ext9ab'
+    __table_args__ = {"schema": "UKHINTERN"}
+
+    oid = Column('trgrcd', String, primary_key=True)
+    mnr = Column('trgmnr', String)
+    name1 = Column('iknam1', String(28))
+    name2 = Column('iknam2', String(28))
+    name3 = Column('iknam3', String(28))
+    street = Column('ikstr', String(46))
+    number = Column('ikhnr', String(3))
+    zip_code = Column('ikhplz', String(5))
+    city = Column('ikhort', String(24))
+
+
 @implementer(IModel, IIdentified, ICategory)
 class Category(Base, Location):
 
-    __tablename__ = 'categories'
+    __tablename__ = 'z1ehrkat_t'
     __schema__ = ICategory
     __label__ = _(u"Category")
+    __table_args__ = {"schema": "UKHINTERN"}
 
     oid = Column('oid', String, primary_key=True)
     kat1 = Column('kat1', Boolean)
@@ -54,6 +86,8 @@ class Category(Base, Location):
     kat3 = Column('kat3', Boolean)
     kat4 = Column('kat4', Boolean)
     kat5 = Column('kat5', Boolean)
+    kat6 = Column('kat6', Boolean)
+    kat7 = Column('kat7', Boolean)
 
     @property
     def title(self):
@@ -67,16 +101,21 @@ class Category(Base, Location):
 @implementer(IModel, IIdentified, IAccount)
 class Account(Base, Location):
 
-    __tablename__ = 'accounts'
+    __tablename__ = 'Z1EXT9AA'
     __schema__ = IAccount
     __label__ = _(u"Account")
+    __table_args__ = {"schema": "UKHINTERN"}
     model = Address
 
-    oid = Column('oid', String, primary_key=True)
+    oid = Column('oid', Integer, primary_key=True)
     email = Column('email', String)
-    name = Column('name', String)
-    phone = Column('name', String)
-    password = Column('password', String)
+    login = Column('login', String)
+    az = Column('az', String)
+    name = Column('nname', String)
+    phone = Column('tlnr', String)
+    rechte = Column('rechte', String)
+    password = Column('passwort', String)
+    merkmal = Column('merkmal', String)
 
     @property
     def title(self):
@@ -95,16 +134,17 @@ class Account(Base, Location):
 @implementer(IModel, IIdentified, IVoucher)
 class Voucher(Base, Location):
 
-    __tablename__ = 'vouchers'
+    __tablename__ = 'z1ehrvch_t'
     __schema__ = IVoucher
     __label__ = _(u"Vouchers")
+    __table_args__ = {"schema": "UKHINTERN"}
 
-    oid = Column('oid', Integer, primary_key=True)
-    creation_date = Column('creation_date', DateTime)
+    oid = Column('vch_oid', Integer, primary_key=True)
+    creation_date = Column('erst_dat', DateTime)
     status = Column('status', String)
-    cat = Column('cat', String)
-    user_id = Column('user_id', String, ForeignKey('accounts.oid'))
-    invoice_id = Column('invoice_id', ForeignKey('invoices.oid'))
+    cat = Column('kat', String)
+    user_id = Column('user_id', Integer, ForeignKey('UKHINTERN.Z1EXT9AA.oid'))
+    invoice_id = Column('rech_oid', Integer, ForeignKey('UKHINTERN.z1ehrrch_t.rech_oid'))
 
     # relations
     user = relationship('Account')
@@ -123,19 +163,20 @@ class Voucher(Base, Location):
 @implementer(IModel, IIdentified, IInvoice)
 class Invoice(Base, Location):
 
-    __tablename__ = 'invoices'
+    __tablename__ = 'z1ehrrch_t'
     __schema__ = IInvoice
     __label__ = _(u"Invoice")
+    __table_args__ = {"schema": "UKHINTERN"}
 
-    oid = Column('oid', String, primary_key=True)
-    description = Column('description', String)
+    oid = Column('rech_oid', Integer, primary_key=True)
+    description = Column('text', String)
 
     @property
     def title(self):
         return "Invoice %s" % self.oid
 
-    search_attr = "oid"
-    searchable_attrs = ("oid", "description")
+    search_attr = "rech_oid"
+    searchable_attrs = ("rech_oid", "description")
 
 
 @implementer(IContent, IModelContainer)
@@ -149,6 +190,8 @@ class Accounts(SQLContainer):
     def key_reverse(self, obj):
         return str(obj.oid)
 
+    def key_converter(self, id):
+        return int(id)
 
 @implementer(IContent, IModelContainer)
 class Addresses(SQLContainer):
@@ -160,6 +203,9 @@ class Addresses(SQLContainer):
 
     def key_reverse(self, obj):
         return str(obj.oid)
+
+    def key_converter(self, id):
+        return int(id)
 
 
 @implementer(IContent, IModelContainer)
@@ -184,6 +230,9 @@ class Invoices(SQLContainer):
 
     def key_reverse(self, obj):
         return str(obj.oid)
+
+    def key_converter(self, id):
+        return int(id)
 
 
 @implementer(IContent, IModelContainer)

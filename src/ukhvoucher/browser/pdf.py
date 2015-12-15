@@ -4,13 +4,12 @@
 
 import uvclight
 
-
-from reportlab.lib.pagesizes import letter
-from reportlab.graphics.barcode.common import I2of5
-from reportlab.lib.units import inch
-from reportlab.platypus import PageBreak, SimpleDocTemplate, Paragraph
+#from reportlab.lib.pagesizes import letter
+#from reportlab.graphics.barcode.common import I2of5
+#from reportlab.lib.units import inch
+#from reportlab.platypus import PageBreak, SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
-from tempfile import NamedTemporaryFile
+#from tempfile import NamedTemporaryFile
 from ..interfaces import IUserLayer
 from ..apps import UserRoot
 
@@ -19,15 +18,16 @@ import tempfile
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
-from reportlab.lib.colors import black, blue
-from time import gmtime, strftime
+#from reportlab.lib.colors import black, blue
+from reportlab.lib.colors import black
+#from time import gmtime, strftime
 
-from reportlab.graphics.barcode import code39, code128, code93
-from reportlab.graphics.barcode import eanbc, qr, usps
-from reportlab.graphics.shapes import Drawing
-from reportlab.lib.pagesizes import letter
+from reportlab.graphics.barcode import code39 #, code128, code93
+#from reportlab.graphics.barcode import eanbc, qr, usps
+#from reportlab.graphics.shapes import Drawing
+#from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import mm
-from reportlab.graphics import renderPDF
+#from reportlab.graphics import renderPDF
 
 
 
@@ -35,7 +35,6 @@ from reportlab.graphics import renderPDF
 
 
 styles = getSampleStyleSheet()
-
 
 #ADDRESS = """
 #<h2> %s </h2><br/>
@@ -49,19 +48,22 @@ def printAddress(principal):
     adr = principal.getAddress()
     return adr
 
-VOUCHER = """
- <h2> Gutschein </h2><br/>
- <p> %s </p><br/>
- <p> %s </p><br/>
-"""
+#VOUCHER = """
+# <h2> Gutschein </h2><br/>
+# <p> %s </p><br/>
+# <p> %s </p><br/>
+#"""
 
+
+#def printVoucher(voucher):
+#    return VOUCHER % (
+#        voucher.oid,
+#        voucher.creation_date.strftime('%d.%m.%Y %H:%M')
+#    )
 
 def printVoucher(voucher):
-    return VOUCHER % (
-        voucher.oid,
-        voucher.creation_date.strftime('%d.%m.%Y %H:%M')
-    )
-
+    vou = voucher.oid, voucher.creation_date.strftime('%d.%m.%Y %H:%M')
+    return vou
 
 class PDF(uvclight.Page):
     uvclight.layer(IUserLayer)
@@ -83,13 +85,12 @@ class PDF(uvclight.Page):
         c.setTitle(u'Rehamanagement')
         schriftart = "Helvetica"
         schriftartfett = "Helvetica-Bold"
-        datum = strftime("%d.%m.%Y", gmtime())
         principal = self.request.principal
         adr = printAddress(principal)
         z1 = 1
         z2 = len(principal.getVouchers())
         for voucher in principal.getVouchers():
-
+            vou = printVoucher(voucher)
             # Titel
             c.setFont(schriftart, 12)
             ### Logo ###
@@ -113,7 +114,8 @@ class PDF(uvclight.Page):
             c.setFont(schriftartfett, 12)
             x = 23.5
             # Namensfelder werden nur ausgegeben wenn diese gefuellt sind
-            mnr = '1.50.12/00002'
+            #mnr = '1.50.12/00002'
+            mnr = str(adr.oid)
             c.drawString(2.5 * cm, x * cm, u'Mitglieds-Nr.: ' + mnr)
             x = x - 1.0
             # Namensfelder werden nur ausgegeben wenn diese gefuellt sind
@@ -138,25 +140,23 @@ class PDF(uvclight.Page):
             y = y - 0.6
             c.drawString(2.5 * cm, y * cm, u'(UVV) DGUV Vorschrift 1 "Grundsätze der Prävention"')
             y = y - 1.2
-            c.drawString(2.5 * cm, y * cm, u'Ausstellungsdatum: ' + datum)
+            c.drawString(2.5 * cm, y * cm, u'Ausstellungsdatum: ' + str(vou[1]))
             y = y - 2.5
             #####################################################
             # TEST                                              #
             #####################################################
             # Barcode Value....
             # Mitgliedsnummer (TEST)
-            bc1 = '1501200002'
-            # Gutscheinnummer
-            zz = str(z1)
+            bc1 = mnr
+            # Gutscheinnummer (3 Stellig...)
+            zz = str(vou[0])
             if len(zz) == 1:
                 bc2 = '00' + zz
             if len(zz) == 2:
                 bc2 = '0' + zz
             if len(zz) == 3:
                 bc2 = zz
-            # Gültigkeit
-            bc3 = '0506'
-            barcode_value = bc1 + bc2 + bc3
+            barcode_value = bc1 + '-' + bc2
             barcode = code39.Extended39(barcode_value, barWidth = 0.2 * mm, barHeight = 10 * mm)
             barcode.drawOn(c, 19 * mm, 120 * mm)
             c.drawString(2.5 * cm, 11.0 * cm, barcode_value)
@@ -168,7 +168,6 @@ class PDF(uvclight.Page):
         c.save()
         tmp.seek(0)
         return tmp.read()
-
 
 
         #doc = SimpleDocTemplate(NamedTemporaryFile(), pagesize=letter)
@@ -185,20 +184,6 @@ class PDF(uvclight.Page):
         #pdf = doc.filename
         #pdf.seek(0)
         #return pdf.read()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

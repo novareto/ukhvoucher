@@ -4,8 +4,9 @@
 
 from ul.auth import Principal
 from ukhvoucher import models
-from ukhvoucher.interfaces import IKG1, IKG2, IKG3
+from ukhvoucher.interfaces import IKG1, IKG2, IKG3, IKG4, IKG5, IKG6, IKG7
 from cromlech.sqlalchemy import get_session
+from sqlalchemy import and_
 
 
 class ExternalPrincipal(Principal):
@@ -17,13 +18,33 @@ class ExternalPrincipal(Principal):
     def title(self):
         return self.getAddress().name1
 
+    @property
+    def oid(self):
+        account = self.getAccount()
+        return int(account.oid)
+
+    @property
+    def merkmal(self):
+        account = self.getAccount()
+        return str(account.merkmal).strip()
+
+    def getAccount(self):
+        session = get_session('ukhvoucher')
+        account = session.query(models.Account).filter(and_(models.Account.login==self.id, models.Account.az=="00"))
+        return account.one()
+
     def getAddress(self):
         session = get_session('ukhvoucher')
-        address = session.query(models.Address).get(self.id)
+        address = session.query(models.Address).get(self.oid)
         if address:
             return address
-        else:  # LEGACY
-            pass
+        if self.merkmal == "M":
+            address = session.query(models.AddressTraeger).get(self.oid)
+        elif self.merkmal == "E":
+            address = session.query(models.AddressEinrichtung).get(self.oid)
+        else:
+            address = None
+        return address
 
     def getCategory(self):
         session = get_session('ukhvoucher')
@@ -38,14 +59,41 @@ class ExternalPrincipal(Principal):
                 if category.kat3:
                     cat.add(IKG3)
                 if category.kat4:
-                    cat.add('kat4')
+                    cat.add(IKG4)
                 if category.kat5:
-                    cat.add('kat5')
+                    cat.add(IKG5)
+                if category.kat6:
+                    cat.add(IKG6)
+                if category.kat7:
+                    cat.add(IKG7)
                 return cat
             return createCategory(category)
         else:  # LEGACY
+            mnr = self.getAddress().mnr
+            return self.getCategoryFromMNR(mnr)
             pass
         return []
+
+    def getCategoryFromMNR(self, mnr):
+        mnr = mnr[:4]
+        cat = set()
+        if mnr in ('1.02', '1.03', '1.04'):
+            cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
+        elif mnr == '1.05':
+            cat = set([IKG1, IKG2])
+        elif mnr == "Abwasserverband":
+            cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
+        elif mnr == "Freie KITA":
+            cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
+        elif mnr == "Staatstehater":
+            cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
+        elif mnr == "Entsorgungsbetrieb":
+            cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
+        elif mnr == "Schule":
+            cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
+        elif mnr == "Gemeinsahftskasse":
+            cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
+        return cat
 
     def getVouchers(self, cat=None):
         session = get_session('ukhvoucher')
@@ -53,4 +101,4 @@ class ExternalPrincipal(Principal):
             models.Voucher.user_id == self.id)
         if cat:
             query = query.filter(models.Voucher.cat == cat)
-        return query.all()
+            return query.all()

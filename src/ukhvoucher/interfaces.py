@@ -210,16 +210,15 @@ class IVoucher(Interface):
     )
 
 
-
 class IKG1(Interface):
     u"""Verwaltung, Büro"""
 
     mitarbeiter = schema.Int(
-        title=_(u"Employees"),
+        title=_(u"Beschäftigte"),
     )
 
     standorte = schema.Int(
-        title=_(u"Deparment"),
+        title=_(u"Standorte"),
     )
 
 
@@ -227,15 +226,54 @@ class IKG2(Interface):
     u"""Andere Betriebe"""
 
     mitarbeiter = schema.Int(
-        title=_(u"Employees"),
+        title=_(u"Beschäftigte"),
     )
 
     standorte = schema.Int(
-        title=_(u"Deparment"),
+        title=_(u"Standorte"),
     )
 
 
 class IKG3(Interface):
     u"""Kinderbetreuungseinrichtungen"""
 
+    gruppen = schema.Int(
+        title=_(u"Anzahl der Kindergruppen"),
+    )
+
+    kitas = schema.Int(
+        title=_(u"Anzahl Kommunale Kitas"),
+    )
+
+
+class IKG4(Interface):
+    u"""Entsorgung / Bauhof (Kolonne)"""
+
+    kolonne = schema.Int(
+        title=_(u"Anzahl der Kolonnen"),
+    )
+
+
+class IKG5(Interface):
+    u"""Einrichtungen mit spezieller Gefährdung"""
+
+    mitarbeiter = schema.Int(
+        title=_(u"Beschäftigte"),
+    )
+
+
+class IKG6(Interface):
+    u"""Beschäftigte und Einrichtungen mit spezieller Gefährdung"""
+
+    mitarbeiter = schema.Int(
+        title=_(u"Beschäftigte"),
+    )
+
+
+class IKG7(Interface):
+    u"""Schulen"""
+
+    mitarbeiter = schema.Int(
+        title=_(u"Anzahl Lehrkräfte"),
+    )
 

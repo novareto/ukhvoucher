@@ -7,7 +7,7 @@ import datetime
 from ukhvoucher.apps import UserRoot
 from ukhvoucher.models import Voucher
 from ukhvoucher.interfaces import IUserLayer
-from ukhvoucher.interfaces import IKG1, IKG2, IKG3
+from ukhvoucher.interfaces import IKG1, IKG2, IKG3, IKG4, IKG5, IKG6, IKG7
 
 from dolmen.forms.base.markers import FAILURE
 from dolmen.forms.base import Action, SuccessMarker, Actions
@@ -35,10 +35,10 @@ class CalculateInsert(Action):
             except:
                 oid = 0
             for i in range(amount):
-                oid += 1 
+                oid += 1
                 voucher = Voucher()
                 voucher.oid = oid
-                voucher.creation_date = now
+                voucher.creation_date = now.strftime('%Y-%m-%d')
                 voucher.status = "created"
                 voucher.cat = form._iface.getName()
                 voucher.user_id = principal.id
@@ -72,8 +72,8 @@ class KGBaseForm(uvclight.Form):
 
 class IKG1Form(KGBaseForm):
     _iface = IKG1
-    label = u"KG1"
-    
+    label = u""
+
     def calculate(self, mitarbeiter, standorte):
         if standorte <= 1:
             standorte = 2
@@ -82,9 +82,54 @@ class IKG1Form(KGBaseForm):
 
 class IKG2Form(KGBaseForm):
     _iface = IKG2
-    label = u"KG2"
-    
+    label = u""
+
     def calculate(self, mitarbeiter, standorte):
         if standorte <= 1:
             standorte = 2
         return (mitarbeiter * 10 / 100) + standorte
+
+
+class IKG3Form(KGBaseForm):
+    _iface = IKG3
+    label = u""
+
+    def calculate(self, gruppen, kitas):
+        if kitas <= 1:
+            kitas = 2
+        return (gruppen + kitas)
+
+
+class IKG4Form(KGBaseForm):
+    _iface = IKG4
+    label = u""
+
+    def calculate(self, kolonne):
+        return kolonne
+
+
+class IKG5Form(KGBaseForm):
+    _iface = IKG5
+    label = u""
+
+    def calculate(self, mitarbeiter):
+        if mitarbeiter <= 1:
+            mitarbeiter = 2
+        return (mitarbeiter / 2)
+
+
+class IKG6Form(KGBaseForm):
+    _iface = IKG6
+    label = u""
+
+    def calculate(self, mitarbeiter):
+        return mitarbeiter
+
+
+class IKG7Form(KGBaseForm):
+    _iface = IKG7
+    label = u""
+
+    def calculate(self, mitarbeiter):
+        return mitarbeiter * 15 / 100
+

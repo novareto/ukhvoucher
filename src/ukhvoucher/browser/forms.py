@@ -64,6 +64,8 @@ class CreateModel(Form):
             return FAILURE
 
         # create it
+        print data
+        import pdb; pdb.set_trace()
         item = self.context.model(**data)
         self.context.add(item)
 
