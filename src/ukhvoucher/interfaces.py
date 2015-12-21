@@ -7,6 +7,57 @@ from ukhvoucher import _
 from zope import schema
 from zope.interface import Interface, Attribute
 from zope.schema.interfaces import IContextSourceBinder
+from cromlech.sqlalchemy import get_session
+from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
+from plone.memoize import forever
+
+
+
+@grok.provider(IContextSourceBinder)
+def get_oid(context):
+    from sqlalchemy.sql.functions import max
+    from ukhvoucher.models import Accounts, AddressTraeger, Address, AddressEinrichtung
+    rc = []
+    session = get_session('ukhvoucher')
+    if isinstance(context, Accounts):
+        try:
+            oid = int(session.query(max(Address.oid)).one()[0]) + 1
+        except:
+            oid = 999000000000001
+        oid = 999000000000001
+
+        rc = [SimpleTerm(oid, oid, u'%s neues Unternehmen' % str(oid))]
+    @forever.memoize
+    def getValue():
+        for x in session.query(Address):
+            rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+        for x in session.query(AddressTraeger):
+            rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+        for x in session.query(AddressEinrichtung):
+            rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+        return SimpleVocabulary(rc)
+    return getValue()
+
+
+def getInvoiceId():
+    from ukhvoucher.models import Invoice
+    from sqlalchemy.sql.functions import max
+    session = get_session('ukhvoucher')
+    try:
+        oid = int(session.query(max(Invoice.oid)).one()[0]) + 1
+    except:
+        oid = 100000
+    return unicode(oid)
+
+
+@grok.provider(IContextSourceBinder)
+def get_reason(context):
+    rc = [
+        SimpleTerm(u'', u'', u'OK'),
+        SimpleTerm(u'Teilnehmer != Rechnung', u'Teilnehmer != Rechnung', u'Teilnehmer != Rechnung'),
+        SimpleTerm(u'Rechnungssumme falsch', u'Rechnungssumme falsch', u'Rechnungssumme falsch'),
+    ]
+    return SimpleVocabulary(rc)
 
 
 def get_source(name):
@@ -16,12 +67,32 @@ def get_source(name):
     return source
 
 
+@grok.provider(IContextSourceBinder)
+def get_kategorie(context):
+    rc = [
+        SimpleTerm(IKG1.getName(), IKG1.getName(), IKG1.getDoc()),
+        SimpleTerm(IKG2.getName(), IKG2.getName(), IKG2.getDoc()),
+        SimpleTerm(IKG3.getName(), IKG3.getName(), IKG3.getDoc()),
+        SimpleTerm(IKG4.getName(), IKG4.getName(), IKG4.getDoc()),
+        SimpleTerm(IKG5.getName(), IKG5.getName(), IKG5.getDoc()),
+        SimpleTerm(IKG6.getName(), IKG6.getName(), IKG6.getDoc()),
+        SimpleTerm(IKG7.getName(), IKG7.getName(), IKG7.getDoc()),
+        ]
+    return SimpleVocabulary(rc)
+
+
 class IVouchersCreation(Interface):
 
     number = schema.Int(
         title=_(u"Number of vouchers"),
         description=_(u"Number of vouchers to query"),
         required=True,
+        )
+
+    kategorie = schema.Choice(
+        title=u"Kategorie",
+        description=u"Für welche Kategorie wollen sie Gutscheine anlegen",
+        source=get_kategorie,
         )
 
 
@@ -51,15 +122,41 @@ class IModelContainer(Interface):
 
 class IAccount(Interface):
 
-    oid = schema.TextLine(
+#    oid = schema.TextLine(
+#        title=_(u"Unique identifier"),
+#        description=_(u"Internal identifier"),
+#        required=True,
+#    )
+
+    oid = schema.Choice(
         title=_(u"Unique identifier"),
         description=_(u"Internal identifier"),
         required=True,
+        source=get_oid,
     )
 
-    name = schema.TextLine(
-        title=_(u"Fullname"),
-        description=_(u"Please give your Fullname here"),
+    login = schema.TextLine(
+        title=_(u"Benutzerkennung"),
+        description=_(u"Benutzerkennung"),
+        required=True,
+    )
+
+    az = schema.TextLine(
+        title=_(u"Mitbenutzerkennung"),
+        description=_(u"Mitbenutzerkennung"),
+        required=True,
+        default=u"00",
+    )
+
+    vname = schema.TextLine(
+        title=_(u"Vorname"),
+        description=_(u"Bitte geben Sie hier Ihren Vornamen ein."),
+        required=True,
+    )
+
+    nname = schema.TextLine(
+        title=_(u"Nachname"),
+        description=_(u"Bitte geben Sie hier Ihren Nachnamen ein."),
         required=True,
     )
 
@@ -115,6 +212,16 @@ class ICategory(Interface):
         required=True,
     )
 
+    kat6 = schema.Bool(
+        title=_(u"Kat 6"),
+        required=True,
+    )
+
+    kat7 = schema.Bool(
+        title=_(u"Kat 7"),
+        required=True,
+    )
+
 
 class IAddress(Interface):
 
@@ -166,10 +273,19 @@ class IInvoice(Interface):
         title=_(u"Unique Invoice identifier"),
         description=_(u"Internal identifier of the invoice"),
         required=True,
+        defaultFactory=getInvoiceId,
     )
 
-    description = schema.TextLine(
+    reason = schema.Choice(
+        title=_(u'Begründung'),
+        description=_(u'Bitte geben wählen Sie hier aus warum Sie mit der Rechnung nicht einverstanden sein'),
+        source=get_reason,
+        required = False,
+    )
+
+    description = schema.Text(
         title=_('Beschreibung'),
+        required=False,
     )
 
     vouchers = schema.Set(
@@ -197,15 +313,15 @@ class IVoucher(Interface):
         required=True,
     )
 
-    user_id = schema.Choice(
+    user_id = schema.TextLine(
         title=_(u"User id"),
-        source=get_source('accounts'),
+        #source=get_source('accounts'),
         required=True,
     )
 
-    invoice_id = schema.Choice(
+    invoice_id = schema.TextLine(
         title=_(u"Invoice id"),
-        source=get_source('invoices'),
+        #source=get_source('invoices'),
         required=True,
     )
 

@@ -23,6 +23,9 @@ setup(name='ukhvoucher',
           "ukhtheme.uvclight",
           "reportlab",
           "pysqlite",
+          "ukh.ibmdbsa",
+          "infrae.testbrowser",
+          "plone.memoize",
       ],
       entry_points={
          'fanstatic.libraries': [

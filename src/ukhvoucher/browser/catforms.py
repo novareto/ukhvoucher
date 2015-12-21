@@ -33,7 +33,7 @@ class CalculateInsert(Action):
             try:
                 oid = int(session.query(max(Voucher.oid)).one()[0]) + 1
             except:
-                oid = 0
+                oid = 100000
             for i in range(amount):
                 oid += 1
                 voucher = Voucher()
@@ -73,7 +73,6 @@ class KGBaseForm(uvclight.Form):
 class IKG1Form(KGBaseForm):
     _iface = IKG1
     label = u""
-
     def calculate(self, mitarbeiter, standorte):
         if standorte <= 1:
             standorte = 2
@@ -83,7 +82,6 @@ class IKG1Form(KGBaseForm):
 class IKG2Form(KGBaseForm):
     _iface = IKG2
     label = u""
-
     def calculate(self, mitarbeiter, standorte):
         if standorte <= 1:
             standorte = 2

@@ -2,8 +2,8 @@
   address request.principal.getAddress();
   vouchers request.principal.getVouchers();
   categories request.principal.getCategory()">
-  <p class="lead"> Gutscheine für 1. Hilfe </p>
-  <p> Sie können für folgende Kontingentgruppen Gutscheine anfordern </p>
+  <p class="lead"> Wertscheck für Erste-Hilfe </p>
+  <p> Sie können für folgende Kontingentgruppen Wertschecks anfordern </p>
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default" tal:repeat="cat view.categories">
       <div class="panel-heading" role="tab" id="headingOne" tal:attributes="id string:heading${cat['name']}">
@@ -26,6 +26,7 @@
                   <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 class="modal-title" id="myModalLabel" tal:content="cat['doc']" > </h4>
+                <p tal:content="cat['desc']"> </p>
               </div>
               <div class="modal-body" tal:content="structure cat['form'].render()"> </div>
             </div>
@@ -35,6 +36,7 @@
       <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" tal:attributes="id string:collapse${cat['name']}">
         <div class="panel-body" tal:define="cat_vouchers request.principal.getVouchers(cat['name'])">
           <div tal:condition="cat_vouchers">
+            <a href="" tal:attributes="href string:${view.application_url()}/pdf?cat=${cat['name']}"> Gutscheine für diese Kategorie Downloaden </a>
             <table class="table">
               <tr>
                 <th> Gutschein id </th>

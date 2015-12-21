@@ -1,0 +1,28 @@
+<div class="row">
+<button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal">
+  Hilfe 
+</button>
+<div class="modal fade" id="myModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Hilfe</h4>
+      </div>
+      <div class="modal-body">
+        <p class="lead"> Hilfe </p>
+        <p> p - Hier können wir verschiedene Hilfen anbieten </p>
+        <h1> H1 - Hier können wir verschiedene Hilfen anbieten </h1>
+        <h2> H2 - Hier können wir verschiedene Hilfen anbieten </h2>
+        <h3> H3 - Hier können wir verschiedene Hilfen anbieten </h3>
+        <h4> H4 - Hier können wir verschiedene Hilfen anbieten </h4>
+        <h5> H5 - Hier können wir verschiedene Hilfen anbieten </h5>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+

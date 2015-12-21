@@ -15,6 +15,29 @@ from zope.interface import implementer
 from zope.location import Location
 
 
+from sqlalchemy import types
+
+class StrippedString(types.TypeDecorator):
+    '''
+    Returns CHAR values with spaces stripped
+    '''
+
+    impl = types.String
+
+    def process_bind_param(self, value, dialect):
+        "No-op"
+        return value
+
+    def process_result_value(self, value, dialect):
+        "Strip the trailing spaces on resulting values"
+        return value.rstrip()
+
+    def copy(self):
+        "Make a copy of this type"
+        return StrippedString(self.impl.length)
+
+
+
 @implementer(IModel, IIdentified, IAddress)
 class Address(Base, Location):
 
@@ -40,6 +63,8 @@ class Address(Base, Location):
     # search attributes
     search_attr = "name1"
     searchable_attrs = ("oid", "name1", "street", 'zip_code', 'city')
+
+    mnr = ""
 
 
 class AddressEinrichtung(Base):
@@ -111,7 +136,8 @@ class Account(Base, Location):
     email = Column('email', String)
     login = Column('login', String)
     az = Column('az', String)
-    name = Column('nname', String)
+    vname = Column('vname', String)
+    nname = Column('nname', String)
     phone = Column('tlnr', String)
     rechte = Column('rechte', String)
     password = Column('passwort', String)
@@ -127,7 +153,7 @@ class Account(Base, Location):
         return session.query(Category).filter(Category.oid == self.oid).all()
 
     # search attributes
-    search_attr = "email"
+    search_attr = "oid"
     searchable_attrs = ("oid", "email", "name")
 
 
@@ -169,6 +195,7 @@ class Invoice(Base, Location):
     __table_args__ = {"schema": "UKHINTERN"}
 
     oid = Column('rech_oid', Integer, primary_key=True)
+    reason = Column('grund', StrippedString)
     description = Column('text', String)
 
     @property
@@ -185,7 +212,7 @@ class Accounts(SQLContainer):
 
     model = Account
     listing_attrs = uvclight.Fields(Account.__schema__).select(
-        'oid', 'email', 'name')
+        'oid', 'login', 'email', 'name')
 
     def key_reverse(self, obj):
         return str(obj.oid)
@@ -214,10 +241,13 @@ class Vouchers(SQLContainer):
 
     model = Voucher
     listing_attrs = uvclight.Fields(Voucher.__schema__).select(
-        'oid', 'status', 'user_id')
+        'oid', 'cat', 'status', 'user_id')
 
     def key_reverse(self, obj):
-        return 'Voucher %s' % obj.oid
+        return '%s' % obj.oid
+
+    def key_converter(self, id):
+        return int(id)
 
 
 @implementer(IContent, IModelContainer)
@@ -226,7 +256,7 @@ class Invoices(SQLContainer):
 
     model = Invoice
     listing_attrs = uvclight.Fields(Invoice.__schema__).select(
-        'oid', 'description')
+        'oid', 'description', 'vouchers')
 
     def key_reverse(self, obj):
         return str(obj.oid)
@@ -241,7 +271,10 @@ class Categories(SQLContainer):
 
     model = Category
     listing_attrs = uvclight.Fields(Category.__schema__).select(
-        'oid', 'kat1', 'kat2', 'kat3', 'kat4', 'kat5')
+        'oid', 'kat1', 'kat2', 'kat3', 'kat4', 'kat5', 'kat6', 'kat7')
 
     def key_reverse(self, obj):
         return str(obj.oid)
+
+    def key_converter(self, id):
+        return int(id)

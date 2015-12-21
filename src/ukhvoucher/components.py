@@ -16,7 +16,8 @@ class ExternalPrincipal(Principal):
 
     @property
     def title(self):
-        return self.getAddress().name1
+        adr = self.getAddress()
+        return "%s %s" %(adr.name1, adr.name2)
 
     @property
     def oid(self):
@@ -26,6 +27,8 @@ class ExternalPrincipal(Principal):
     @property
     def merkmal(self):
         account = self.getAccount()
+        if not account.merkmal:
+            return "M"
         return str(account.merkmal).strip()
 
     def getAccount(self):
@@ -48,7 +51,7 @@ class ExternalPrincipal(Principal):
 
     def getCategory(self):
         session = get_session('ukhvoucher')
-        category = session.query(models.Category).get(self.id)
+        category = session.query(models.Category).get(self.oid)
         if category:
             def createCategory(category):
                 cat = set()
@@ -69,9 +72,9 @@ class ExternalPrincipal(Principal):
                 return cat
             return createCategory(category)
         else:  # LEGACY
+            import pdb; pdb.set_trace()
             mnr = self.getAddress().mnr
             return self.getCategoryFromMNR(mnr)
-            pass
         return []
 
     def getCategoryFromMNR(self, mnr):
@@ -93,6 +96,7 @@ class ExternalPrincipal(Principal):
             cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
         elif mnr == "Gemeinsahftskasse":
             cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
+        print cat
         return cat
 
     def getVouchers(self, cat=None):
@@ -102,3 +106,4 @@ class ExternalPrincipal(Principal):
         if cat:
             query = query.filter(models.Voucher.cat == cat)
             return query.all()
+        return query.all()

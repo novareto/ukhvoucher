@@ -38,7 +38,10 @@ class Username(uvclight.MenuItem):
 
     @property
     def title(self):
-        return u"Sie sind angemeldet als: %s" % self.request.principal.title
+        try:
+            return u"Sie sind angemeldet als: %s" % self.request.principal.title
+        except:
+            return "HHH"
 
 
 class BaseNavMenu(uvclight.MenuItem):
