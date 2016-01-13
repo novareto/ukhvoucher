@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import grokcore.component as grok
-from . import VOCABULARIES
+from . import VOCABULARIES, DISABLED
 from .models import Account, Invoice, Voucher, Address
 from cromlech.sqlalchemy import get_session
 from zope.schema.interfaces import IContextSourceBinder
@@ -31,7 +31,8 @@ def vouchers(context):
     disabled = set()
     for item in session.query(Voucher).all():
         items.append(SimpleTerm(item, token=item.oid, title=item.title))
-        if item.invoice is not None:
+        if item.invoice is not None or item.status == DISABLED:
+            disabled.add(str(item.oid))
             disabled.add(item.oid)
     vocabulary = SimpleVocabulary(items)
     vocabulary.disabled_items = disabled

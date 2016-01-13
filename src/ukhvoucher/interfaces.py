@@ -120,6 +120,23 @@ class IModelContainer(Interface):
     model = Attribute(u'Model')
 
 
+class IDisablingVouchers(Interface):
+    vouchers = schema.Set(
+        value_type=schema.Choice(source=get_source('vouchers')),
+        title=_(u"Vouchers"),
+        required=True,
+    )
+
+
+class IJournalize(Interface):
+
+    note = schema.TextLine(
+        title=_(u"Note"),
+        description=u"Journal note.",
+        required=False,
+    )
+    
+
 class IAccount(Interface):
 
 #    oid = schema.TextLine(

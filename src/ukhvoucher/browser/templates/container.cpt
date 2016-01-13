@@ -1,4 +1,7 @@
 <div>
+  Pages: <span tal:replace="structure view.batching.render()" />
+</div>
+<div>
   <h1 tal:content="context.__label__" />
   <table class="table table-bordered table-striped">
     <theader>
@@ -7,7 +10,7 @@
       </tr>
     </theader>
     <tbody>
-      <tr tal:repeat="content iter(context)">
+      <tr tal:repeat="content view.batching.batch">
 	<td tal:repeat="value view.listing(content)">
 	<tal:relation define="lister len(value[1]) > 1">
 	<ul tal:omit-tag="not lister">

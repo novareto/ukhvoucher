@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from uuid import uuid1
 
+import json
 import uvclight
 import datetime
 
 from ukhvoucher.apps import UserRoot
-from ukhvoucher.models import Voucher
+from ukhvoucher.models import Voucher, Generation, VouchersGeneration
 from ukhvoucher.interfaces import IUserLayer
 from ukhvoucher.interfaces import IKG1, IKG2, IKG3, IKG4, IKG5, IKG6, IKG7
 
@@ -26,27 +28,40 @@ class CancelAction(Action):
 class CalculateInsert(Action):
 
     def __call__(self, form):
-        def insert(form, amount):
-            session = get_session('ukhvoucher')
-            now = datetime.datetime.now()
-            principal = form.request.principal
-            try:
-                oid = int(session.query(max(Voucher.oid)).one()[0]) + 1
-            except:
-                oid = 100000
-            for i in range(amount):
-                oid += 1
-                voucher = Voucher()
-                voucher.oid = oid
-                voucher.creation_date = now.strftime('%Y-%m-%d')
-                voucher.status = "created"
-                voucher.cat = form._iface.getName()
-                voucher.user_id = principal.id
-                session.add(voucher)
         data, errors = form.extractData()
         if errors:
             form.submissionError = errors
             return FAILURE
+
+        
+        def insert(form, amount):
+            now = datetime.datetime.now()
+            principal = form.request.principal
+            session = get_session('ukhvoucher')
+            try:
+                oid = int(session.query(max(Voucher.oid)).one()[0]) + 1
+            except:
+                oid = 100000
+
+            p = Generation(oid=str(uuid1()))
+            for i in range(amount):
+                oid += 1
+                voucher = Voucher()
+                voucher.oid = oid
+                voucher.creation_date = now  #.strftime('%Y-%m-%d')
+                voucher.status = "created"
+                voucher.cat = form._iface.getName()
+                voucher.user_id = principal.id
+                a = VouchersGeneration(
+                    date=now,
+                    type=form._iface.getName(),
+                    data=json.dumps(data),
+                    user=principal.id,
+                )
+                a.voucher = voucher
+                p.vouchers.append(a)
+            session.add(p)
+
         amount = form.calculate(**data)
         insert(form, amount)
         form.flash(u'Wir haben %s Gutscheine erzeugt.', type="info")

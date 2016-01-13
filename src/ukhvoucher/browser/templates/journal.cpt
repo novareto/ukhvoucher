@@ -1,0 +1,23 @@
+<div>
+  <h1>Journal</h1>
+  <table class="table table-bordered table-striped">
+    <theader>
+      <tr>
+	<th>Journal id</th>
+	<th>Date</th>
+	<th>User</th>
+	<th>Action</th>
+	<th>Note</th>
+      </tr>
+    </theader>
+    <tbody>
+      <tr tal:repeat="content view.entries">
+	<td tal:content="content.jid" />
+	<td tal:content="content.date" />
+	<td tal:content="content.userid" />
+	<td tal:content="content.action" />
+	<td tal:content="content.note" />
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import uvclight
-
+from uuid import uuid1
 from datetime import datetime
 from cromlech.sqlalchemy import get_session
 from dolmen.forms.base.utils import apply_data_event
@@ -13,12 +13,13 @@ from uvclight import Form, Fields, SUCCESS, FAILURE
 from uvclight import action, layer, name, title, context
 from ul.auth import require
 from dolmen.forms.base.components import _marker
+from zope.interface import Interface
 
-from ..interfaces import IVouchersCreation
+from ..interfaces import IVouchersCreation, IDisablingVouchers
 from ..interfaces import IModel, IModelContainer, IAdminLayer, IUserLayer
-from ..interfaces import IAccount
-from ..models import Voucher
-from .. import _, resources
+from ..interfaces import IAccount, IJournalize
+from ..models import Voucher, JournalEntry
+from .. import _, resources, DISABLED
 from ..apps import UserRoot
 
 
@@ -27,6 +28,61 @@ MULTI = set()
 MULTI_DISABLED = set((
     "vouchers",
 ))
+
+
+@menuentry(IDocumentActions, order=10)
+class DisableVouchers(Form):
+    context(Interface)
+    name('disable_vouchers')
+    layer(IAdminLayer)
+    require('manage.vouchers')
+    title(u'Disable vouchers')
+
+    ignoreContent = True
+    ignoreRequest = False
+
+    @property
+    def fields(self):
+        fields = Fields(IDisablingVouchers) + Fields(IJournalize)
+        fields['vouchers'].mode = 'multidisabled'
+        return fields
+
+    def update(self):
+        resources.ukhvouchers.need()
+
+    @property
+    def action_url(self):
+        return self.request.path
+
+    @action(_(u'Disable'))
+    def handle_save(self):
+        data, errors = self.extractData()
+        journal_note = data.pop('note')
+        if errors:
+            self.flash(_(u"An error occured"))
+            return FAILURE
+
+        for voucher in data['vouchers']:
+            voucher.status = DISABLED
+
+        # journalize
+        session = get_session('ukhvoucher')
+        entry = JournalEntry(
+            jid=str(uuid1()),
+            date=datetime.now(),
+            userid=self.request.principal.id,
+            action=u"Add : %s" % self.context.model.__label__,
+            note=journal_note)
+        session.add(entry)
+            
+        self.flash(_(u"Voucher(s) disabled"))
+        self.redirect(self.application_url())
+        return SUCCESS
+
+    @action(_(u'Cancel'))
+    def handle_cancel(self):
+        self.redirect(self.url(self.context))
+        return SUCCESS
 
 
 @menuentry(AddMenu, order=10)
@@ -47,7 +103,11 @@ class CreateModel(Form):
                 field.mode = 'multiselect'
             elif field.identifier in MULTI_DISABLED:
                 field.mode = 'multidisabled'
-        return fields
+
+        journal = Fields(IJournalize)
+        journal['note'].ignoreContent = True
+                
+        return fields + journal
 
     def update(self):
         resources.ukhvouchers.need()
@@ -59,18 +119,30 @@ class CreateModel(Form):
     @action(_(u'Add'))
     def handle_save(self):
         data, errors = self.extractData()
-
+        journal_note = data.pop('note')
+        
         if errors:
             self.flash(_(u'An error occurred.'))
             return FAILURE
 
-        # create it
+        # create it
         item = self.context.model(**data)
         self.context.add(item)
 
-        # redirect
+        # redirect
         base_url = self.url(self.context)
         self.flash(_(u'Added with success.'))
+
+        # journalize
+        entry = JournalEntry(
+            jid=str(uuid1()),
+            date=datetime.now(),
+            userid=self.request.principal.id,
+            action=u"Add : %s" % self.context.model.__label__,
+            note=journal_note)
+        self.context.add(entry)
+
+        # redirect
         self.redirect(base_url)
         return SUCCESS
 
@@ -100,7 +172,11 @@ class EditModel(Form):
                 field.mode = 'multiselect'
             elif field.identifier in MULTI_DISABLED:
                 field.mode = 'multidisabled'
-        return fields
+
+        journal = Fields(IJournalize)
+        journal['note'].ignoreContent = True
+        
+        return fields + journal
 
     def update(self):
         resources.ukhvouchers.need()
@@ -112,12 +188,25 @@ class EditModel(Form):
     @action(_(u'Update'))
     def handle_save(self):
         data, errors = self.extractData()
+        journal_note = data.pop('note')
+        
         if errors:
             self.flash(_(u"An error occured"))
             return FAILURE
 
+        # apply new content values
         apply_data_event(self.fields, self.getContentData(), data)
         self.flash(_(u"Content updated"))
+
+        # journalize
+        entry = JournalEntry(
+            jid=str(uuid1()),
+            date=datetime.now(),
+            userid=self.request.principal.id,
+            action=u"Add : %s" % self.context.model.__label__,
+            note=journal_note)
+        self.context.add(entry)
+
         self.redirect(self.application_url())
         return SUCCESS
 
@@ -175,7 +264,7 @@ class AskForVouchers(Form):
     ignoreContent = True
     ignoreRequest = True
 
-    fields = Fields(IVouchersCreation)
+    fields = Fields(IVouchersCreation) + Fields(IJournalize)
 
     @property
     def action_url(self):
@@ -187,6 +276,8 @@ class AskForVouchers(Form):
     @action(_(u'Demand'))
     def handle_save(self):
         data, errors = self.extractData()
+        journal_note = data.pop('note')
+
         if errors:
             self.flash(_(u"An error occured"))
             return FAILURE
@@ -201,6 +292,16 @@ class AskForVouchers(Form):
                     user_id=self.context.oid)
                 session.add(voucher)
 
+            # journalize
+            entry = JournalEntry(
+                jid=str(uuid1()),
+                date=datetime.now(),
+                userid=self.request.principal.id,
+                action=u"Created %n vouchers" % number,
+                note=journal_note)
+            session.add(entry)
+
+            # redirect
             self.flash(_(u"Demanded %i vouchers" % number))
             self.redirect(self.application_url())
             return SUCCESS

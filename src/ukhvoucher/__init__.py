@@ -22,3 +22,6 @@ _ = MessageFactory('ukhvoucher')
 
 Base = declarative_base()
 VOCABULARIES = {}
+
+
+DISABLED = u'disabled'
