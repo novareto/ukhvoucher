@@ -1,0 +1,27 @@
+.batch {
+    display: inline;
+}
+
+.batch ul {
+    list-style: none;
+    margin: none;
+    display: inline;
+    padding: 0;
+}
+
+.batch ul li {
+    display: inline;
+    padding: 4px;
+    margin: 0 5px 0 0;
+}
+
+.batch ul li a {
+    padding: 0;
+    margin: 0;
+}
+
+.batch ul .current {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    color: black;
+}
