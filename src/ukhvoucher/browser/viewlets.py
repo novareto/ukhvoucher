@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import uvclight
+import json
+from ..models import Voucher
+from ..interfaces import IAccount, IAdminLayer, IUserLayer
 from .forms import ModelIndex
-from ..interfaces import IAccount
-from zope.interface import Interface
-from ukhtheme.uvclight.viewlets import BelowContent
-from uvc.entities.browser.menus import IPersonalMenu
 from dolmen.menu import Entry, menu
+from ukhtheme.uvclight.viewlets import BelowContent
 from uvc.design.canvas import menus
 from uvc.entities.browser.menus import IPersonalMenu, INavigationMenu
-from ..interfaces import IAdminLayer, IUserLayer
+from zope.interface import Interface
 
 
 class Categories(uvclight.Viewlet):
@@ -28,6 +28,17 @@ class Categories(uvclight.Viewlet):
         return "Categories: %s" % ', '.join(
             (kat[0] for kat in values if kat[1]))
 
+
+class VoucherGeneration(uvclight.Viewlet):
+    uvclight.context(Voucher)
+    uvclight.view(ModelIndex)
+    uvclight.viewletmanager(BelowContent)
+
+    template = uvclight.get_template('generation.cpt', __file__)
+
+    def update(self):
+        self.data = json.loads(self.context.generation.data)
+    
 
 class Username(uvclight.MenuItem):
     uvclight.context(Interface)

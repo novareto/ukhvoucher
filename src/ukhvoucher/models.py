@@ -186,6 +186,7 @@ class Voucher(Base, Location):
     cat = Column('kat', String)
     user_id = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
     invoice_id = Column('rech_oid', Integer, ForeignKey(schema + 'z1ehrrch_t.rech_oid'))
+    generation_id = Column('gen_oid', String, ForeignKey(schema + 'generations.oid'))
 
     # relations
     user = relationship('Account')
@@ -226,28 +227,12 @@ class Invoice(Base, Location):
 class Generation(Base):
     __tablename__ = 'generations'
 
-    oid = Column('oid', String, primary_key=True)    
-    vouchers = relationship("VouchersGeneration")
-
-
-class VouchersGeneration(Base):
-    __tablename__ = 'vouchers_generation'
-
-    voucher_id = Column(
-        'voucher_id', Integer,
-        ForeignKey('z1ehrvch_t.vch_oid'), primary_key=True)
-
-    generation_id = Column(
-        'generation_id', String,
-        ForeignKey('generations.oid'), primary_key=True)
-
+    oid = Column('oid', String, primary_key=True)
     date = Column('date', DateTime)
     type = Column('type', String)
     data = Column('data', String)
     user = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
-    
-    voucher = relationship("Voucher")
-    generation = relationship("Generation")
+    vouchers = relationship("Voucher", backref="generation")
 
     
 @implementer(IContent, IModelContainer)

@@ -10,18 +10,27 @@
 }
 
 .batch ul li {
-    display: inline;
-    padding: 4px;
-    margin: 0 5px 0 0;
+    display: inline-block;
 }
 
-.batch ul li a {
-    padding: 0;
-    margin: 0;
-}
-
-.batch ul .current {
+.batch ul li a.page {
     background-color: #f4f4f4;
+    border-radius: 10px;
+    color: #666;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    min-width: 10px;
+    padding: 3px 7px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    border: 1px solid #777;
+}
+
+.batch ul a.current-page {
     font-weight: bold;
-    color: black;
+    background-color: #777777;
+    color: #fff;
 }
