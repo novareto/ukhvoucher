@@ -4,17 +4,18 @@ import uvclight
 from ..apps import AdminRoot, UserRoot
 from ..interfaces import IAdminLayer, IUserLayer
 from ..interfaces import IModel, IModelContainer
-from ..resources import ukhvouchers
 from ..models import JournalEntry
+from ..resources import ukhcss
+from ..resources import ukhvouchers
+from .batch import get_dichotomy_batches
 from cromlech.sqlalchemy import get_session
+from dolmen.batch import Batcher
 from sqlalchemy import inspect
 from ul.auth import require
 from zope.component import getMultiAdapter
 from zope.component.hooks import getSite
 from zope.i18n import translate
 from zope.interface import Interface
-from dolmen.batch import Batcher
-from ..resources import ukhcss
 
 
 class UserRootIndex(uvclight.Page):
@@ -86,7 +87,8 @@ class ContainerIndex(uvclight.Page):
     require('manage.vouchers')
 
     template = uvclight.get_template('container.cpt', __file__)
-
+    batching = uvclight.get_template('batch.pt', __file__)
+    
     def listing(self, item):
         details = inspect(item)
         relations = details.mapper.relationships.keys()
@@ -108,8 +110,17 @@ class ContainerIndex(uvclight.Page):
         ukhcss.need()
         self.columns = [field.title for field in self.context.listing_attrs]
         elements = list(self.context)
-        self.batching = Batcher(self.context, self.request, size=10)
-        self.batching.update(elements)        
+        self.batcher = Batcher(self.context, self.request, size=10)
+        if elements:
+            self.batcher.update(elements)
+            self.dichotomy = get_dichotomy_batches(
+                self.batcher.batch.batches,
+                self.batcher.batch.total,
+                self.batcher.batch.number)
+            self.batch = self.batching.render(
+                self, **self.namespace())
+        else:
+            self.batch = u''
 
     def relation(self, id, value):
         site = getSite()

@@ -33,7 +33,6 @@ class CalculateInsert(Action):
             form.submissionError = errors
             return FAILURE
 
-
         def insert(form, amount):
             now = datetime.datetime.now()
             principal = form.request.principal
@@ -68,8 +67,6 @@ class CalculateInsert(Action):
                 session.add(voucher)
 
             session.add(generation)
-
-
         amount = form.calculate(**data)
         insert(form, amount)
         form.flash(u'Wir haben %s Gutscheine erzeugt.', type="info")

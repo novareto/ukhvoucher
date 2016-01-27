@@ -1,0 +1,22 @@
+<fieldset>
+  <legend>Voucher generation</legend>
+  <p>
+    This voucher is part of the generation ${viewlet.context.generation.oid}
+    that created ${len(viewlet.context.generation.vouchers)} vouchers.
+  </p>
+  <dl>
+    <dt>Date</dt>
+    <dd tal:content="viewlet.context.generation.date" />
+    <dt>User</dt>
+    <dd tal:content="viewlet.context.generation.user" />
+    <dt>Data</dt>
+    <dd>
+      <table class="table table-bordered table-vertical">
+	<tr tal:repeat="field viewlet.data.items()">
+	  <th tal:content="field[0]" />
+	  <td tal:content="field[1]" />
+	</tr>
+      </table>
+    </dd>
+  </dl>
+</fieldset>
