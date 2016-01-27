@@ -42,11 +42,13 @@
                 <th> Gutschein id </th>
                 <th> Datum </th>
                 <th> Status </th>
+                <th> Grundlage </th>
               </tr>
               <tr tal:repeat="voucher cat_vouchers">
                 <td tal:content="voucher.oid"></td>
                 <td tal:content="voucher.creation_date"></td>
                 <td tal:content="voucher.status"></td>
+                <td tal:content="voucher.displayData"></td>
               </tr>
             </table>
           </div>

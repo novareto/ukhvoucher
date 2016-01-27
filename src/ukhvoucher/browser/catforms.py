@@ -7,7 +7,7 @@ import uvclight
 import datetime
 
 from ukhvoucher.apps import UserRoot
-from ukhvoucher.models import Voucher, Generation, VouchersGeneration
+from ukhvoucher.models import Voucher, Generation
 from ukhvoucher.interfaces import IUserLayer
 from ukhvoucher.interfaces import IKG1, IKG2, IKG3, IKG4, IKG5, IKG6, IKG7
 
@@ -33,7 +33,7 @@ class CalculateInsert(Action):
             form.submissionError = errors
             return FAILURE
 
-        
+
         def insert(form, amount):
             now = datetime.datetime.now()
             principal = form.request.principal
@@ -43,24 +43,32 @@ class CalculateInsert(Action):
             except:
                 oid = 100000
 
-            p = Generation(oid=str(uuid1()))
+            p = 1
+            p = int(session.query(max(Generation.oid)).one()[0]) + 1
+            print "GENERATION OID", 2
+            generation = Generation(
+                oid=p,
+                date=now.strftime('%Y-%m-%d'),
+                type=form._iface.getName(),
+                data=json.dumps(data),
+                user=principal.id,
+                uoid=oid
+            )
+
             for i in range(amount):
                 oid += 1
-                voucher = Voucher()
-                voucher.oid = oid
-                voucher.creation_date = now  #.strftime('%Y-%m-%d')
-                voucher.status = "created"
-                voucher.cat = form._iface.getName()
-                voucher.user_id = principal.id
-                a = VouchersGeneration(
-                    date=now,
-                    type=form._iface.getName(),
-                    data=json.dumps(data),
-                    user=principal.id,
-                )
-                a.voucher = voucher
-                p.vouchers.append(a)
-            session.add(p)
+                voucher = Voucher(
+                    oid = oid,
+                    creation_date = now.strftime('%Y-%m-%d'),
+                    status = "created",
+                    cat = form._iface.getName(),
+                    user_id = principal.id,
+                    generation_id = p,
+                    )
+                session.add(voucher)
+
+            session.add(generation)
+
 
         amount = form.calculate(**data)
         insert(form, amount)
