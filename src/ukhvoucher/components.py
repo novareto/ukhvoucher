@@ -75,7 +75,7 @@ class ExternalPrincipal(Principal):
                 return cat
             return createCategory(category)
         else:  # LEGACY
-            import pdb; pdb.set_trace()
+            ##################################################import pdb; pdb.set_trace()
             mnr = self.getAddress().mnr
             return self.getCategoryFromMNR(mnr)
         return []
@@ -108,7 +108,6 @@ class ExternalPrincipal(Principal):
             models.Voucher.user_id == self.id)
         if cat:
             query = query.filter(models.Voucher.cat == cat)
-            return query.all()
         return query.all()
 
 

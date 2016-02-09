@@ -42,20 +42,23 @@ class CalculateInsert(Action):
             except:
                 oid = 100000
 
-            p = str(uuid1())
+            p = 1
+            p = int(session.query(max(Generation.oid)).one()[0]) + 1
+            print "GENERATION OID", 2
             generation = Generation(
                 oid=p,
-                date=now,
+                date=now.strftime('%Y-%m-%d'),
                 type=form._iface.getName(),
                 data=json.dumps(data),
                 user=principal.id,
+                uoid=oid
             )
-            
+
             for i in range(amount):
                 oid += 1
                 voucher = Voucher(
                     oid = oid,
-                    creation_date = now,  #.strftime('%Y-%m-%d')
+                    creation_date = now.strftime('%Y-%m-%d'),
                     status = "created",
                     cat = form._iface.getName(),
                     user_id = principal.id,
@@ -64,7 +67,6 @@ class CalculateInsert(Action):
                 session.add(voucher)
 
             session.add(generation)
-                
         amount = form.calculate(**data)
         insert(form, amount)
         form.flash(u'Wir haben %s Gutscheine erzeugt.', type="info")

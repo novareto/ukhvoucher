@@ -10,7 +10,7 @@ from dolmen.menu import menuentry
 from uvc.design.canvas.menus import AddMenu
 from uvc.design.canvas import IDocumentActions
 from uvclight import Form, Fields, SUCCESS, FAILURE
-from uvclight import action, layer, name, title, context
+from uvclight import action, layer, name, title, context, menu, order
 from ul.auth import require
 from dolmen.forms.base.components import _marker
 from zope.interface import Interface
@@ -18,9 +18,10 @@ from zope.interface import Interface
 from ..interfaces import IVouchersCreation, IDisablingVouchers
 from ..interfaces import IModel, IModelContainer, IAdminLayer, IUserLayer
 from ..interfaces import IAccount, IJournalize
-from ..models import Voucher, JournalEntry
+from ..models import Voucher, JournalEntry, Vouchers
 from .. import _, resources, DISABLED
 from ..apps import UserRoot
+from uvc.entities.browser import IContextualActionsMenu, IDocumentActions
 
 
 MULTI = set()
@@ -30,7 +31,14 @@ MULTI_DISABLED = set((
 ))
 
 
-@menuentry(IDocumentActions, order=10)
+class DisableVoucherMenuItem(uvclight.MenuItem):
+    menu(IContextualActionsMenu)
+    context(Vouchers)
+    title(u'Gutscheine löschen')
+    name('disable_vouchers')
+    order(50)
+
+
 class DisableVouchers(Form):
     context(Interface)
     name('disable_vouchers')
@@ -61,7 +69,7 @@ class DisableVouchers(Form):
         if errors:
             self.flash(_(u"An error occured"))
             return FAILURE
-
+        import pdb; pdb.set_trace()
         for voucher in data['vouchers']:
             voucher.status = DISABLED
 
@@ -69,12 +77,13 @@ class DisableVouchers(Form):
         session = get_session('ukhvoucher')
         entry = JournalEntry(
             jid=str(uuid1()),
-            date=datetime.now(),
+            date=datetime.now().strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
             action=u"Disabled vouchers : %s" % ', '.join(data['vouchers']),
+            oid=data['oid'],
             note=journal_note)
         session.add(entry)
-            
+
         self.flash(_(u"Voucher(s) disabled"))
         self.redirect(self.application_url())
         return SUCCESS
@@ -106,7 +115,7 @@ class CreateModel(Form):
 
         journal = Fields(IJournalize)
         journal['note'].ignoreContent = True
-                
+
         return fields + journal
 
     def update(self):
@@ -120,7 +129,7 @@ class CreateModel(Form):
     def handle_save(self):
         data, errors = self.extractData()
         journal_note = data.pop('note')
-        
+
         if errors:
             self.flash(_(u'An error occurred.'))
             return FAILURE
@@ -136,9 +145,10 @@ class CreateModel(Form):
         # journalize
         entry = JournalEntry(
             jid=str(uuid1()),
-            date=datetime.now(),
+            date=datetime.now().strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
-            action=u"Add : %s" % self.context.model.__label__,
+            action=u"Add:%s" % self.context.model.__label__,
+            oid=data['oid'],
             note=journal_note)
         self.context.add(entry)
 
@@ -189,7 +199,7 @@ class EditModel(Form):
     def handle_save(self):
         data, errors = self.extractData()
         journal_note = data.pop('note')
-        
+
         if errors:
             self.flash(_(u"An error occured"))
             return FAILURE
@@ -199,11 +209,13 @@ class EditModel(Form):
         self.flash(_(u"Content updated"))
 
         # journalize
+
         entry = JournalEntry(
             jid=str(uuid1()),
-            date=datetime.now(),
+            date=datetime.now().strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
             action=u"Edited : %s" % self.context.__label__,
+            oid=data['oid'],
             note=journal_note)
         self.context.add(entry)
 
@@ -277,27 +289,51 @@ class AskForVouchers(Form):
     def handle_save(self):
         data, errors = self.extractData()
         journal_note = data.pop('note')
+        now = datetime.now()
 
         if errors:
             self.flash(_(u"An error occured"))
             return FAILURE
-
         number = data.get('number', 0)
         if number:
             session = get_session('ukhvoucher')
-            for idx in range(number, 0):
+            try:
+                from sqlalchemy.sql.functions import max
+                oid = int(session.query(max(Voucher.oid)).one()[0]) + 1
+            except:
+                oid = 100000
+            from ukhvoucher.models import Generation
+            import json
+
+            p = int(session.query(max(Generation.oid)).one()[0]) + 1
+            generation = Generation(
+                oid=p,
+                date=now.strftime('%Y-%m-%d'),
+                type=data['kategorie'],
+                data=json.dumps('Manuelle Erzeugung'),
+                user=self.request.principal.id,
+                uoid=oid
+            )
+
+            for idx in range(number):
                 voucher = Voucher(
-                    creation_date=datetime.now(),
-                    status='Pending',
-                    user_id=self.context.oid)
+                    creation_date=datetime.now().strftime('%Y-%m-%d'),
+                    status='created',
+                    cat = data['kategorie'],
+                    user_id=self.context.login,
+                    generation_id=p,
+                    oid=oid)
+                oid += 1
                 session.add(voucher)
+            session.add(generation)
 
             # journalize
             entry = JournalEntry(
-                jid=str(uuid1()),
-                date=datetime.now(),
+                jid=str(uuid1())[:31],
+                date=datetime.now().strftime('%Y-%m-%d'),
                 userid=self.request.principal.id,
-                action=u"Created %n vouchers" % number,
+                action=u"Add:%s" % self.context.model.__label__,
+                oid=str(self.context.oid),
                 note=journal_note)
             session.add(entry)
 

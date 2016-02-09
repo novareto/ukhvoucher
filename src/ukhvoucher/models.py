@@ -18,7 +18,7 @@ from sqlalchemy import types
 
 
 schema = 'UKHINTERN.'
-schema = ''
+#schema = ''
 
 
 class StrippedString(types.TypeDecorator):
@@ -48,7 +48,7 @@ class Address(Base, Location):
     __tablename__ = 'z1ehradr_t'
     __schema__ = IAddress
     __label__ = _(u"Address")
-    #__table_args__ = {"schema": "UKHINTERN"}
+    __table_args__ = {"schema": "UKHINTERN"}
 
     oid = Column('oid', Integer, primary_key=True, autoincrement=True)
     name1 = Column('iknam1', String(28))
@@ -72,19 +72,20 @@ class Address(Base, Location):
 
 
 class JournalEntry(Base):
-    __tablename__ = 'journal'
-    #__table_args__ = {"schema": "UKHINTERN"}
+    __tablename__ = 'Z1EHRJRN_T'
+    __table_args__ = {"schema": "UKHINTERN"}
 
-    jid = Column('jid', String, primary_key=True)
-    date = Column('date', DateTime)
-    action = Column('action', String)
-    userid = Column('userid', String)
-    note = Column('note', String)
+    jid = Column('jrn_oid', String(32), primary_key=True)
+    date = Column('jrn_dat', DateTime)
+    action = Column('aktion', String(20))
+    userid = Column('user_id', String(30))
+    note = Column('text', String(500))
+    oid = Column('oid', Integer)
 
-    
+
 class AddressEinrichtung(Base):
     __tablename__ = 'z1ext9ac'
-    #__table_args__ = {"schema": "UKHINTERN"}
+    __table_args__ = {"schema": "UKHINTERN"}
 
     oid = Column('enrrcd', String, primary_key=True)
     mnr = Column('enrnum', String)
@@ -99,7 +100,7 @@ class AddressEinrichtung(Base):
 
 class AddressTraeger(Base):
     __tablename__ = 'z1ext9ab'
-    #__table_args__ = {"schema": "UKHINTERN"}
+    __table_args__ = {"schema": "UKHINTERN"}
 
     oid = Column('trgrcd', String, primary_key=True)
     mnr = Column('trgmnr', String)
@@ -118,7 +119,7 @@ class Category(Base, Location):
     __tablename__ = 'z1ehrkat_t'
     __schema__ = ICategory
     __label__ = _(u"Category")
-    #__table_args__ = {"schema": "UKHINTERN"}
+    __table_args__ = {"schema": "UKHINTERN"}
 
     oid = Column('oid', String, primary_key=True)
     kat1 = Column('kat1', Boolean)
@@ -144,7 +145,7 @@ class Account(Base, Location):
     __tablename__ = 'Z1EXT9AA'
     __schema__ = IAccount
     __label__ = _(u"Account")
-    #__table_args__ = {"schema": "UKHINTERN"}
+    __table_args__ = {"schema": "UKHINTERN"}
     model = Address
 
     oid = Column('oid', Integer, primary_key=True)
@@ -178,7 +179,7 @@ class Voucher(Base, Location):
     __tablename__ = 'z1ehrvch_t'
     __schema__ = IVoucher
     __label__ = _(u"Vouchers")
-    #__table_args__ = {"schema": "UKHINTERN"}
+    __table_args__ = {"schema": "UKHINTERN"}
 
     oid = Column('vch_oid', Integer, primary_key=True)
     creation_date = Column('erst_dat', DateTime)
@@ -186,7 +187,7 @@ class Voucher(Base, Location):
     cat = Column('kat', String)
     user_id = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
     invoice_id = Column('rech_oid', Integer, ForeignKey(schema + 'z1ehrrch_t.rech_oid'))
-    generation_id = Column('gen_oid', String, ForeignKey(schema + 'generations.oid'))
+    generation_id = Column('gen_oid', Integer, ForeignKey(schema + 'z1ehrbgl_t.bgl_oid'))
 
     # relations
     user = relationship('Account')
@@ -199,6 +200,11 @@ class Voucher(Base, Location):
     search_attr = "oid"
     searchable_attrs = ("oid", "status", "user_id")
 
+    @property
+    def displayData(self):
+        import json
+        return json.loads(self.generation.data)
+
 
 @implementer(IModel, IIdentified, IInvoice)
 class Invoice(Base, Location):
@@ -206,7 +212,7 @@ class Invoice(Base, Location):
     __tablename__ = 'z1ehrrch_t'
     __schema__ = IInvoice
     __label__ = _(u"Invoice")
-    #__table_args__ = {"schema": "UKHINTERN"}
+    __table_args__ = {"schema": "UKHINTERN"}
 
     oid = Column('rech_oid', Integer, primary_key=True)
     reason = Column('grund', StrippedString)
@@ -215,7 +221,7 @@ class Invoice(Base, Location):
     vouchers = relationship(
         Voucher, collection_class=set,
         backref=backref('invoice', uselist=False))
-    
+
     @property
     def title(self):
         return "Invoice %s" % self.oid
@@ -225,16 +231,19 @@ class Invoice(Base, Location):
 
 
 class Generation(Base):
-    __tablename__ = 'generations'
+    __tablename__ = 'z1ehrbgl_t'
+    __table_args__ = {"schema": "UKHINTERN"}
 
-    oid = Column('oid', String, primary_key=True)
-    date = Column('date', DateTime)
-    type = Column('type', String)
-    data = Column('data', String)
+    oid = Column('bgl_oid', Integer, primary_key=True)
+    date = Column('vcb_dat', DateTime)
+    type = Column('kat', String(20))
+    data = Column('text', String(500))
     user = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
-    vouchers = relationship("Voucher", backref="generation")
+    uoid = Column('oid', Integer)
 
-    
+    voucher = relationship("Voucher", backref=backref('generation') )
+
+
 @implementer(IContent, IModelContainer)
 class Accounts(SQLContainer):
     __label__ = _(u"Accounts")

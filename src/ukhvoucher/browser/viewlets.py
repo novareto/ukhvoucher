@@ -112,3 +112,7 @@ class MenuVouchers(BaseNavMenu):
     attribute = "vouchers"
     title = "Gutscheine"
 
+class Journal(BaseNavMenu):
+    uvclight.order(6)
+    attribute = "journal"
+    title = u"Journal"
