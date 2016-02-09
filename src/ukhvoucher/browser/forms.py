@@ -69,7 +69,6 @@ class DisableVouchers(Form):
         if errors:
             self.flash(_(u"An error occured"))
             return FAILURE
-        import pdb; pdb.set_trace()
         for voucher in data['vouchers']:
             voucher.status = DISABLED
 

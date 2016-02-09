@@ -58,7 +58,76 @@ class UserRootIndex(uvclight.Page):
     def getDesc(self, name):
         desc = ""
         if name == "IKG1":
-            desc = u"Lorem IPSUM"
+            desc = u"""
+                    __________________________________________________________________________________________
+                    Beschäftigte: Bitte tragen Sie alle bei der UKH versicherten Beschäftigten ein, die in Ihren
+                    Verwaltungsbereichen arbeiten. Zählen Sie dazu die Personen, nicht die Vollzeitstellen.
+                    Beamte sind keine Beschäftigten und werden daher nicht mitgezählt.
+                    __________________________________________________________________________________________
+                    Standorte: Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens
+                    zwei versicherte Beschäftigte üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum
+                    Beispiel getrennte Gebäude, jedoch nicht verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes.
+                    """
+        if name == "IKG2":
+            desc = u"""
+                    __________________________________________________________________________________________
+                    Andere Betriebe: Alle Betriebe, die nicht in der Hauptsache Verwaltungs- oder Bürobetriebe sind, beispielsweise
+                    technische Betriebe, landwirtschaftliche und gärtnerische Betriebe,  hauswirtschaftliche Betriebe, Betriebe
+                    für öffentliche Sicherheit und Ordnung mit Streifendienst, Zoos, Theater- und Musikbetriebe, Betreuungseinrichtungen,
+                    Entsorgungsbetriebe und Bauhöfe ohne Einteilung in Kolonnen.
+                    __________________________________________________________________________________________
+
+                    Bitte beachten Sie hier die Besonderheiten für verschiedene Betriebsarten wie Kinderbetreuungseinrichtungen
+                    Betriebe mit Beschäftigten in Kolonnen, Betriebe mit besonderer Gefährdung, sofern diese für Ihren Betrieb
+                    nachfolgend aufgeführt sind.
+                    __________________________________________________________________________________________
+                    Beschäftigte: Bitte tragen Sie alle bei der UKH versicherten beschäftigten Personen (ohne Beamte) ein,
+                    die in anderen Bereichen als Verwaltung / Büros arbeiten abzüglich a) Beschäftigte in Kindertageseinrichtungen,
+                    b) Beschäftigte in Kolonnen (Entsorgung, Bauhof), c) Beschäftigte mit spezieller Gefährdung gemäß unten
+                    stehenden Sonderkontingenten, d) Beschäftigte in Betrieben mit beruflich qualifizierten Ersthelfern
+                    wie Gesundheits- und Pflegediensten, Schwimmbädern.
+                    __________________________________________________________________________________________
+                    Standorte: Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens
+                    zwei versicherte Beschäftigte üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum
+                    Beispiel getrennte Gebäude, jedoch nicht verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes.
+
+                    """
+        if name == "IKG3":
+            desc = u"""
+                    __________________________________________________________________________________________
+                    Kindergruppen: Bitte tragen Sie ein, wie viele Kindergruppen in Ihren Einrichtungen  maximal
+                    gleichzeitig betrieben werden. Beispiel: 4 Vormittagsgruppen und 2 Nachmittagsgruppen sind
+                    maximal 4 Gruppen gleichzeitig.
+                    __________________________________________________________________________________________
+                    Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens zwei
+                    versicherte Beschäftigte üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum
+                    Beispiel getrennte Gebäude, jedoch nicht verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes.
+                    """
+        if name == "IKG4":
+            desc = u"""
+                    __________________________________________________________________________________________
+                    Kolonnen: Bitte tragen Sie die maximale Zahl der Kolonnen ein, in denen Beschäftigte in der
+                    Entsorgung oder im Bauhof außerhalb gleichzeitig tätig sind.
+                    __________________________________________________________________________________________
+                    Hinweis: Die übrigen Beschäftigten des Betriebs, die an festen Standorten tätig sind,
+                    sind mit der Personenzahl unter „Andere Betriebe“ zu erfassen.
+                    """
+        if name == "IKG5":
+            desc = u"""
+                    __________________________________________________________________________________________
+                    Beschäftigte: Bitte tragen Sie die bei der UKH versicherten Beschäftigten ein, die eine dieser
+                    Tätigkeiten ausüben. Beachten Sie bitte auch, dass diese Personen unter „Andere Betriebe“ abzuziehen sind.
+                    __________________________________________________________________________________________
+                    Geben Sie an, welches Merkmal für besondere Gefährdung zutrifft.
+                    """
+        if name == "IKG6":
+            desc = u"""
+                    __________________________________________________________________________________________
+                    Beschäftigte: Bitte tragen Sie die bei der UKH versicherten Beschäftigten ein, die eine dieser
+                    Tätigkeiten ausüben. Beachten Sie bitte auch, dass diese Personen unter „Andere Betriebe“ abzuziehen sind.
+                    __________________________________________________________________________________________
+                    Geben Sie an, welches Merkmal für besondere Gefährdung zutrifft.
+                    """
         return desc
 
 
@@ -88,7 +157,7 @@ class ContainerIndex(uvclight.Page):
 
     template = uvclight.get_template('container.cpt', __file__)
     batching = uvclight.get_template('batch.pt', __file__)
-    
+
     def listing(self, item):
         details = inspect(item)
         relations = details.mapper.relationships.keys()
@@ -141,3 +210,16 @@ class JournalIndex(uvclight.Page):
     def update(self):
         session = get_session('ukhvoucher')
         self.entries = session.query(JournalEntry)
+
+
+class TT(uvclight.View):
+    uvclight.layer(IAdminLayer)
+    uvclight.context(Interface)
+    require('manage.vouchers')
+
+    def render(self):
+        from ukhvoucher.models import TestTable
+        session = get_session('ukhvoucher')
+        import pdb; pdb.set_trace()
+        return ""
+

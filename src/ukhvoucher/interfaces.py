@@ -53,9 +53,55 @@ def getInvoiceId():
 @grok.provider(IContextSourceBinder)
 def get_reason(context):
     rc = [
-        SimpleTerm(u'', u'', u'OK'),
-        SimpleTerm(u'Teilnehmer != Rechnung', u'Teilnehmer != Rechnung', u'Teilnehmer != Rechnung'),
-        SimpleTerm(u'Rechnungssumme falsch', u'Rechnungssumme falsch', u'Rechnungssumme falsch'),
+        SimpleTerm(u'', u'', u''),
+        SimpleTerm(u'Ablehnung, da keine Teilnehmercodes anbei',
+                   u'Ablehnung, da keine Teilnehmercodes anbei',
+                   u'Ablehnung, da keine Teilnehmercodes anbei'),
+        SimpleTerm(u'Ablehnung, da nicht ausreichend Teilnehmercodes anbei',
+                   u'Ablehnung, da nicht ausreichend Teilnehmercodes anbei',
+                   u'Ablehnung, da nicht ausreichend Teilnehmercodes anbei'),
+        SimpleTerm(u'Ablehnung, da doppelte Teilnehmercodes eingereicht wurden',
+                   u'Ablehnung, da doppelte Teilnehmercodes eingereicht wurden',
+                   u'Ablehnung, da doppelte Teilnehmercodes eingereicht wurden'),
+        SimpleTerm(u'Ablehnung, da unterzeichnete Original-Teilnehmerliste fehlt',
+                   u'Ablehnung, da unterzeichnete Original-Teilnehmerliste fehlt',
+                   u'Ablehnung, da unterzeichnete Original-Teilnehmerliste fehlt'),
+        SimpleTerm(u'Ablehnung, da eine falsche Lehrgangsgebuehr zu Grunde gelegt wurde',
+                   u'Ablehnung, da eine falsche Lehrgangsgebuehr zu Grunde gelegt wurde',
+                   u'Ablehnung, da eine falsche Lehrgangsgebuehr zu Grunde gelegt wurde'),
+        SimpleTerm(u'Ablehnung, da die fachliche/oertliche Zustaendigkeit der UKH nicht gegeben ist',
+                   u'Ablehnung, da die fachliche/oertliche Zustaendigkeit der UKH nicht gegeben ist',
+                   u'Ablehnung, da die fachliche/oertliche Zustaendigkeit der UKH nicht gegeben ist'),
+        SimpleTerm(u'Ablehnung, da 7 UE-Zusatzlehrgang FFW',
+                   u'Ablehnung, da 7 UE-Zusatzlehrgang FFW',
+                   u'Ablehnung, da 7 UE-Zusatzlehrgang FFW'),
+        SimpleTerm(u'Ablehnung, da keine ermaechtigte Stelle',
+                   u'Ablehnung, da keine ermaechtigte Stelle',
+                   u'Ablehnung, da keine ermaechtigte Stelle'),
+        SimpleTerm(u'Ablehnung, da kein anerkannter Erste Hilfe-Lehrgang',
+                   u'Ablehnung, da kein anerkannter Erste Hilfe-Lehrgang',
+                   u'Ablehnung, da kein anerkannter Erste Hilfe-Lehrgang'),
+        SimpleTerm(u'Ablehnung, da keine vollstaendigen Unterlagen und Daten',
+                   u'Ablehnung, da keine vollstaendigen Unterlagen und Daten',
+                   u'Ablehnung, da keine vollstaendigen Unterlagen und Daten'),
+        SimpleTerm(u'Kuerzung, da nicht ausreichend Teilnehmercodes anbei',
+                   u'Kuerzung, da nicht ausreichend Teilnehmercodes anbei',
+                   u'Kuerzung, da nicht ausreichend Teilnehmercodes anbei'),
+        SimpleTerm(u'Kuerzung, da doppelte Teilnehmercodes eingereicht wurden',
+                   u'Kuerzung, da doppelte Teilnehmercodes eingereicht wurden',
+                   u'Kuerzung, da doppelte Teilnehmercodes eingereicht wurden'),
+        SimpleTerm(u'Kuerzung, da unterzeichnete Original-Teilnehmerliste fehlt',
+                   u'Kuerzung, da unterzeichnete Original-Teilnehmerliste fehlt',
+                   u'Kuerzung, da unterzeichnete Original-Teilnehmerliste fehlt'),
+        SimpleTerm(u'Kuerzung, da eine falsche Lehrgangsgebuehr zu Grunde gelegt wurde',
+                   u'Kuerzung, da eine falsche Lehrgangsgebuehr zu Grunde gelegt wurde',
+                   u'Kuerzung, da eine falsche Lehrgangsgebuehr zu Grunde gelegt wurde'),
+        SimpleTerm(u'Kuerzung, da die fachliche/oertliche Zustaendigkeit der UKH nicht gegeben ist',
+                   u'Kuerzung, da die fachliche/oertliche Zustaendigkeit der UKH nicht gegeben ist',
+                   u'Kuerzung, da die fachliche/oertliche Zustaendigkeit der UKH nicht gegeben ist'),
+        SimpleTerm(u'Zahlung erfolgt an Mitgliedsunternehmen/-betrieb oder Privatperson/Tagespflegeperson',
+                   u'Zahlung erfolgt an Mitgliedsunternehmen/-betrieb oder Privatperson/Tagespflegeperson',
+                   u'Zahlung erfolgt an Mitgliedsunternehmen/-betrieb oder Privatperson/Tagespflegeperson'),
     ]
     return SimpleVocabulary(rc)
 
@@ -135,7 +181,7 @@ class IJournalize(Interface):
         description=u"Journal note.",
         required=False,
     )
-    
+
 
 class IAccount(Interface):
 
@@ -390,6 +436,12 @@ class IKG4(Interface):
 class IKG5(Interface):
     u"""Einrichtungen mit spezieller Gefährdung"""
 
+    merkmal = schema.Choice(
+        title=u"Welches Merkmal trifft für die besondere Gefährdung zu:",
+        values=(u'',
+                u'Beschaeftigte im Freilichtmuseum Hessenpark',
+                u'Beschaeftigte in der Tierpflege'))
+
     mitarbeiter = schema.Int(
         title=_(u"Beschäftigte"),
     )
@@ -397,6 +449,17 @@ class IKG5(Interface):
 
 class IKG6(Interface):
     u"""Beschäftigte und Einrichtungen mit spezieller Gefährdung"""
+
+    merkmal = schema.Choice(
+        title=u"Welches Merkmal trifft für die besondere Gefährdung zu:",
+        values=(u'',
+                u'mit Waldarbeiten Beschaeftigte von Hessen-Forst',
+                u'im Strassendienst Beschaeftigte von Hessen mobil',
+                u'im Aussendienst Beschaeftigte bei der Hessischen Verwaltung fuer Bodenmanagement',
+                u'mit Arbeiten im Kanalnetz Beschaeftigte in Abwasserbetrieben',
+                u'mit Arbeiten im Schaechten Beschaeftigte in Wasserversorgungsbetrieben',
+                u'auf Deponien Beschaeftigte',
+                u'Beschaeftigte von N*ICE (ohne Leiharbeitnehmer)'))
 
     mitarbeiter = schema.Int(
         title=_(u"Beschäftigte"),

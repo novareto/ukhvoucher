@@ -4,6 +4,7 @@ from . import Base
 from .interfaces import IVoucher, IInvoice, IAddress, IAccount, ICategory
 from .interfaces import IModel, IModelContainer, IIdentified
 from . import _
+from zope.location import ILocation, Location, LocationProxy, locate
 
 import uvclight
 from cromlech.sqlalchemy import get_session
@@ -39,6 +40,15 @@ class StrippedString(types.TypeDecorator):
     def copy(self):
         "Make a copy of this type"
         return StrippedString(self.impl.length)
+
+
+
+class TestTable(Base):
+    __tablename__ = 'z1test2'
+    __table_args__ = {"schema": "UKHINTERN"}
+
+    pid = Column('pid', Integer, primary_key=True)
+    ptext = Column('ptext', String(50))
 
 
 
@@ -244,6 +254,9 @@ class Generation(Base):
     voucher = relationship("Voucher", backref=backref('generation') )
 
 
+from profilehooks import profile
+
+
 @implementer(IContent, IModelContainer)
 class Accounts(SQLContainer):
     __label__ = _(u"Accounts")
@@ -251,6 +264,23 @@ class Accounts(SQLContainer):
     model = Account
     listing_attrs = uvclight.Fields(Account.__schema__).select(
         'oid', 'login', 'email', 'name')
+
+
+    @profile
+    def gg(self):
+        models = self.query_filters(self.session.query(self.model)).all()
+        return models
+
+    def __iter__(self):
+        print self.gg()
+        models = self.query_filters(self.session.query(self.model)).all()
+        for model in models:
+            proxy = ILocation(model, None)
+            if proxy is None:
+                proxy = LocationProxy(model)
+            locate(proxy, self, self.key_reverse(model))
+            yield proxy
+
 
     def key_reverse(self, obj):
         return str(obj.oid)
@@ -280,7 +310,7 @@ class Vouchers(SQLContainer):
 
     model = Voucher
     listing_attrs = uvclight.Fields(Voucher.__schema__).select(
-        'oid', 'cat', 'status', 'user_id')
+        'oid', 'cat', 'status', 'user_id', 'displayData')
 
     def key_reverse(self, obj):
         return '%s' % obj.oid
