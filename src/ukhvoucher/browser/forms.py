@@ -71,7 +71,7 @@ class DisableVouchers(Form):
             jid=str(uuid1()),
             date=datetime.now(),
             userid=self.request.principal.id,
-            action=u"Add : %s" % self.context.model.__label__,
+            action=u"Disabled vouchers : %s" % ', '.join(data['vouchers']),
             note=journal_note)
         session.add(entry)
             
@@ -175,7 +175,7 @@ class EditModel(Form):
 
         journal = Fields(IJournalize)
         journal['note'].ignoreContent = True
-        
+
         return fields + journal
 
     def update(self):
@@ -203,7 +203,7 @@ class EditModel(Form):
             jid=str(uuid1()),
             date=datetime.now(),
             userid=self.request.principal.id,
-            action=u"Add : %s" % self.context.model.__label__,
+            action=u"Edited : %s" % self.context.__label__,
             note=journal_note)
         self.context.add(entry)
 

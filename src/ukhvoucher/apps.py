@@ -3,10 +3,11 @@
 import webob.exc
 
 from . import Site
+from .components import ExternalPrincipal, AdminPrincipal
 from .interfaces import IAdminLayer, IUserLayer
 from .models import Accounts, Addresses, Account, Vouchers, Invoices, Categories
 
-from cromlech.browser import IPublicationRoot
+from cromlech.browser import IPublicationRoot, getSession
 from cromlech.security import Interaction, unauthenticated_principal
 from cromlech.sqlalchemy import get_session
 from ul.auth import SecurePublication, ICredentials
@@ -71,12 +72,11 @@ class Admin(SQLPublication, SecurePublication):
         pass
 
     def principal_factory(self, username):
-        principal = SecurePublication.principal_factory(self, username)
-        if principal is not unauthenticated_principal:
-            principal.permissions = set(('manage.vouchers',))
-            principal.roles = set()
-            principal.title = "Administrator"
-        return principal
+        if username:
+            session = getSession()
+            masquarade = session.get('masquarade', None)
+            return AdminPrincipal(username, masquarade)
+        return unauthenticated_principal
 
     def site_manager(self, request):
         return Site(AdminRoot(request, self.name))
@@ -127,12 +127,8 @@ class User(SQLPublication, SecurePublication):
         pass
 
     def principal_factory(self, username):
-        from .components import ExternalPrincipal
         if username:
-            principal = ExternalPrincipal(id=username)
-            principal.permissions = set(('users.access',))
-            principal.roles = set()
-            return principal
+            return ExternalPrincipal(id=username)
         return unauthenticated_principal
 
     def site_manager(self, request):
