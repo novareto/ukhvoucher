@@ -78,10 +78,10 @@ class DisableVouchers(Form):
             jid=str(uuid1())[:32],
             date=datetime.now().strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
-            action=u"Add:%s" % self.context.model.__label__,
+            action=u"Disabled vouchers : %s" % ', '.join(data['vouchers']),
             oid=data['oid'],
             note=journal_note)
-        #session.add(entry)
+        session.add(entry)
 
         self.flash(_(u"Voucher(s) disabled"))
         self.redirect(self.application_url())
@@ -214,10 +214,10 @@ class EditModel(Form):
             jid=str(uuid1())[:32],
             date=datetime.now().strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
-            action=u"Add:%s" % "TEST",# % self.context.model.__label__,
+            action=u"Edited : %s" % self.context.__label__,
             oid=data['oid'],
             note=journal_note)
-        #self.context.add(entry)
+        self.context.add(entry)
 
         self.redirect(self.application_url())
         return SUCCESS

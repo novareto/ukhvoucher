@@ -11,6 +11,9 @@ from sqlalchemy import and_
 
 class ExternalPrincipal(Principal):
 
+    permissions = frozenset(('users.access',))
+    roles = frozenset()
+
     def __init__(self, id, title=u''):
         self.id = id
 
@@ -106,3 +109,21 @@ class ExternalPrincipal(Principal):
         if cat:
             query = query.filter(models.Voucher.cat == cat)
         return query.all()
+
+
+class AdminPrincipal(ExternalPrincipal):
+
+    permissions = frozenset(('manage.vouchers',))
+    roles = frozenset()
+
+    def __init__(self, id, masquarade):
+        self.id = id
+        self.masquarade = masquarade
+
+    @property
+    def oid(self):
+        return self.masquarade
+
+    @property
+    def title(self):
+        return "Administrator"
