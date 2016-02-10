@@ -59,6 +59,7 @@ class UserRootIndex(uvclight.Page):
         desc = ""
         if name == "IKG1":
             desc = u"""
+                    <h1> KLAUS </h1>
                     __________________________________________________________________________________________
                     Beschäftigte: Bitte tragen Sie alle bei der UKH versicherten Beschäftigten ein, die in Ihren
                     Verwaltungsbereichen arbeiten. Zählen Sie dazu die Personen, nicht die Vollzeitstellen.
@@ -94,6 +95,7 @@ class UserRootIndex(uvclight.Page):
                     """
         if name == "IKG3":
             desc = u"""
+                    <h1> KLAUS </h1>
                     __________________________________________________________________________________________
                     Kindergruppen: Bitte tragen Sie ein, wie viele Kindergruppen in Ihren Einrichtungen  maximal
                     gleichzeitig betrieben werden. Beispiel: 4 Vormittagsgruppen und 2 Nachmittagsgruppen sind

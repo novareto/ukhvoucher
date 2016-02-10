@@ -213,7 +213,14 @@ class Voucher(Base, Location):
     @property
     def displayData(self):
         import json
-        return json.loads(self.generation.data)
+        rc = []
+        data = json.loads(self.generation.data)
+        if isinstance(data, dict):
+            for k, v in json.loads(self.generation.data).items():
+                rc.append("%s: %s" % (k, v))
+            return '; '.join(rc)
+        return data
+
 
 
 @implementer(IModel, IIdentified, IInvoice)

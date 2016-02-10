@@ -24,4 +24,5 @@ Base = declarative_base()
 VOCABULARIES = {}
 
 
-DISABLED = u'disabled'
+DISABLED = u'ungültig'
+CREATED = u"erstellt"

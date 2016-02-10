@@ -19,7 +19,7 @@ from ..interfaces import IVouchersCreation, IDisablingVouchers
 from ..interfaces import IModel, IModelContainer, IAdminLayer, IUserLayer
 from ..interfaces import IAccount, IJournalize
 from ..models import Voucher, JournalEntry, Vouchers
-from .. import _, resources, DISABLED
+from .. import _, resources, DISABLED, CREATED
 from ..apps import UserRoot
 from uvc.entities.browser import IContextualActionsMenu, IDocumentActions
 
@@ -75,7 +75,7 @@ class DisableVouchers(Form):
         # journalize
         session = get_session('ukhvoucher')
         entry = JournalEntry(
-            jid=str(uuid1()),
+            jid=str(uuid1())[:32],
             date=datetime.now().strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
             action=u"Add:%s" % self.context.model.__label__,
@@ -134,6 +134,7 @@ class CreateModel(Form):
             return FAILURE
 
         # create it
+        print data
         item = self.context.model(**data)
         self.context.add(item)
 
@@ -143,7 +144,7 @@ class CreateModel(Form):
 
         # journalize
         entry = JournalEntry(
-            jid=str(uuid1()),
+            jid=str(uuid1())[:32],
             date=datetime.now().strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
             action=u"Add:%s" % self.context.model.__label__,
@@ -210,7 +211,7 @@ class EditModel(Form):
         # journalize
 
         entry = JournalEntry(
-            jid=str(uuid1()),
+            jid=str(uuid1())[:32],
             date=datetime.now().strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
             action=u"Add:%s" % "TEST",# % self.context.model.__label__,
@@ -317,7 +318,7 @@ class AskForVouchers(Form):
             for idx in range(number):
                 voucher = Voucher(
                     creation_date=datetime.now().strftime('%Y-%m-%d'),
-                    status='created',
+                    status=CREATED,
                     cat = data['kategorie'],
                     user_id=self.context.login,
                     generation_id=p,
