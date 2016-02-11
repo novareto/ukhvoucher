@@ -1,5 +1,9 @@
+<h1> Erste Hilfe Portal </h1>
+<p>
+<a href="" class="btn btn-primary" tal:attributes='href "%s/invoices/add" % (view.application_url())'> Neue Rechnung erstellen </a>
+</p>
 <fieldset>
-<legend> Bitte wählen Sie hier das Mitglied aus </legend>
+    <legend> Bitte wählen Sie hier das Mitglied aus </legend>
     <form enctype="multipart/form-data" method="post" novalidate="novalidate"
         id="selectunternehmen"
         action="" class="form-inline pull-right" tal:attributes="action viewlet.action_url">

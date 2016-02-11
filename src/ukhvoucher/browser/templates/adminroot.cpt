@@ -1,4 +1,3 @@
-<h1>Erste Hilfe Portal </h1>
 <div tal:condition="request.principal.masquarade">
 <div tal:define="adr request.principal.getAddress()">
     <div class="btn-group pull-right">
@@ -21,19 +20,19 @@
     <p tal:content="adr.city"/>
 </div>
 <hr>
-<div tal:define="account request.principal.getAccount()">
+<div tal:define="accounts request.principal.getAccount()">
     <div class="btn-group pull-right">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Aktion <span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
-            <li tal:repeat="aA view.getAccountActions(account)">
+            <li tal:repeat="aA view.getAccountActions(accounts)">
             <span tal:replace="aA"> </span>
             </li>
         </ul>
     </div>
     <p class="lead"> Account </p>
-    <div tal:condition="account">
+    <div tal:repeat="account accounts">
         <p tal:content="account.login"/>
         <p tal:content="account.password"/>
         <p tal:content="account.email"/>

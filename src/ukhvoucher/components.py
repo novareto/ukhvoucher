@@ -128,21 +128,16 @@ class AdminPrincipal(ExternalPrincipal):
 
     def getAccount(self):
         session = get_session('ukhvoucher')
-        account = session.query(models.Account).filter(models.Account.oid==self.oid)
-        if account.count() == 1:
-            return account.one()
-        return None
+        accounts = session.query(models.Account).filter(models.Account.oid==self.oid)
+        return accounts
 
     def getVouchers(self, cat=None):
         session = get_session('ukhvoucher')
-        account = self.getAccount()
-        if account:
-            query = session.query(models.Voucher).filter(
-                models.Voucher.user_id == account.oid)
-            if cat:
-                query = query.filter(models.Voucher.cat == cat)
-            return query.all()
-        return []
+        query = session.query(models.Voucher).filter(
+            models.Voucher.user_id == self.oid)
+        if cat:
+            query = query.filter(models.Voucher.cat == cat)
+        return query.all()
 
     def getJournalEntries(self):
         session = get_session('ukhvoucher')

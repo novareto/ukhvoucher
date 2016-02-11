@@ -211,6 +211,8 @@ class AskForVouchers(Form):
     layer(IAdminLayer)
     require('manage.vouchers')
     title(u'Gutscheine bearbeiten')
+    label = 'Gutscheine erzeugen'
+    description = "Beschreibung"
 
     ignoreContent = True
     ignoreRequest = True
@@ -224,7 +226,7 @@ class AskForVouchers(Form):
     def update(self):
         resources.ukhvouchers.need()
 
-    @action(_(u'Demand'))
+    @action(_(u'Erstellen'))
     def handle_save(self):
         data, errors = self.extractData()
         journal_note = data.pop('note')
@@ -276,7 +278,7 @@ class AskForVouchers(Form):
             session.add(entry)
 
             # redirect
-            self.flash(_(u"Demanded %i vouchers" % number))
+            self.flash(_(u"%i Gutscheine erstellt" % number))
             self.redirect(self.application_url())
             return SUCCESS
         else:
@@ -295,7 +297,9 @@ class DisableVouchers(Form):
     name('disable.vouchers')
     layer(IAdminLayer)
     require('manage.vouchers')
-    title(u'Disable vouchers')
+    title(u'Gutscheine sperren')
+    label = 'Gutscheine sperren'
+    description = "Beschreibung"
 
     ignoreContent = True
     ignoreRequest = False
@@ -313,7 +317,7 @@ class DisableVouchers(Form):
     def action_url(self):
         return self.request.path
 
-    @action(_(u'Disable'))
+    @action(_(u'Gutscheine sperren'))
     def handle_save(self):
         data, errors = self.extractData()
         journal_note = data.pop('note')

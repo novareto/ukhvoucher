@@ -18,6 +18,7 @@ def get_oid(context):
     from sqlalchemy.sql.functions import max
     from ukhvoucher.models import Accounts, AddressTraeger, Address, AddressEinrichtung
     rc = []
+    rcc = []
     session = get_session('ukhvoucher')
     if isinstance(context, Accounts):
         try:
@@ -31,8 +32,10 @@ def get_oid(context):
     def getValue():
         for x in session.query(Address):
             rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+            rcc.append(x.oid)
         for x in session.query(AddressTraeger):
-            rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+            if x.oid not in rcc:
+                rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
         #for x in session.query(AddressEinrichtung):
         #    rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
         return SimpleVocabulary(rc)
@@ -130,8 +133,8 @@ def get_kategorie(context):
 class IVouchersCreation(Interface):
 
     number = schema.Int(
-        title=_(u"Number of vouchers"),
-        description=_(u"Number of vouchers to query"),
+        title=_(u"Anzahl der Gutscheine"),
+        description=_(u"Wie viele Gutscheine sollen angelegt werden?"),
         required=True,
         )
 
@@ -169,7 +172,7 @@ class IModelContainer(Interface):
 class IDisablingVouchers(Interface):
     vouchers = schema.Set(
         value_type=schema.Choice(source=get_source('vouchers')),
-        title=_(u"Vouchers"),
+        title=_(u"Gutscheine"),
         required=True,
     )
 
@@ -181,6 +184,12 @@ class IJournalize(Interface):
         description=u"Eintrag in der Historie.",
         required=False,
     )
+
+
+def gN(context=None):
+    if VOCABULARIES:
+        return VOCABULARIES['account'](context)
+    return u""
 
 
 class IAccount(Interface):
@@ -202,6 +211,7 @@ class IAccount(Interface):
         title=_(u"Benutzerkennung"),
         description=_(u"Benutzerkennung"),
         required=True,
+        defaultFactory=gN,
     )
 
     az = schema.TextLine(
@@ -294,6 +304,11 @@ class IAddress(Interface):
         required=True,
     )
 
+    mnr = schema.TextLine(
+        title=_(u"Mitgliedsnummer"),
+        required=False,
+    )
+
     name1 = schema.TextLine(
         title=_(u"Address Name1"),
         required=True,
@@ -341,7 +356,7 @@ class IInvoice(Interface):
 
     reason = schema.Choice(
         title=_(u'Begründung'),
-        description=_(u'Bitte wählen Sie hier aus warum Sie mit der Rechnung nicht einverstanden sein'),
+        description=_(u'Sind sie mit den Gutscheinen der Rechnung nicht einverstanden?'),
         source=get_reason,
         required = False,
     )

@@ -18,8 +18,8 @@ from zope.location import Location
 from sqlalchemy import types
 
 
-#schema = 'UKHINTERN.'
-schema = ''
+schema = 'UKHINTERN'
+#schema = ''
 
 
 class StrippedString(types.TypeDecorator):
@@ -60,7 +60,7 @@ class Address(Base, Location):
     __label__ = _(u"Address")
 
     if schema:
-        __table_args__ = {"schema": schema[1:]}
+        __table_args__ = {"schema": schema}
 
     oid = Column('oid', Integer, primary_key=True, autoincrement=True)
     name1 = Column('iknam1', String(28))
@@ -68,14 +68,14 @@ class Address(Base, Location):
     name3 = Column('iknam3', String(28))
     street = Column('ikstr', String(46))
     number = Column('ikhnr', String(3))
+    mnr = Column('trgmnr', String(15))
     zip_code = Column('ikhplz', String(5))
     city = Column('ikhort', String(24))
-    user_id = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
+    user_id = Column('user_id', Integer, ForeignKey(schema + '.Z1EXT9AA.oid'))
 
     @property
     def title(self):
         return "Adresse des Benutzers %s" % (self.oid)
-        #return "Address %s for user %s" % (self.oid, self.user_id)
 
     # search attributes
     search_attr = "name1"
@@ -87,7 +87,7 @@ class Address(Base, Location):
 class JournalEntry(Base):
     __tablename__ = 'Z1EHRJRN_T'
     if schema:
-        __table_args__ = {"schema": schema[1:]}
+        __table_args__ = {"schema": schema}
 
     jid = Column('jrnoid', Integer, primary_key=True)
     date = Column('jrn_dat', DateTime)
@@ -100,7 +100,7 @@ class JournalEntry(Base):
 class AddressEinrichtung(Base):
     __tablename__ = 'z1ext9ac'
     if schema:
-        __table_args__ = {"schema": schema[1:]}
+        __table_args__ = {"schema": schema}
 
     oid = Column('enrrcd', String, primary_key=True)
     mnr = Column('enrnum', String)
@@ -116,7 +116,7 @@ class AddressEinrichtung(Base):
 class AddressTraeger(Base):
     __tablename__ = 'z1ext9ab'
     if schema:
-        __table_args__ = {"schema": schema[1:]}
+        __table_args__ = {"schema": schema}
 
     oid = Column('trgrcd', String, primary_key=True)
     mnr = Column('trgmnr', String)
@@ -135,10 +135,9 @@ class Category(Base, Location):
     __tablename__ = 'z1ehrkat_t'
     __schema__ = ICategory
     __label__ = _(u"Kategorie")
-    __table_args__ = {"schema": "UKHINTERN"}
 
     if schema:
-        __table_args__ = {"schema": schema[1:]}
+        __table_args__ = {"schema": schema}
 
     oid = Column('oid', String, primary_key=True)
     kat1 = Column('kat1', Boolean)
@@ -165,7 +164,7 @@ class Account(Base, Location):
     __schema__ = IAccount
     __label__ = _(u"Account")
     if schema:
-        __table_args__ = {"schema": schema[1:]}
+        __table_args__ = {"schema": schema}
 
     model = Address
 
@@ -201,15 +200,15 @@ class Voucher(Base, Location):
     __schema__ = IVoucher
     __label__ = _(u"Vouchers")
     if schema:
-        __table_args__ = {"schema": schema[1:]}
+        __table_args__ = {"schema": schema}
 
     oid = Column('vch_oid', Integer, primary_key=True)
     creation_date = Column('erst_dat', DateTime)
     status = Column('status', String)
     cat = Column('kat', String)
-    user_id = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
-    invoice_id = Column('rech_oid', Integer, ForeignKey(schema + 'z1ehrrch_t.rech_oid'))
-    generation_id = Column('gen_oid', Integer, ForeignKey(schema + 'z1ehrbgl_t.bgl_oid'))
+    user_id = Column('user_id', Integer, ForeignKey(schema + '.Z1EXT9AA.oid'))
+    invoice_id = Column('rech_oid', Integer, ForeignKey(schema + '.z1ehrrch_t.rech_oid'))
+    generation_id = Column('gen_oid', Integer, ForeignKey(schema + '.z1ehrbgl_t.bgl_oid'))
 
     # relations
     user = relationship('Account')
@@ -242,7 +241,7 @@ class Invoice(Base, Location):
     __schema__ = IInvoice
     __label__ = _(u"Invoice")
     if schema:
-        __table_args__ = {"schema": schema[1:]}
+        __table_args__ = {"schema": schema}
 
     oid = Column('rech_oid', Integer, primary_key=True)
     reason = Column('grund', StrippedString)
@@ -254,7 +253,7 @@ class Invoice(Base, Location):
 
     @property
     def title(self):
-        return "Invoice %s" % self.oid
+        return "Rechnung %s" % self.oid
 
     search_attr = "rech_oid"
     searchable_attrs = ("oid", "reason")
@@ -263,13 +262,13 @@ class Invoice(Base, Location):
 class Generation(Base):
     __tablename__ = 'z1ehrbgl_t'
     if schema:
-        __table_args__ = {"schema": schema[1:]}
+        __table_args__ = {"schema": schema}
 
     oid = Column('bgl_oid', Integer, primary_key=True)
     date = Column('vcb_dat', DateTime)
     type = Column('kat', String(20))
     data = Column('text', String(500))
-    user = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
+    user = Column('user_id', Integer, ForeignKey(schema + '.Z1EXT9AA.oid'))
     uoid = Column('oid', Integer)
 
     voucher = relationship("Voucher", backref=backref('generation') )
@@ -286,8 +285,6 @@ class Accounts(SQLContainer):
     listing_attrs = uvclight.Fields(Account.__schema__).select(
         'oid', 'login', 'email', 'name')
 
-
-    @profile
     def gg(self):
         models = self.query_filters(self.session.query(self.model)).all()
         return models

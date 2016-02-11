@@ -3,13 +3,13 @@
 import uvclight
 import json
 from ..models import Voucher
-from ..interfaces import IAccount, IAdminLayer, IUserLayer
+from ..interfaces import IAccount, IAdminLayer
 from .forms import ModelIndex
-from dolmen.menu import Entry, menu
+from dolmen.menu import menu
 from ukhtheme.uvclight.viewlets import BelowContent
-from uvc.design.canvas import menus
 from uvc.entities.browser.menus import IPersonalMenu, INavigationMenu
 from zope.interface import Interface
+from cromlech.browser import getSession
 
 
 class Categories(uvclight.Viewlet):
@@ -116,3 +116,42 @@ class Journal(BaseNavMenu):
     uvclight.order(6)
     attribute = "journal"
     title = u"Historie"
+
+
+class LogoutMenu(uvclight.MenuItem):
+    uvclight.context(Interface)
+    menu(IPersonalMenu)
+    uvclight.title(u'Logout')
+    id = "lmi"
+    submenu = None
+
+    @property
+    def action(self):
+        return self.view.application_url() + '/logout1'
+
+
+class Logout(uvclight.View):
+    uvclight.context(uvclight.IRootObject)
+    uvclight.name('logout1')
+    uvclight.auth.require('zope.Public')
+
+    def make_response(self, result, *args, **kwargs):
+        response = super(Logout, self).make_response(result, *args, **kwargs)
+        url = self.application_url()
+        response.url = url
+        response.location = url
+        response.status_int = 302
+        response.delete_cookie('auth_pubtkt', path='/', domain='kuvb.de')
+        return response
+
+    def update(self):
+        session = getSession()
+        if session:
+            if 'username' in session:
+                del session['username']
+            if 'masquarde' in session:
+                del session['masquarade']
+
+    def render(self):
+        return self.redirect(self.application_url())
+
