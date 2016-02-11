@@ -1,6 +1,6 @@
 <div>
   <hr />
-  <h3>Results</h3>
+  <h3>Ergebnisse</h3>
   <table class="table table-bordered table-striped"
 	 tal:condition="component.results">
     <theader>
@@ -23,6 +23,6 @@
     </tbody>
   </table>
   <div tal:condition="not component.results">
-    <em>No results</em>
+    <em>Keine Ergebnisse</em>
   </div>
 </div>

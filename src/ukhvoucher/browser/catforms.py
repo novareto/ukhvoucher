@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from uuid import uuid1
-
 import json
 import uvclight
 import datetime
 
+from ukhvoucher import CREATED
 from ukhvoucher.apps import UserRoot
 from ukhvoucher.models import Voucher, Generation
 from ukhvoucher.interfaces import IUserLayer
@@ -59,9 +58,9 @@ class CalculateInsert(Action):
                 voucher = Voucher(
                     oid = oid,
                     creation_date = now.strftime('%Y-%m-%d'),
-                    status = "created",
+                    status = CREATED,
                     cat = form._iface.getName(),
-                    user_id = principal.id,
+                    user_id = principal.oid,
                     generation_id = p,
                     )
                 session.add(voucher)
@@ -130,7 +129,7 @@ class IKG5Form(KGBaseForm):
     _iface = IKG5
     label = u""
 
-    def calculate(self, mitarbeiter):
+    def calculate(self, merkmal, mitarbeiter):
         if mitarbeiter <= 1:
             mitarbeiter = 2
         return (mitarbeiter / 2)

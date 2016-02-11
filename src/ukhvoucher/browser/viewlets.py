@@ -24,7 +24,7 @@ class Categories(uvclight.Viewlet):
             values += [(kid, getattr(category, kid))
                        for kid in ('kat1', 'kat2', 'kat3', 'kat4', 'kat5')]
         if not values:
-            return u"No categories"
+            return u"Keine Kategorien"
         return "Categories: %s" % ', '.join(
             (kat[0] for kat in values if kat[1]))
 
@@ -38,7 +38,7 @@ class VoucherGeneration(uvclight.Viewlet):
 
     def update(self):
         self.data = json.loads(self.context.generation.data)
-    
+
 
 class Username(uvclight.MenuItem):
     uvclight.context(Interface)
@@ -104,7 +104,7 @@ class MenuAddresses(BaseNavMenu):
 class MenuKategorien(BaseNavMenu):
     uvclight.order(4)
     attribute = "categories"
-    title = "Katgorien"
+    title = "Kategorien"
 
 
 class MenuVouchers(BaseNavMenu):
@@ -115,4 +115,4 @@ class MenuVouchers(BaseNavMenu):
 class Journal(BaseNavMenu):
     uvclight.order(6)
     attribute = "journal"
-    title = u"Journal"
+    title = u"Historie"

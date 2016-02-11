@@ -103,7 +103,7 @@ msgid "Invoice id"
 msgstr "Rechnungsnummer"
 
 msgid "Search : "
-msgstr "Suche"
+msgstr "Suche : "
 
 msgid "Invoice"
 msgstr "Rechnung"

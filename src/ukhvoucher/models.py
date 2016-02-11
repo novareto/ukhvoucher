@@ -72,7 +72,8 @@ class Address(Base, Location):
 
     @property
     def title(self):
-        return "Address %s for user %s" % (self.oid, self.user_id)
+        return "Adresse des Benutzers %s" % (self.oid)
+        #return "Address %s for user %s" % (self.oid, self.user_id)
 
     # search attributes
     search_attr = "name1"
@@ -85,7 +86,7 @@ class JournalEntry(Base):
     __tablename__ = 'Z1EHRJRN_T'
     __table_args__ = {"schema": "UKHINTERN"}
 
-    jid = Column('jrn_oid', String(32), primary_key=True)
+    jid = Column('jrnoid', Integer, primary_key=True)
     date = Column('jrn_dat', DateTime)
     action = Column('aktion', String(20))
     userid = Column('user_id', String(30))
@@ -128,7 +129,7 @@ class Category(Base, Location):
 
     __tablename__ = 'z1ehrkat_t'
     __schema__ = ICategory
-    __label__ = _(u"Category")
+    __label__ = _(u"Kategorie")
     __table_args__ = {"schema": "UKHINTERN"}
 
     oid = Column('oid', String, primary_key=True)
@@ -142,7 +143,7 @@ class Category(Base, Location):
 
     @property
     def title(self):
-        return "Category %s" % self.oid
+        return "Kategorie %s" % self.oid
 
     # search attributes
     search_attr = "oid"
@@ -244,7 +245,7 @@ class Invoice(Base, Location):
         return "Invoice %s" % self.oid
 
     search_attr = "rech_oid"
-    searchable_attrs = ("rech_oid", "description")
+    searchable_attrs = ("oid", "reason")
 
 
 class Generation(Base):
@@ -328,7 +329,7 @@ class Vouchers(SQLContainer):
 
 @implementer(IContent, IModelContainer)
 class Invoices(SQLContainer):
-    __label__ = u"Invoices"
+    __label__ = u"Rechnungen"
 
     model = Invoice
     listing_attrs = uvclight.Fields(Invoice.__schema__).select(
@@ -343,7 +344,7 @@ class Invoices(SQLContainer):
 
 @implementer(IContent, IModelContainer)
 class Categories(SQLContainer):
-    __label__ = u"Categories"
+    __label__ = u"Kategorien"
 
     model = Category
     listing_attrs = uvclight.Fields(Category.__schema__).select(

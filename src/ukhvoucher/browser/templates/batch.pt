@@ -1,6 +1,6 @@
 <div class="batch">
   <ul>
-    <li i18n:translate="">Pages&nbsp;&nbsp;</li>
+    <li i18n:translate="">Seiten&nbsp;&nbsp;</li>
     <li tal:repeat="info view.dichotomy"
 	tal:attributes="class info[0]">
       <span tal:condition="info[0] == 'ellipsis'"

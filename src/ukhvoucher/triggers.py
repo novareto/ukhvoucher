@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from .models import Voucher, Invoice
 from sqlalchemy import event
+from .models import Voucher, Invoice
+from ukhvoucher import BOOKED, NOT_BOOKED
 
 
 def rel_modified(target, value, initiator):
-    value.status = u'booked'
+    value.status = BOOKED
     return value
 
 
 def rel_deleted(target, value, initiator):
-    value.stauts = u"not booked"
+    value.stauts = NOT_BOOKED
     return value
 
 

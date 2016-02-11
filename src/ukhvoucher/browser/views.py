@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import uvclight
+from webhelpers.html.builder import HTML
+from ukhvoucher import models
 from ..apps import AdminRoot, UserRoot
 from ..interfaces import IAdminLayer, IUserLayer
-from ..interfaces import IModel, IModelContainer
+from ..interfaces import IModelContainer
 from ..models import JournalEntry
 from ..resources import ukhcss
 from ..resources import ukhvouchers
@@ -150,6 +152,81 @@ class AdminRootIndex(uvclight.Page):
     def update(self):
         ukhvouchers.need()
 
+    def getAdrActions(self, adr):
+        rc = []
+        oid = self.request.principal.oid
+        if not adr or isinstance(adr, (models.AddressTraeger, models.AddressEinrichtung)):
+            rc.append(
+                    HTML.tag(
+                        'a',
+                        href="%s/addresses/add?form.field.oid=%s" % (self.application_url(), oid),
+                        c="Neue Adresse anlegen",)
+                    )
+        elif isinstance(adr, models.Address):
+            rc.append(
+                    HTML.tag(
+                        'a',
+                        href="%s/addresses/%s/edit" % (self.application_url(), oid),
+                        c="Adresse bearbeiten",)
+                    )
+        return rc
+
+    def getAccountActions(self, account):
+        rc = []
+        oid = self.request.principal.oid
+        if not account:
+            rc.append(
+                    HTML.tag(
+                        'a',
+                        href="%s/accounts/add" % self.application_url(),
+                        c="Neuen Account anlegen",)
+                    )
+        else:
+            rc.append(
+                    HTML.tag(
+                        'a',
+                        href="%s/accounts/%s/edit" % (self.application_url(), oid),
+                        c="Account bearbeiten",)
+                    )
+        return rc
+
+    def getCatActions(self):
+        rc = []
+        oid = self.request.principal.oid
+        session = get_session('ukhvoucher')
+        category = session.query(models.Category).get(oid)
+        if category:
+            rc.append(
+                    HTML.tag(
+                        'a',
+                        href="%s/categories/%s/edit" % (self.application_url(), oid),
+                        c="Kategorien bearbeiten",)
+                    )
+        else:
+            rc.append(
+                    HTML.tag(
+                        'a',
+                        href="%s/categories/add?form.field.oid=%s" % (self.application_url(), oid),
+                        c="Neuen Kategorien anlegen",)
+                    )
+        return rc
+
+    def getVoucherActions(self):
+        rc = []
+        oid = self.request.principal.oid
+        rc.append(
+                HTML.tag(
+                    'a',
+                    href="%s/accounts/%s/ask.vouchers" % (self.application_url(), oid),
+                    c=u"Zusätzliche Gutscheine erzeugen",)
+                )
+        rc.append(
+                HTML.tag(
+                    'a',
+                    href="%s/accounts/%s/disable.vouchers" % (self.application_url(), oid),
+                    c=u"Gutscheine löschen",)
+                )
+        return rc
 
 class ContainerIndex(uvclight.Page):
     uvclight.name('index')
@@ -213,15 +290,16 @@ class JournalIndex(uvclight.Page):
         session = get_session('ukhvoucher')
         self.entries = session.query(JournalEntry)
 
-
+from profilehooks import profile
 class TT(uvclight.View):
     uvclight.layer(IAdminLayer)
     uvclight.context(Interface)
     require('manage.vouchers')
 
+    @profile
     def render(self):
         from ukhvoucher.models import TestTable
         session = get_session('ukhvoucher')
-        import pdb; pdb.set_trace()
+        tt = session.query(models.AddressEinrichtung.name1).all()
         return ""
 

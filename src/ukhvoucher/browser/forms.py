@@ -39,60 +39,6 @@ class DisableVoucherMenuItem(uvclight.MenuItem):
     order(50)
 
 
-class DisableVouchers(Form):
-    context(Interface)
-    name('disable_vouchers')
-    layer(IAdminLayer)
-    require('manage.vouchers')
-    title(u'Disable vouchers')
-
-    ignoreContent = True
-    ignoreRequest = False
-
-    @property
-    def fields(self):
-        fields = Fields(IDisablingVouchers) + Fields(IJournalize)
-        fields['vouchers'].mode = 'multidisabled'
-        return fields
-
-    def update(self):
-        resources.ukhvouchers.need()
-
-    @property
-    def action_url(self):
-        return self.request.path
-
-    @action(_(u'Disable'))
-    def handle_save(self):
-        data, errors = self.extractData()
-        journal_note = data.pop('note')
-        if errors:
-            self.flash(_(u"An error occured"))
-            return FAILURE
-        for voucher in data['vouchers']:
-            voucher.status = DISABLED
-
-        # journalize
-        session = get_session('ukhvoucher')
-        entry = JournalEntry(
-            jid=str(uuid1())[:32],
-            date=datetime.now().strftime('%Y-%m-%d'),
-            userid=self.request.principal.id,
-            action=u"Disabled vouchers : %s" % ', '.join(data['vouchers']),
-            oid=data['oid'],
-            note=journal_note)
-        session.add(entry)
-
-        self.flash(_(u"Voucher(s) disabled"))
-        self.redirect(self.application_url())
-        return SUCCESS
-
-    @action(_(u'Cancel'))
-    def handle_cancel(self):
-        self.redirect(self.url(self.context))
-        return SUCCESS
-
-
 @menuentry(AddMenu, order=10)
 class CreateModel(Form):
     name('add')
@@ -133,18 +79,12 @@ class CreateModel(Form):
             self.flash(_(u'An error occurred.'))
             return FAILURE
 
-        # create it
-        print data
         item = self.context.model(**data)
         self.context.add(item)
 
-        # redirect
-        base_url = self.url(self.context)
-        self.flash(_(u'Added with success.'))
 
         # journalize
         entry = JournalEntry(
-            jid=str(uuid1())[:32],
             date=datetime.now().strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
             action=u"Add:%s" % self.context.model.__label__,
@@ -152,14 +92,13 @@ class CreateModel(Form):
             note=journal_note)
         self.context.add(entry)
 
-        # redirect
-        self.redirect(base_url)
+        self.flash(_(u'Added with success.'))
+        self.redirect(self.application_url())
         return SUCCESS
 
     @action(_(u'Abbrechen'))
     def handle_cancel(self):
-        base_url = self.url(self.context)
-        self.redirect(base_url)
+        self.redirect(self.application_url())
         return SUCCESS
 
 
@@ -169,7 +108,7 @@ class EditModel(Form):
     name('edit')
     layer(IAdminLayer)
     require('manage.vouchers')
-    title(u'Edit')
+    title(u'Bearbeiten')
 
     ignoreContent = False
     ignoreRequest = True
@@ -195,7 +134,7 @@ class EditModel(Form):
     def action_url(self):
         return self.request.path
 
-    @action(_(u'Update'))
+    @action(_(u'Änderung übernehmen'))
     def handle_save(self):
         data, errors = self.extractData()
         journal_note = data.pop('note')
@@ -211,20 +150,20 @@ class EditModel(Form):
         # journalize
 
         entry = JournalEntry(
-            jid=str(uuid1())[:32],
             date=datetime.now().strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
             action=u"Edited : %s" % self.context.__label__,
             oid=data['oid'],
             note=journal_note)
-        self.context.add(entry)
+        session = get_session('ukhvoucher')
+        session.add(entry)
 
         self.redirect(self.application_url())
         return SUCCESS
 
-    @action(_(u'Cancel'))
+    @action(_(u'Abbrechen'))
     def handle_cancel(self):
-        self.redirect(self.url(self.context))
+        self.redirect(self.application_url())
         return SUCCESS
 
 
@@ -271,7 +210,7 @@ class AskForVouchers(Form):
     name('ask.vouchers')
     layer(IAdminLayer)
     require('manage.vouchers')
-    title(u'Ask for vouchers')
+    title(u'Gutscheine bearbeiten')
 
     ignoreContent = True
     ignoreRequest = True
@@ -320,7 +259,7 @@ class AskForVouchers(Form):
                     creation_date=datetime.now().strftime('%Y-%m-%d'),
                     status=CREATED,
                     cat = data['kategorie'],
-                    user_id=self.context.login,
+                    user_id=self.context.oid,
                     generation_id=p,
                     oid=oid)
                 oid += 1
@@ -329,7 +268,6 @@ class AskForVouchers(Form):
 
             # journalize
             entry = JournalEntry(
-                jid=str(uuid1())[:31],
                 date=datetime.now().strftime('%Y-%m-%d'),
                 userid=self.request.principal.id,
                 action=u"Add:%s" % self.context.model.__label__,
@@ -346,7 +284,60 @@ class AskForVouchers(Form):
             self.redirect(self.url(self.context))
             return FAILURE
 
-    @action(_(u'Cancel'))
+    @action(_(u'Abbrechen'))
     def handle_cancel(self):
-        self.redirect(self.url(self.context))
+        self.redirect(self.application_url())
+        return SUCCESS
+
+
+class DisableVouchers(Form):
+    context(Interface)
+    name('disable.vouchers')
+    layer(IAdminLayer)
+    require('manage.vouchers')
+    title(u'Disable vouchers')
+
+    ignoreContent = True
+    ignoreRequest = False
+
+    @property
+    def fields(self):
+        fields = Fields(IDisablingVouchers) + Fields(IJournalize)
+        fields['vouchers'].mode = 'multidisabled'
+        return fields
+
+    def update(self):
+        resources.ukhvouchers.need()
+
+    @property
+    def action_url(self):
+        return self.request.path
+
+    @action(_(u'Disable'))
+    def handle_save(self):
+        data, errors = self.extractData()
+        journal_note = data.pop('note')
+        if errors:
+            self.flash(_(u"An error occured"))
+            return FAILURE
+        for voucher in data['vouchers']:
+            voucher.status = DISABLED
+
+        # journalize
+        session = get_session('ukhvoucher')
+        entry = JournalEntry(
+            date=datetime.now().strftime('%Y-%m-%d'),
+            userid="admin", #str(self.request.principal.id),
+            action=u"%s Gutscheine rm" % len(data['vouchers']),
+            oid=self.context.oid,
+            note=journal_note)
+        session.add(entry)
+
+        self.flash(_(u"Voucher(s) disabled"))
+        self.redirect(self.application_url())
+        return SUCCESS
+
+    @action(_(u'Abbrechen'))
+    def handle_cancel(self):
+        self.redirect(self.application_url())
         return SUCCESS

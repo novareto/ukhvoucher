@@ -6,7 +6,9 @@ from uvc.design.canvas import IAboveContent
 from cromlech.browser import getSession
 from zope.schema import Choice
 from zope.interface import Interface
-from ..interfaces import get_oid
+from ukhvoucher.browser.views import AdminRootIndex
+from ..interfaces import IAdminLayer, get_oid
+
 
 
 class IAccounts(Interface):
@@ -21,17 +23,24 @@ class IAccounts(Interface):
 class UserMasquarade(uvclight.ViewletForm):
     uvclight.viewletmanager(IAboveContent)
     uvclight.context(Interface)
+    uvclight.view(AdminRootIndex)
+    uvclight.layer(IAdminLayer)
     uvclight.auth.require('manage.vouchers')
     uvclight.order(20)
+    template = uvclight.get_template('selectunternehmen.cpt', __file__)
 
     fields = uvclight.Fields(IAccounts)
     ignoreContent = False
+
+    def __init__(self, *args):
+        uvclight.ViewletForm.__init__(self, *args)
+        self.setContentData(self.request.principal)
 
     @property
     def action_url(self):
         return self.view.application_url()
 
-    @uvclight.action(u'Select user', identifier="masq")
+    @uvclight.action(u'Mitglied auswählen', identifier="masq")
     def handle_masquarade(self):
         data, errors = self.extractData()
         if errors:
@@ -42,10 +51,6 @@ class UserMasquarade(uvclight.ViewletForm):
         self.view.redirect(self.request.path)
 
     def render(self):
-        oid = self.request.principal.masquarade
         form = uvclight.ViewletForm.render(self)
-        if oid is not None:
-            masquarade = u"<p>Currently inspecting user %r</p>" % oid
-            return masquarade + form
         return form
-        
+

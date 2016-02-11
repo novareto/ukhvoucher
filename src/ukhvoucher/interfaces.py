@@ -33,8 +33,8 @@ def get_oid(context):
             rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
         for x in session.query(AddressTraeger):
             rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
-        for x in session.query(AddressEinrichtung):
-            rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+        #for x in session.query(AddressEinrichtung):
+        #    rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
         return SimpleVocabulary(rc)
     return getValue()
 
@@ -177,8 +177,8 @@ class IDisablingVouchers(Interface):
 class IJournalize(Interface):
 
     note = schema.TextLine(
-        title=_(u"Note"),
-        description=u"Journal note.",
+        title=_(u"Notiz"),
+        description=u"Eintrag in der Historie.",
         required=False,
     )
 
@@ -193,7 +193,7 @@ class IAccount(Interface):
 
     oid = schema.Choice(
         title=_(u"Unique identifier"),
-        description=_(u"Internal identifier"),
+        description=_(u"Eindeutiger Schlüssel OID"),
         required=True,
         source=get_oid,
     )
@@ -341,7 +341,7 @@ class IInvoice(Interface):
 
     reason = schema.Choice(
         title=_(u'Begründung'),
-        description=_(u'Bitte geben wählen Sie hier aus warum Sie mit der Rechnung nicht einverstanden sein'),
+        description=_(u'Bitte wählen Sie hier aus warum Sie mit der Rechnung nicht einverstanden sein'),
         source=get_reason,
         required = False,
     )
