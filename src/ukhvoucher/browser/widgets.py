@@ -18,6 +18,9 @@ class MultiSelectFieldWidget(MultiChoiceFieldWidget):
     grok.name('multidisabled')
     template = uvclight.get_template('disabled.cpt', __file__)
 
+    def update(self):
+        self._disabled = self.component.valueField.vocabularyFactory(None)
+        MultiChoiceFieldWidget.update(self)
+
     def disabled(self, token):
-        voc = self.component.valueField.vocabularyFactory(None)
-        return token in voc.disabled_items
+        return token in self._disabled

@@ -19,7 +19,7 @@ def localize(application):
     return wrapper
 
 
-def router(conf, session_key, zcml, name):
+def router(conf, session_key, zcml, dsn, name):
 
     allowed = ('de',)
     register_allowed_languages(allowed)
@@ -30,10 +30,6 @@ def router(conf, session_key, zcml, name):
     setSecurityPolicy(GenericSecurityPolicy)
 
     # We register our SQLengine under a given name
-    dsn = "sqlite:////tmp/ukhvoucher.db"
-    dsn = "sqlite:////home/kt/erstehilfe/ukhvoucher1.db"
-    dsn = "ibm_db_sa400://smartimp:smart09ukh@10.64.2.1:446/S65D4DBA"
-
     engine = create_and_register_engine(dsn, name)
 
     # We use a declarative base, if it exists we bind it and create
