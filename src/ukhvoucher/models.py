@@ -17,8 +17,8 @@ from zope.location import Location
 from sqlalchemy import types
 
 
-schema = 'UKHINTERN.'
-#schema = ''
+#schema = 'UKHINTERN.'
+schema = ''
 
 
 class StrippedString(types.TypeDecorator):
@@ -48,7 +48,9 @@ class Address(Base, Location):
     __tablename__ = 'z1ehradr_t'
     __schema__ = IAddress
     __label__ = _(u"Address")
-    __table_args__ = {"schema": "UKHINTERN"}
+
+    if schema:
+        __table_args__ = {"schema": schema[1:]}
 
     oid = Column('oid', Integer, primary_key=True, autoincrement=True)
     name1 = Column('iknam1', String(28))
@@ -73,7 +75,8 @@ class Address(Base, Location):
 
 class JournalEntry(Base):
     __tablename__ = 'Z1EHRJRN_T'
-    __table_args__ = {"schema": "UKHINTERN"}
+    if schema:
+        __table_args__ = {"schema": schema[1:]}
 
     jid = Column('jrn_oid', String(32), primary_key=True)
     date = Column('jrn_dat', DateTime)
@@ -85,7 +88,8 @@ class JournalEntry(Base):
 
 class AddressEinrichtung(Base):
     __tablename__ = 'z1ext9ac'
-    __table_args__ = {"schema": "UKHINTERN"}
+    if schema:
+        __table_args__ = {"schema": schema[1:]}
 
     oid = Column('enrrcd', String, primary_key=True)
     mnr = Column('enrnum', String)
@@ -100,7 +104,8 @@ class AddressEinrichtung(Base):
 
 class AddressTraeger(Base):
     __tablename__ = 'z1ext9ab'
-    __table_args__ = {"schema": "UKHINTERN"}
+    if schema:
+        __table_args__ = {"schema": schema[1:]}
 
     oid = Column('trgrcd', String, primary_key=True)
     mnr = Column('trgmnr', String)
@@ -119,7 +124,9 @@ class Category(Base, Location):
     __tablename__ = 'z1ehrkat_t'
     __schema__ = ICategory
     __label__ = _(u"Category")
-    __table_args__ = {"schema": "UKHINTERN"}
+
+    if schema:
+        __table_args__ = {"schema": schema[1:]}
 
     oid = Column('oid', String, primary_key=True)
     kat1 = Column('kat1', Boolean)
@@ -145,7 +152,9 @@ class Account(Base, Location):
     __tablename__ = 'Z1EXT9AA'
     __schema__ = IAccount
     __label__ = _(u"Account")
-    __table_args__ = {"schema": "UKHINTERN"}
+    if schema:
+        __table_args__ = {"schema": schema[1:]}
+
     model = Address
 
     oid = Column('oid', Integer, primary_key=True)
@@ -179,7 +188,8 @@ class Voucher(Base, Location):
     __tablename__ = 'z1ehrvch_t'
     __schema__ = IVoucher
     __label__ = _(u"Vouchers")
-    __table_args__ = {"schema": "UKHINTERN"}
+    if schema:
+        __table_args__ = {"schema": schema[1:]}
 
     oid = Column('vch_oid', Integer, primary_key=True)
     creation_date = Column('erst_dat', DateTime)
@@ -212,7 +222,8 @@ class Invoice(Base, Location):
     __tablename__ = 'z1ehrrch_t'
     __schema__ = IInvoice
     __label__ = _(u"Invoice")
-    __table_args__ = {"schema": "UKHINTERN"}
+    if schema:
+        __table_args__ = {"schema": schema[1:]}
 
     oid = Column('rech_oid', Integer, primary_key=True)
     reason = Column('grund', StrippedString)
@@ -232,7 +243,8 @@ class Invoice(Base, Location):
 
 class Generation(Base):
     __tablename__ = 'z1ehrbgl_t'
-    __table_args__ = {"schema": "UKHINTERN"}
+    if schema:
+        __table_args__ = {"schema": schema[1:]}
 
     oid = Column('bgl_oid', Integer, primary_key=True)
     date = Column('vcb_dat', DateTime)
