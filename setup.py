@@ -26,6 +26,8 @@ setup(name='ukhvoucher',
           "reportlab",
           "ukh.ibmdbsa",
           "ukhtheme.uvclight",
+          "profilehooks",
+          "webhelpers",
           "ul.auth",
       ],
       entry_points={

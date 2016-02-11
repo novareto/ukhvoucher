@@ -1,28 +1,39 @@
 <div>
   <hr />
   <h3>Ergebnisse</h3>
-  <table class="table table-bordered table-striped"
-	 tal:condition="component.results">
-    <theader>
-      <tr>
-      	<th tal:repeat="col view.columns" tal:content="col" />
+  <div tal:replace="structure view.batch" />
+  <div>
+    <h1 tal:content="context.__label__" />
+    <table class="table table-bordered table-striped"
+	   tal:condition="view.batcher.batch">
+      <theader>
+	<tr>
+	  <th tal:repeat="col view.columns" tal:content="col" />
       </tr>
-    </theader>
-    <tbody>
-      <tr tal:repeat="content iter(component.results)">
-        <td tal:repeat="value view.listing(content)">
-          <a href=""
-             tal:omit-tag="value[0] != 'oid'"
-             tal:attributes="href view.url(content)">
-            <span class="glyphicon glyphicon-link"
-                  tal:omit-tag="value[0] != 'oid'">&nbsp;</span>
-            <span tal:content="value[1]" />
-          </a>
-	</td>
-      </tr>
-    </tbody>
-  </table>
-  <div tal:condition="not component.results">
+      </theader>
+      <tbody>
+	<tr tal:repeat="content view.batcher.batch">
+	  <td tal:repeat="value view.listing(content)">
+	    <tal:relation define="lister len(value[1]) > 1">
+	      <ul tal:omit-tag="not lister">
+		<li tal:omit-tag="not lister" tal:repeat="val value[1]">
+		  <a href=""
+		     tal:omit-tag="not val['link']"
+		     tal:attributes="href val['link']">
+		    <span class="glyphicon glyphicon-link"
+			  tal:omit-tag="not val['link']">
+		      </span><span tal:content="val['value']" />
+		  </a>
+		</li>
+	      </ul>
+ 	    </tal:relation>
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+  </div>
+  <div tal:replace="structure view.batch" />
+  <div tal:condition="not view.results">
     <em>Keine Ergebnisse</em>
   </div>
 </div>

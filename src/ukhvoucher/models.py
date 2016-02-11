@@ -20,7 +20,7 @@ from sqlalchemy import types
 
 
 schema = 'UKHINTERN'
-#schema = ''
+schema = ''
 
 
 class StrippedString(types.TypeDecorator):
@@ -44,15 +44,6 @@ class StrippedString(types.TypeDecorator):
 
 
 
-class TestTable(Base):
-    __tablename__ = 'z1test2'
-    __table_args__ = {"schema": "UKHINTERN"}
-
-    pid = Column('pid', Integer, primary_key=True)
-    ptext = Column('ptext', String(50))
-
-
-
 @implementer(IModel, IIdentified, IAddress)
 class Address(Base, Location):
 
@@ -72,7 +63,7 @@ class Address(Base, Location):
     mnr = Column('trgmnr', String(15))
     zip_code = Column('ikhplz', String(5))
     city = Column('ikhort', String(24))
-    user_id = Column('user_id', Integer, ForeignKey(schema + '.Z1EXT9AA.oid'))
+    user_id = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
 
     @property
     def title(self):
@@ -207,9 +198,9 @@ class Voucher(Base, Location):
     creation_date = Column('erst_dat', DateTime)
     status = Column('status', String)
     cat = Column('kat', String)
-    user_id = Column('user_id', Integer, ForeignKey(schema + '.Z1EXT9AA.oid'))
-    invoice_id = Column('rech_oid', Integer, ForeignKey(schema + '.z1ehrrch_t.rech_oid'))
-    generation_id = Column('gen_oid', Integer, ForeignKey(schema + '.z1ehrbgl_t.bgl_oid'))
+    user_id = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
+    invoice_id = Column('rech_oid', Integer, ForeignKey(schema + 'z1ehrrch_t.rech_oid'))
+    generation_id = Column('gen_oid', Integer, ForeignKey(schema + 'z1ehrbgl_t.bgl_oid'))
 
     # relations
     user = relationship('Account')
@@ -269,13 +260,12 @@ class Generation(Base):
     date = Column('vcb_dat', DateTime)
     type = Column('kat', String(20))
     data = Column('text', String(500))
-    user = Column('user_id', Integer, ForeignKey(schema + '.Z1EXT9AA.oid'))
+    user = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
     uoid = Column('oid', Integer)
 
     voucher = relationship("Voucher", backref=backref('generation') )
 
 
-from profilehooks import profile
 
 
 @implementer(IContent, IModelContainer)

@@ -256,6 +256,7 @@ class ContainerIndex(uvclight.Page):
 
         for col in self.context.listing_attrs:
             value = getattr(item, col.identifier, col.defaultValue)
+
             if col.identifier in relations:
                 relation = self.relation(col.identifier, value)
                 yield col.identifier, [{
@@ -266,11 +267,12 @@ class ContainerIndex(uvclight.Page):
                     'value': value,
                     'link': col.identifier == 'oid' and itemurl or ''}]
 
-    def update(self):
-        ukhcss.need()
-        self.columns = [field.title for field in self.context.listing_attrs]
-        elements = list(self.context)
+    def batch_elements(self):
+        return list(self.context)
+                
+    def set_batch(self):
         self.batcher = Batcher(self.context, self.request, size=10)
+        elements = self.batch_elements()
         if elements:
             self.batcher.update(elements)
             self.dichotomy = get_dichotomy_batches(
@@ -281,6 +283,11 @@ class ContainerIndex(uvclight.Page):
                 self, **self.namespace())
         else:
             self.batch = u''
+                
+    def update(self):
+        ukhcss.need()
+        self.columns = [field.title for field in self.context.listing_attrs]
+        self.set_batch()
 
     def relation(self, id, value):
         site = getSite()

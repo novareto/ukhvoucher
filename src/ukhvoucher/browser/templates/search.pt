@@ -4,12 +4,13 @@
       <div class="col-md-3">
 	<h4 class="pull-right">
 	  <span class="glyphicon glyphicon-search"></span>
-    <span i18n:translate="">Suche:</span> <span tal:content="context.model.__label__" />
+	  <span i18n:translate="">Suche:</span>
+	  <span tal:content="context.model.__label__" />
 	</h4>
       </div>
       <div class="col-md-8">
-	<input type="text" tal:attributes="name component.attribute"
-	       class="form-control" />
+	<input type="text" class="form-control"
+	       tal:attributes="name component.attribute" />
 	<input type="hidden" name="action.search" value="Search" />
       </div>
       <div class="col-md-1">

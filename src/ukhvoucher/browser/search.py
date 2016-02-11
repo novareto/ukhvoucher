@@ -2,6 +2,7 @@
 
 import uvclight
 from ul.auth import require
+from .views import ContainerIndex
 from .. import _
 from ..apps import AdminRoot, UserRoot
 from ..interfaces import IModel, IModelContainer
@@ -53,7 +54,7 @@ class SearchAction(uvclight.Action):
                     else:
                         query = query.filter(column == value)
 
-        return query.all()
+        return query
 
     def __call__(self, view):
         data, errors = view.extractData()
@@ -64,15 +65,19 @@ class SearchAction(uvclight.Action):
 
         model = view.context.model
         session = view.context.session
-        view.results = self.search(session, model, **data)
+        view.results = [
+            LocationProxy(res, view.context, str(res.oid))
+            for res in self.search(session, model, **data)]
+    
         return uvclight.SUCCESS
 
 
-class Search(uvclight.Form):
+class Search(uvclight.Form, ContainerIndex):
     uvclight.name("search")
     uvclight.context(IModelContainer)
     require('manage.vouchers')
 
+    results = None
     ignoreRequest = False
     ignoreContent = True
     postOnly = False
@@ -82,14 +87,12 @@ class Search(uvclight.Form):
         SearchAction(_(u'Suche'), 'search'),
     )
 
-    def update(self):
-        self.columns = [field.title for field in self.context.listing_attrs]
-        uvclight.Form.update(self)
+    def updateForm(self):
+        uvclight.Form.updateForm(self)
+        ContainerIndex.update(self)
 
-    def listing(self, item):
-        for col in self.context.listing_attrs:
-            yield col.identifier, getattr(
-                item, col.identifier, col.defaultValue)
+    def batch_elements(self):
+       return getattr(self, 'results', [])
 
     @property
     def label(self):
@@ -98,12 +101,14 @@ class Search(uvclight.Form):
 
     @property
     def fields(self):
-        fields = uvclight.Fields(self.context.model.__schema__)
-        fields = fields.select(*self.context.model.searchable_attrs)
+        fields = uvclight.Fields(self.context.model.__schema__).select(
+            *self.context.model.searchable_attrs)
         for field in fields:
             field.prefix = ''
             field.description = ''
             field.required = False
+            field.defaultValue = ''
+            field.defaultFactory = None
             if field.identifier in MULTISELECTS:
                 field.mode = 'multiselect'
 
@@ -136,10 +141,3 @@ class SearchResults(uvclight.Viewlet):
 
     template = uvclight.get_template('results.pt', __file__)
 
-    def update(self):
-        self.results = [
-            LocationProxy(res, self.context, str(res.oid))
-            for res in getattr(self.view, 'results', [])]
-
-    def url(self, item):
-        return self.view.url(item)
