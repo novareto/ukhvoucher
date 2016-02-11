@@ -30,7 +30,7 @@ class ExternalPrincipal(Principal):
     @property
     def merkmal(self):
         account = self.getAccount()
-        if not account.merkmal:
+        if not account and not account.merkmal:
             return "M"
         return str(account.merkmal).strip()
 
@@ -44,13 +44,12 @@ class ExternalPrincipal(Principal):
         address = session.query(models.Address).get(self.oid)
         if address:
             return address
-        if self.merkmal == "M":
-            address = session.query(models.AddressTraeger).get(self.oid)
-        elif self.merkmal == "E":
-            address = session.query(models.AddressEinrichtung).get(self.oid)
-        else:
-            address = None
-        return address
+        address = session.query(models.AddressTraeger).get(self.oid)
+        if address:
+            return address
+        address = session.query(models.AddressEinrichtung).get(self.oid)
+        if address:
+            return address
 
     def getCategory(self):
         session = get_session('ukhvoucher')
@@ -99,13 +98,12 @@ class ExternalPrincipal(Principal):
             cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
         elif mnr == "Gemeinsahftskasse":
             cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
-        print cat
         return cat
 
     def getVouchers(self, cat=None):
         session = get_session('ukhvoucher')
         query = session.query(models.Voucher).filter(
-            models.Voucher.user_id == self.id)
+            models.Voucher.user_id == self.oid)
         if cat:
             query = query.filter(models.Voucher.cat == cat)
         return query.all()
@@ -127,3 +125,23 @@ class AdminPrincipal(ExternalPrincipal):
     @property
     def title(self):
         return "Administrator"
+
+    def getAccount(self):
+        session = get_session('ukhvoucher')
+        accounts = session.query(models.Account).filter(models.Account.oid==self.oid)
+        return accounts
+
+    def getVouchers(self, cat=None):
+        session = get_session('ukhvoucher')
+        query = session.query(models.Voucher).filter(
+            models.Voucher.user_id == self.oid)
+        if cat:
+            query = query.filter(models.Voucher.cat == cat)
+        return query.all()
+
+    def getJournalEntries(self):
+        session = get_session('ukhvoucher')
+        query = session.query(models.JournalEntry).filter(
+            models.JournalEntry.oid == self.oid)
+        return query.all()
+

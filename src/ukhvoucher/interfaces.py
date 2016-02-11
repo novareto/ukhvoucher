@@ -18,23 +18,26 @@ def get_oid(context):
     from sqlalchemy.sql.functions import max
     from ukhvoucher.models import Accounts, AddressTraeger, Address, AddressEinrichtung
     rc = []
+    rcc = []
     session = get_session('ukhvoucher')
     if isinstance(context, Accounts):
         try:
             oid = int(session.query(max(Address.oid)).one()[0]) + 1
         except:
             oid = 999000000000001
-        oid = 999000000000001
+        #oid = 999000000000001
 
         rc = [SimpleTerm(oid, oid, u'%s neues Unternehmen' % str(oid))]
     @forever.memoize
     def getValue():
         for x in session.query(Address):
             rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+            rcc.append(x.oid)
         for x in session.query(AddressTraeger):
-            rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
-        for x in session.query(AddressEinrichtung):
-            rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+            if x.oid not in rcc:
+                rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+        #for x in session.query(AddressEinrichtung):
+        #    rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
         return SimpleVocabulary(rc)
     return getValue()
 
@@ -53,9 +56,55 @@ def getInvoiceId():
 @grok.provider(IContextSourceBinder)
 def get_reason(context):
     rc = [
-        SimpleTerm(u'', u'', u'OK'),
-        SimpleTerm(u'Teilnehmer != Rechnung', u'Teilnehmer != Rechnung', u'Teilnehmer != Rechnung'),
-        SimpleTerm(u'Rechnungssumme falsch', u'Rechnungssumme falsch', u'Rechnungssumme falsch'),
+        SimpleTerm(u'', u'', u''),
+        SimpleTerm(u'Ablehnung, da keine Teilnehmercodes anbei',
+                   u'Ablehnung, da keine Teilnehmercodes anbei',
+                   u'Ablehnung, da keine Teilnehmercodes anbei'),
+        SimpleTerm(u'Ablehnung, da nicht ausreichend Teilnehmercodes anbei',
+                   u'Ablehnung, da nicht ausreichend Teilnehmercodes anbei',
+                   u'Ablehnung, da nicht ausreichend Teilnehmercodes anbei'),
+        SimpleTerm(u'Ablehnung, da doppelte Teilnehmercodes eingereicht wurden',
+                   u'Ablehnung, da doppelte Teilnehmercodes eingereicht wurden',
+                   u'Ablehnung, da doppelte Teilnehmercodes eingereicht wurden'),
+        SimpleTerm(u'Ablehnung, da unterzeichnete Original-Teilnehmerliste fehlt',
+                   u'Ablehnung, da unterzeichnete Original-Teilnehmerliste fehlt',
+                   u'Ablehnung, da unterzeichnete Original-Teilnehmerliste fehlt'),
+        SimpleTerm(u'Ablehnung, da eine falsche Lehrgangsgebuehr zu Grunde gelegt wurde',
+                   u'Ablehnung, da eine falsche Lehrgangsgebuehr zu Grunde gelegt wurde',
+                   u'Ablehnung, da eine falsche Lehrgangsgebühr zu Grunde gelegt wurde'),
+        SimpleTerm(u'Ablehnung, da die fachliche/oertliche Zustaendigkeit der UKH nicht gegeben ist',
+                   u'Ablehnung, da die fachliche/oertliche Zustaendigkeit der UKH nicht gegeben ist',
+                   u'Ablehnung, da die fachliche/örtliche Zuständigkeit der UKH nicht gegeben ist'),
+        SimpleTerm(u'Ablehnung, da 7 UE-Zusatzlehrgang FFW',
+                   u'Ablehnung, da 7 UE-Zusatzlehrgang FFW',
+                   u'Ablehnung, da 7 UE-Zusatzlehrgang FFW'),
+        SimpleTerm(u'Ablehnung, da keine ermaechtigte Stelle',
+                   u'Ablehnung, da keine ermaechtigte Stelle',
+                   u'Ablehnung, da keine ermächtigte Stelle'),
+        SimpleTerm(u'Ablehnung, da kein anerkannter Erste Hilfe-Lehrgang',
+                   u'Ablehnung, da kein anerkannter Erste Hilfe-Lehrgang',
+                   u'Ablehnung, da kein anerkannter Erste Hilfe-Lehrgang'),
+        SimpleTerm(u'Ablehnung, da keine vollstaendigen Unterlagen und Daten',
+                   u'Ablehnung, da keine vollstaendigen Unterlagen und Daten',
+                   u'Ablehnung, da keine vollständigen Unterlagen und Daten'),
+        SimpleTerm(u'Kuerzung, da nicht ausreichend Teilnehmercodes anbei',
+                   u'Kuerzung, da nicht ausreichend Teilnehmercodes anbei',
+                   u'Kürzung, da nicht ausreichend Teilnehmercodes anbei'),
+        SimpleTerm(u'Kuerzung, da doppelte Teilnehmercodes eingereicht wurden',
+                   u'Kuerzung, da doppelte Teilnehmercodes eingereicht wurden',
+                   u'Kürzung, da doppelte Teilnehmercodes eingereicht wurden'),
+        SimpleTerm(u'Kuerzung, da unterzeichnete Original-Teilnehmerliste fehlt',
+                   u'Kuerzung, da unterzeichnete Original-Teilnehmerliste fehlt',
+                   u'Kürzung, da unterzeichnete Original-Teilnehmerliste fehlt'),
+        SimpleTerm(u'Kuerzung, da eine falsche Lehrgangsgebuehr zu Grunde gelegt wurde',
+                   u'Kuerzung, da eine falsche Lehrgangsgebuehr zu Grunde gelegt wurde',
+                   u'Kürzung, da eine falsche Lehrgangsgebühr zu Grunde gelegt wurde'),
+        SimpleTerm(u'Kuerzung, da die fachliche/oertliche Zustaendigkeit der UKH nicht gegeben ist',
+                   u'Kuerzung, da die fachliche/oertliche Zustaendigkeit der UKH nicht gegeben ist',
+                   u'Kürzung, da die fachliche/örtliche Zuständigkeit der UKH nicht gegeben ist'),
+        SimpleTerm(u'Zahlung erfolgt an Mitgliedsunternehmen/-betrieb oder Privatperson/Tagespflegeperson',
+                   u'Zahlung erfolgt an Mitgliedsunternehmen/-betrieb oder Privatperson/Tagespflegeperson',
+                   u'Zahlung erfolgt an Mitgliedsunternehmen/-betrieb oder Privatperson/Tagespflegeperson'),
     ]
     return SimpleVocabulary(rc)
 
@@ -84,8 +133,8 @@ def get_kategorie(context):
 class IVouchersCreation(Interface):
 
     number = schema.Int(
-        title=_(u"Number of vouchers"),
-        description=_(u"Number of vouchers to query"),
+        title=_(u"Anzahl der Gutscheine"),
+        description=_(u"Wie viele Gutscheine sollen angelegt werden?"),
         required=True,
         )
 
@@ -123,7 +172,7 @@ class IModelContainer(Interface):
 class IDisablingVouchers(Interface):
     vouchers = schema.Set(
         value_type=schema.Choice(source=get_source('vouchers')),
-        title=_(u"Vouchers"),
+        title=_(u"Gutscheine"),
         required=True,
     )
 
@@ -131,11 +180,17 @@ class IDisablingVouchers(Interface):
 class IJournalize(Interface):
 
     note = schema.TextLine(
-        title=_(u"Note"),
-        description=u"Journal note.",
+        title=_(u"Notiz"),
+        description=u"Eintrag in der Historie.",
         required=False,
     )
-    
+
+
+def gN(context=None):
+    if VOCABULARIES:
+        return VOCABULARIES['account'](context)
+    return u""
+
 
 class IAccount(Interface):
 
@@ -147,7 +202,7 @@ class IAccount(Interface):
 
     oid = schema.Choice(
         title=_(u"Unique identifier"),
-        description=_(u"Internal identifier"),
+        description=_(u"Eindeutiger Schlüssel OID"),
         required=True,
         source=get_oid,
     )
@@ -156,6 +211,7 @@ class IAccount(Interface):
         title=_(u"Benutzerkennung"),
         description=_(u"Benutzerkennung"),
         required=True,
+        defaultFactory=gN,
     )
 
     az = schema.TextLine(
@@ -248,6 +304,11 @@ class IAddress(Interface):
         required=True,
     )
 
+    mnr = schema.TextLine(
+        title=_(u"Mitgliedsnummer"),
+        required=False,
+    )
+
     name1 = schema.TextLine(
         title=_(u"Address Name1"),
         required=True,
@@ -295,7 +356,7 @@ class IInvoice(Interface):
 
     reason = schema.Choice(
         title=_(u'Begründung'),
-        description=_(u'Bitte geben wählen Sie hier aus warum Sie mit der Rechnung nicht einverstanden sein'),
+        description=_(u'Sind sie mit den Gutscheinen der Rechnung nicht einverstanden?'),
         source=get_reason,
         required = False,
     )
@@ -390,6 +451,12 @@ class IKG4(Interface):
 class IKG5(Interface):
     u"""Einrichtungen mit spezieller Gefährdung"""
 
+    merkmal = schema.Choice(
+        title=u"Welches Merkmal trifft für die besondere Gefährdung zu:",
+        values=(u'',
+                u'Beschaeftigte im Freilichtmuseum Hessenpark',
+                u'Beschaeftigte in der Tierpflege'))
+
     mitarbeiter = schema.Int(
         title=_(u"Beschäftigte"),
     )
@@ -397,6 +464,17 @@ class IKG5(Interface):
 
 class IKG6(Interface):
     u"""Beschäftigte und Einrichtungen mit spezieller Gefährdung"""
+
+    merkmal = schema.Choice(
+        title=u"Welches Merkmal trifft für die besondere Gefährdung zu:",
+        values=(u'',
+                u'mit Waldarbeiten Beschaeftigte von Hessen-Forst',
+                u'im Strassendienst Beschaeftigte von Hessen mobil',
+                u'im Aussendienst Beschaeftigte bei der Hessischen Verwaltung fuer Bodenmanagement',
+                u'mit Arbeiten im Kanalnetz Beschaeftigte in Abwasserbetrieben',
+                u'mit Arbeiten im Schaechten Beschaeftigte in Wasserversorgungsbetrieben',
+                u'auf Deponien Beschaeftigte',
+                u'Beschaeftigte von N*ICE (ohne Leiharbeitnehmer)'))
 
     mitarbeiter = schema.Int(
         title=_(u"Beschäftigte"),

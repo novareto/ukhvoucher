@@ -37,7 +37,7 @@ class SearchAction(uvclight.Action):
 
                 if attr in details.relationships.keys():
                     relation = details.relationships.get(attr)
-                    modelcls = relation.mapper.class_                    
+                    modelcls = relation.mapper.class_
                     if relation.collection_class is None:
                         query = query.join(relation.mapper).filter(
                             modelcls.id == value.id)
@@ -79,7 +79,7 @@ class Search(uvclight.Form):
     prefix = ''
 
     actions = uvclight.Actions(
-        SearchAction(_(u'Search'), 'search'),
+        SearchAction(_(u'Suche'), 'search'),
     )
 
     def update(self):
@@ -93,7 +93,7 @@ class Search(uvclight.Form):
 
     @property
     def label(self):
-        return _(u"Search : ${item_type}",
+        return _(u"Suche : ${item_type}",
                  mapping=dict(item_type=self.context.model.__label__))
 
     @property

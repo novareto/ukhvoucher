@@ -26,7 +26,7 @@
                   <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 class="modal-title" id="myModalLabel" tal:content="cat['doc']" > </h4>
-                <p tal:content="cat['desc']"> </p>
+                <p tal:content="structure cat['desc']"> </p>
               </div>
               <div class="modal-body" tal:content="structure cat['form'].render()"> </div>
             </div>

@@ -3,13 +3,13 @@
 import uvclight
 import json
 from ..models import Voucher
-from ..interfaces import IAccount, IAdminLayer, IUserLayer
+from ..interfaces import IAccount, IAdminLayer
 from .forms import ModelIndex
-from dolmen.menu import Entry, menu
+from dolmen.menu import menu
 from ukhtheme.uvclight.viewlets import BelowContent
-from uvc.design.canvas import menus
 from uvc.entities.browser.menus import IPersonalMenu, INavigationMenu
 from zope.interface import Interface
+from cromlech.browser import getSession
 
 
 class Categories(uvclight.Viewlet):
@@ -24,7 +24,7 @@ class Categories(uvclight.Viewlet):
             values += [(kid, getattr(category, kid))
                        for kid in ('kat1', 'kat2', 'kat3', 'kat4', 'kat5')]
         if not values:
-            return u"No categories"
+            return u"Keine Kategorien"
         return "Categories: %s" % ', '.join(
             (kat[0] for kat in values if kat[1]))
 
@@ -41,7 +41,7 @@ class VoucherGeneration(uvclight.Viewlet):
             self.data = json.loads(self.context.generation.data)
         else:
             self.data = None
-    
+
 
 class Username(uvclight.MenuItem):
     uvclight.context(Interface)
@@ -107,7 +107,7 @@ class MenuAddresses(BaseNavMenu):
 class MenuKategorien(BaseNavMenu):
     uvclight.order(4)
     attribute = "categories"
-    title = "Katgorien"
+    title = "Kategorien"
 
 
 class MenuVouchers(BaseNavMenu):
@@ -118,4 +118,43 @@ class MenuVouchers(BaseNavMenu):
 class Journal(BaseNavMenu):
     uvclight.order(6)
     attribute = "journal"
-    title = u"Journal"
+    title = u"Historie"
+
+
+class LogoutMenu(uvclight.MenuItem):
+    uvclight.context(Interface)
+    menu(IPersonalMenu)
+    uvclight.title(u'Logout')
+    id = "lmi"
+    submenu = None
+
+    @property
+    def action(self):
+        return self.view.application_url() + '/logout1'
+
+
+class Logout(uvclight.View):
+    uvclight.context(uvclight.IRootObject)
+    uvclight.name('logout1')
+    uvclight.auth.require('zope.Public')
+
+    def make_response(self, result, *args, **kwargs):
+        response = super(Logout, self).make_response(result, *args, **kwargs)
+        url = self.application_url()
+        response.url = url
+        response.location = url
+        response.status_int = 302
+        response.delete_cookie('auth_pubtkt', path='/', domain='kuvb.de')
+        return response
+
+    def update(self):
+        session = getSession()
+        if session:
+            if 'username' in session:
+                del session['username']
+            if 'masquarde' in session:
+                del session['masquarade']
+
+    def render(self):
+        return self.redirect(self.application_url())
+

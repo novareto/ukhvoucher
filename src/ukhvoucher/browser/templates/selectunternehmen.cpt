@@ -1,0 +1,21 @@
+<h1> Erste Hilfe Portal </h1>
+<p>
+<a href="" class="btn btn-primary" tal:attributes='href "%s/invoices/add" % (view.application_url())'> Neue Rechnung erstellen </a>
+</p>
+<fieldset>
+    <legend> Bitte wählen Sie hier das Mitglied aus </legend>
+    <form enctype="multipart/form-data" method="post" novalidate="novalidate"
+        id="selectunternehmen"
+        action="" class="form-inline pull-right" tal:attributes="action viewlet.action_url">
+
+        <div class="form-group" id="select_unternehmen" tal:define="widget form.fieldWidgets.get('form.field.oid')">
+            <div class="select-wrapper">
+                <span metal:use-macro="macro['field-inline']"> </span>
+            </div>
+        </div>
+
+        <span tal:define="widget form.actionWidgets.get('form.action.masq')">
+            <span metal:use-macro="macro['action-inline']"></span>
+        </span>
+    </form>
+</fieldset>
