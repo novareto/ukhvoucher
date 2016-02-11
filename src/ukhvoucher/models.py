@@ -6,6 +6,7 @@ from .interfaces import IModel, IModelContainer, IIdentified
 from . import _
 
 import uvclight
+from urllib import quote, unquote
 from cromlech.sqlalchemy import get_session
 from dolmen.sqlcontainer import SQLContainer
 from sqlalchemy import *
@@ -160,7 +161,7 @@ class Account(Base, Location):
     oid = Column('oid', Integer, primary_key=True)
     email = Column('email', String)
     login = Column('login', String)
-    az = Column('az', String)
+    az = Column('az', String, primary_key=True)
     vname = Column('vname', String)
     nname = Column('nname', String)
     phone = Column('tlnr', String)
@@ -264,11 +265,17 @@ class Accounts(SQLContainer):
     listing_attrs = uvclight.Fields(Account.__schema__).select(
         'oid', 'login', 'email', 'name')
 
-    def key_reverse(self, obj):
-        return str(obj.oid)
-
     def key_converter(self, id):
-        return int(id)
+        keys = unquote(id)
+        try:
+            login, az = keys.split(' ')
+            return login, int(az)
+        except ValueError:
+            return None
+
+    def key_reverse(self, obj):
+        return quote('%s %s' % (obj.login, obj.az))
+
 
 
 @implementer(IContent, IModelContainer)

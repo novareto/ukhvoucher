@@ -37,7 +37,10 @@ class VoucherGeneration(uvclight.Viewlet):
     template = uvclight.get_template('generation.cpt', __file__)
 
     def update(self):
-        self.data = json.loads(self.context.generation.data)
+        if self.context.generation is not None:
+            self.data = json.loads(self.context.generation.data)
+        else:
+            self.data = None
     
 
 class Username(uvclight.MenuItem):

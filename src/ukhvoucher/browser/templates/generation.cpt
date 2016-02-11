@@ -1,4 +1,4 @@
-<fieldset>
+<fieldset tal:condition="viewlet.data">
   <legend>Voucher generation</legend>
   <p>
     This voucher is part of the generation ${viewlet.context.generation.oid}
