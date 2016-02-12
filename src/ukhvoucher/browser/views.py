@@ -228,13 +228,13 @@ class AdminRootIndex(uvclight.Page):
         rc.append(
                 HTML.tag(
                     'a',
-                    href="%s/accounts/%s/ask.vouchers" % (self.application_url(), oid),
+                    href="%s/account/%s/ask.vouchers" % (self.application_url(), oid),
                     c=u"Zusätzliche Gutscheine erzeugen",)
                 )
         rc.append(
                 HTML.tag(
                     'a',
-                    href="%s/accounts/%s/disable.vouchers" % (self.application_url(), oid),
+                    href="%s/account/%s/disable.vouchers" % (self.application_url(), oid),
                     c=u"Gutscheine löschen",)
                 )
         return rc
@@ -269,7 +269,7 @@ class ContainerIndex(uvclight.Page):
 
     def batch_elements(self):
         return list(self.context)
-                
+
     def set_batch(self):
         self.batcher = Batcher(self.context, self.request, size=10)
         elements = self.batch_elements()
@@ -283,7 +283,7 @@ class ContainerIndex(uvclight.Page):
                 self, **self.namespace())
         else:
             self.batch = u''
-                
+
     def update(self):
         ukhcss.need()
         self.columns = [field.title for field in self.context.listing_attrs]
@@ -316,7 +316,6 @@ class TT(uvclight.View):
     require('manage.vouchers')
 
     def render(self):
-        from ukhvoucher.models import TestTable
         session = get_session('ukhvoucher')
         tt = session.query(models.AddressEinrichtung.name1).all()
         return ""

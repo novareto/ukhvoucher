@@ -46,10 +46,33 @@ class AdminUsers(GlobalUtility):
                 return user
         return None
 
+from zope.location import ILocation, Location, LocationProxy, locate
+class AccountTraverser(Location):
+
+    def __init__(self, parent, name):
+        self.__parent__ = parent
+        self.__name__ = name
+
+    def __getitem__(self, key):
+        session = get_session('ukhvoucher')
+        try:
+            ret = session.query(Account).filter(Account.oid == key).all()
+            if ret > 0:
+                model = ret[0]
+                proxy = ILocation(model, None)
+                if proxy is None:
+                    proxy = LocationProxy(model)
+                locate(proxy, self, str(model.oid))
+                return proxy
+            else:
+                raise KeyError
+        except:
+            raise KeyError
+
 
 @implementer(IPublicationRoot)
 class AdminRoot(Location):
-    traversable('categories', 'accounts', 'addresses', 'vouchers', 'invoices')
+    traversable('categories', 'accounts', 'addresses', 'vouchers', 'invoices', 'account')
 
     credentials = ('admins',)
 
@@ -62,6 +85,7 @@ class AdminRoot(Location):
         self.vouchers = Vouchers(self, 'vouchers', session_key)
         self.invoices = Invoices(self, 'invoices', session_key)
         self.categories = Categories(self, 'categories', session_key)
+        self.account = AccountTraverser(self, 'account')
 
 
 class Admin(SQLPublication, SecurePublication):

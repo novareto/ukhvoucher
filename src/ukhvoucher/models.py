@@ -19,8 +19,10 @@ from zope.location import Location
 from sqlalchemy import types
 
 
-schema = 'UKHINTERN'
 schema = ''
+schema = 'UKHINTERN.'
+
+print "SCHEMA", schema
 
 
 class StrippedString(types.TypeDecorator):
@@ -52,7 +54,7 @@ class Address(Base, Location):
     __label__ = _(u"Address")
 
     if schema:
-        __table_args__ = {"schema": schema}
+        __table_args__ = {"schema": schema[:-1]}
 
     oid = Column('oid', Integer, primary_key=True, autoincrement=True)
     name1 = Column('iknam1', String(28))
@@ -79,7 +81,7 @@ class Address(Base, Location):
 class JournalEntry(Base):
     __tablename__ = 'Z1EHRJRN_T'
     if schema:
-        __table_args__ = {"schema": schema}
+        __table_args__ = {"schema": schema[:-1]}
 
     jid = Column('jrnoid', Integer, primary_key=True)
     date = Column('jrn_dat', DateTime)
@@ -92,7 +94,7 @@ class JournalEntry(Base):
 class AddressEinrichtung(Base):
     __tablename__ = 'z1ext9ac'
     if schema:
-        __table_args__ = {"schema": schema}
+        __table_args__ = {"schema": schema[:-1]}
 
     oid = Column('enrrcd', String, primary_key=True)
     mnr = Column('enrnum', String)
@@ -108,7 +110,7 @@ class AddressEinrichtung(Base):
 class AddressTraeger(Base):
     __tablename__ = 'z1ext9ab'
     if schema:
-        __table_args__ = {"schema": schema}
+        __table_args__ = {"schema": schema[:-1]}
 
     oid = Column('trgrcd', String, primary_key=True)
     mnr = Column('trgmnr', String)
@@ -129,7 +131,7 @@ class Category(Base, Location):
     __label__ = _(u"Kategorie")
 
     if schema:
-        __table_args__ = {"schema": schema}
+        __table_args__ = {"schema": schema[:-1]}
 
     oid = Column('oid', String, primary_key=True)
     kat1 = Column('kat1', Boolean)
@@ -156,13 +158,13 @@ class Account(Base, Location):
     __schema__ = IAccount
     __label__ = _(u"Account")
     if schema:
-        __table_args__ = {"schema": schema}
+        __table_args__ = {"schema": schema[:-1]}
 
     model = Address
 
     oid = Column('oid', Integer, primary_key=True)
     email = Column('email', String)
-    login = Column('login', String)
+    login = Column('login', String, primary_key=True)
     az = Column('az', String, primary_key=True)
     vname = Column('vname', String)
     nname = Column('nname', String)
@@ -184,7 +186,6 @@ class Account(Base, Location):
     search_attr = "oid"
     searchable_attrs = ("oid", "email", "name")
 
-
 @implementer(IModel, IIdentified, IVoucher)
 class Voucher(Base, Location):
 
@@ -192,7 +193,7 @@ class Voucher(Base, Location):
     __schema__ = IVoucher
     __label__ = _(u"Vouchers")
     if schema:
-        __table_args__ = {"schema": schema}
+        __table_args__ = {"schema": schema[:-1]}
 
     oid = Column('vch_oid', Integer, primary_key=True)
     creation_date = Column('erst_dat', DateTime)
@@ -233,7 +234,7 @@ class Invoice(Base, Location):
     __schema__ = IInvoice
     __label__ = _(u"Invoice")
     if schema:
-        __table_args__ = {"schema": schema}
+        __table_args__ = {"schema": schema[:-1]}
 
     oid = Column('rech_oid', Integer, primary_key=True)
     reason = Column('grund', StrippedString)
@@ -254,7 +255,7 @@ class Invoice(Base, Location):
 class Generation(Base):
     __tablename__ = 'z1ehrbgl_t'
     if schema:
-        __table_args__ = {"schema": schema}
+        __table_args__ = {"schema": schema[:-1]}
 
     oid = Column('bgl_oid', Integer, primary_key=True)
     date = Column('vcb_dat', DateTime)
@@ -279,13 +280,13 @@ class Accounts(SQLContainer):
     def key_converter(self, id):
         keys = unquote(id)
         try:
-            login, az = keys.split(' ')
-            return login, int(az)
+            oid, login, az = keys.split(' ')
+            return oid, login, az
         except ValueError:
             return None
 
     def key_reverse(self, obj):
-        return quote('%s %s' % (obj.login, obj.az))
+        return quote('%s %s %s' % (obj.oid, obj.login, obj.az))
 
 
 
