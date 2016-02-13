@@ -3,6 +3,7 @@
 from . import Base
 from .interfaces import IVoucher, IInvoice, IAddress, IAccount, ICategory
 from .interfaces import IModel, IModelContainer, IIdentified
+from .interfaces import IVoucherSearch, IInvoiceSearch
 from . import _
 from zope.location import ILocation, Location, LocationProxy, locate
 
@@ -313,6 +314,8 @@ class Vouchers(SQLContainer):
     listing_attrs = uvclight.Fields(Voucher.__schema__).select(
         'oid', 'cat', 'status', 'user_id', 'displayData')
 
+    search_fields = uvclight.Fields(IVoucherSearch)
+
     def key_reverse(self, obj):
         return '%s' % obj.oid
 
@@ -327,6 +330,8 @@ class Invoices(SQLContainer):
     model = Invoice
     listing_attrs = uvclight.Fields(Invoice.__schema__).select(
         'oid', 'description', 'vouchers')
+
+    search_fields = uvclight.Fields(IInvoiceSearch)
 
     def key_reverse(self, obj):
         return str(obj.oid)

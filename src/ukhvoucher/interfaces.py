@@ -488,3 +488,40 @@ class IKG7(Interface):
         title=_(u"Anzahl Lehrkräfte"),
     )
 
+
+class IVoucherSearch(Interface):
+
+    voucher = schema.Choice(
+        source=get_source('vouchers'),
+        title=_(u"Vouchers"),
+        required=False,
+    )
+
+    status = schema.TextLine(
+        title=_(u"Status"),
+        required=False,
+    )
+
+    user_id = schema.Choice(
+        title=_(u"User id"),
+        source=get_source('accounts'),
+        required=False,
+    )
+
+
+class IInvoiceSearch(Interface):
+
+    oid = schema.Choice(
+        title=_(u"Unique Invoice identifier"),
+        description=_(u"Internal identifier of the invoice"),
+        required=False,
+        source=get_source('invoices'),
+    )
+
+    reason = schema.Choice(
+        title=_(u'Begründung'),
+        description=_(u'Sind sie mit den Gutscheinen der Rechnung nicht einvers\
+tanden?'),
+        source=get_reason,
+        required=False,
+    )
