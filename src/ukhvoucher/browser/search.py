@@ -101,17 +101,18 @@ class Search(uvclight.Form, ContainerIndex):
 
     @property
     def fields(self):
-        fields = uvclight.Fields(self.context.model.__schema__).select(
-            *self.context.model.searchable_attrs)
-        for field in fields:
-            field.prefix = ''
-            field.description = ''
-            field.required = False
-            field.defaultValue = ''
-            field.defaultFactory = None
-            if field.identifier in MULTISELECTS:
-                field.mode = 'multiselect'
-
+        fields = getattr(self.context, 'search_fields', None)
+        if fields is None:
+            fields = uvclight.Fields(self.context.model.__schema__).select(
+                *self.context.model.searchable_attrs)
+            for field in fields:
+                field.prefix = ''
+                field.description = ''
+                field.required = False
+                field.defaultValue = ''
+                field.defaultFactory = None
+                if field.identifier in MULTISELECTS:
+                    field.mode = 'multiselect'
         return fields
 
 
