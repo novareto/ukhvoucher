@@ -8,6 +8,7 @@ from ..apps import AdminRoot, UserRoot
 from ..interfaces import IModel, IModelContainer
 from ..interfaces import IAdminLayer, IUserLayer
 from ..models import Accounts, Account, Addresses, Address, Vouchers, Voucher
+from ..resources import ukhvouchers
 from zope.component import getMultiAdapter
 from zope.interface import Interface
 
@@ -30,8 +31,11 @@ class SearchAction(uvclight.Action):
         relationships = details.relationships.keys()
 
         query = session.query(model)
+        print model.searchable_attrs
         for attr in model.searchable_attrs:
+
             if attr in data:
+                print data
                 value = data[attr]
                 if value is NO_VALUE:
                     continue
@@ -53,7 +57,7 @@ class SearchAction(uvclight.Action):
                         query = query.filter(column.like("%%%s%%" % value))
                     else:
                         query = query.filter(column == value)
-
+        print query
         return query
 
     def __call__(self, view):
@@ -65,10 +69,11 @@ class SearchAction(uvclight.Action):
 
         model = view.context.model
         session = view.context.session
+        print data
         view.results = [
             LocationProxy(res, view.context, str(res.oid))
             for res in self.search(session, model, **data)]
-    
+
         return uvclight.SUCCESS
 
 
@@ -88,6 +93,7 @@ class Search(uvclight.Form, ContainerIndex):
     )
 
     def updateForm(self):
+        ukhvouchers.need()
         uvclight.Form.updateForm(self)
         ContainerIndex.update(self)
 
@@ -113,6 +119,7 @@ class Search(uvclight.Form, ContainerIndex):
                 field.defaultFactory = None
                 if field.identifier in MULTISELECTS:
                     field.mode = 'multiselect'
+
         return fields
 
 

@@ -9,10 +9,15 @@
 	</h4>
       </div>
       <div class="col-md-8">
+<<<<<<< HEAD
 	<input type="text" class="form-control"
 	       placeholder=""
 	       tal:attributes="name component.attribute;
 	                       placeholder component.placeholder" />
+=======
+	<input type="text" class="form-control" placeholder="Suchen"
+	       tal:attributes="name component.attribute" />
+>>>>>>> 4f109a08ebefa3a48af6681753a46a2c921a8a19
 	<input type="hidden" name="action.search" value="Search" />
       </div>
       <div class="col-md-1">

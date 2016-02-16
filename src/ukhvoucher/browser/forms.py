@@ -85,7 +85,7 @@ class CreateModel(Form):
 
         # journalize
         entry = JournalEntry(
-            date=datetime.now(), # .strftime('%Y-%m-%d'),
+            date=datetime.now().strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
             action=u"Add:%s" % self.context.model.__label__,
             oid=data['oid'],
@@ -249,7 +249,7 @@ class AskForVouchers(Form):
             p = int(session.query(max(Generation.oid)).one()[0]) + 1
             generation = Generation(
                 oid=p,
-                date=now, #.strftime('%Y-%m-%d'),
+                date=now.strftime('%Y-%m-%d'),
                 type=data['kategorie'],
                 data=json.dumps('Manuelle Erzeugung'),
                 user=self.request.principal.id,
@@ -258,7 +258,7 @@ class AskForVouchers(Form):
 
             for idx in range(number):
                 voucher = Voucher(
-                    creation_date=datetime.now(), #.strftime('%Y-%m-%d'),
+                    creation_date=datetime.now().strftime('%Y-%m-%d'),
                     status=CREATED,
                     cat = data['kategorie'],
                     user_id=self.context.oid,
@@ -270,7 +270,7 @@ class AskForVouchers(Form):
 
             # journalize
             entry = JournalEntry(
-                date=datetime.now(), #.strftime('%Y-%m-%d'),
+                date=datetime.now().strftime('%Y-%m-%d'),
                 userid=self.request.principal.id,
                 action=u"Add:%s" % self.context.model.__label__,
                 oid=str(self.context.oid),
@@ -330,7 +330,7 @@ class DisableVouchers(Form):
         # journalize
         session = get_session('ukhvoucher')
         entry = JournalEntry(
-            date=datetime.now(), #.strftime('%Y-%m-%d'),
+            date=datetime.now().strftime('%Y-%m-%d'),
             userid="admin", #str(self.request.principal.id),
             action=u"%s Gutscheine rm" % len(data['vouchers']),
             oid=self.context.oid,
