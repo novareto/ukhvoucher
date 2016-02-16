@@ -213,7 +213,7 @@ class Voucher(Base, Location):
 
     # search attributes
     search_attr = "oid"
-    searchable_attrs = ("oid", "status", "user_id")
+    searchable_attrs = ("oid", "status", 'user_id')
 
     @property
     def displayData(self):
@@ -312,7 +312,7 @@ class Vouchers(SQLContainer):
 
     model = Voucher
     listing_attrs = uvclight.Fields(Voucher.__schema__).select(
-        'oid', 'cat', 'status', 'user_id', 'displayData')
+        'oid', 'cat', 'status',' user_id', 'displayData')
 
     search_fields = uvclight.Fields(IVoucherSearch)
 

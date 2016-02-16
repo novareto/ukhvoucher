@@ -9,35 +9,37 @@ from zope.interface import Interface, Attribute
 from zope.schema.interfaces import IContextSourceBinder
 from cromlech.sqlalchemy import get_session
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
-from plone.memoize import forever
+from plone.memoize import forever, ram
+from time import time
 
 
 
 @grok.provider(IContextSourceBinder)
 def get_oid(context):
-    from sqlalchemy.sql.functions import max
     from ukhvoucher.models import Accounts, AddressTraeger, Address, AddressEinrichtung
     rc = []
     rcc = []
     session = get_session('ukhvoucher')
-    if isinstance(context, Accounts):
-        try:
-            oid = int(session.query(max(Address.oid)).one()[0]) + 1
-        except:
-            oid = 999000000000001
-        #oid = 999000000000001
-
-        rc = [SimpleTerm(oid, oid, u'%s neues Unternehmen' % str(oid))]
-    @forever.memoize
+    #if isinstance(context, Accounts):
+    #    try:
+    #        oid = int(session.query(max(Address.oid)).one()[0]) + 1
+    #    except:
+    #        oid = 999000000000001
+    #    #oid = 999000000000001
+#
+     #   rc = [SimpleTerm(oid, oid, u'%s neues Unternehmen' % str(oid))]
+    #@forever.memoize
+    @ram.cache(lambda *args: time() // (60 * 60))
     def getValue():
+        print " IAM CALLED"
         for x in session.query(Address):
             rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
             rcc.append(x.oid)
         for x in session.query(AddressTraeger):
             if x.oid not in rcc:
                 rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
-        #for x in session.query(AddressEinrichtung):
-        #    rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+        for x in session.query(AddressEinrichtung):
+            rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
         return SimpleVocabulary(rc)
     return getValue()
 
@@ -491,8 +493,8 @@ class IKG7(Interface):
 
 class IVoucherSearch(Interface):
 
-    voucher = schema.Choice(
-        source=get_source('vouchers'),
+    oid = schema.Choice(
+        source=get_source('all_vouchers'),
         title=_(u"Vouchers"),
         required=False,
     )

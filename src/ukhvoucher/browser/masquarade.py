@@ -8,7 +8,10 @@ from zope.schema import Choice
 from zope.interface import Interface
 from ukhvoucher.browser.views import AdminRootIndex
 from ..interfaces import IAdminLayer, get_oid
-
+from profilehooks import profile
+from plone.memoize import forever
+from plone.memoize import ram
+from time import time
 
 
 class IAccounts(Interface):
@@ -50,7 +53,9 @@ class UserMasquarade(uvclight.ViewletForm):
         session['masquarade'] = data['oid']
         self.view.redirect(self.request.path)
 
+    #@ram.cache(lambda *args: time() // (60 * 60))
     def render(self):
+        print "I AM CALLED"
         form = uvclight.ViewletForm.render(self)
         return form
 

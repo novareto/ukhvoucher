@@ -271,7 +271,7 @@ class ContainerIndex(uvclight.Page):
         return list(self.context)
 
     def set_batch(self):
-        self.batcher = Batcher(self.context, self.request, size=10)
+        self.batcher = Batcher(self.context, self.request, size=50)
         elements = self.batch_elements()
         if elements:
             self.batcher.update(elements)

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import grokcore.component as grok
+from sqlalchemy import distinct
 from . import VOCABULARIES, DISABLED, BOOKED
 from .models import Account, Invoice, Voucher, Address
 from cromlech.sqlalchemy import get_session
@@ -13,8 +14,10 @@ from zope.schema.interfaces import IContextAwareDefaultFactory
 @grok.provider(IContextSourceBinder)
 def accounts(context):
     session = get_session('ukhvoucher')
-    items = [SimpleTerm(item.oid, token=item.oid, title=item.title)
-             for item in session.query(Account).all()]
+    items = [SimpleTerm(None, None, u'Bitte auswählen')]
+    for user_id in session.query(distinct(Voucher.user_id)).all():
+        userid = int(user_id[0])
+        items.append(SimpleTerm(int(userid), token=userid, title=userid))
     return SimpleVocabulary(items)
 
 
@@ -23,6 +26,16 @@ def invoices(context):
     session = get_session('ukhvoucher')
     items = [SimpleTerm(item.oid, token=item.oid, title=item.title)
              for item in session.query(Invoice).all()]
+    return SimpleVocabulary(items)
+
+
+@grok.provider(IContextSourceBinder)
+def all_vouchers(context):
+    items = [SimpleTerm(None, None, u'Bitte auswählen')]
+    session = get_session('ukhvoucher')
+    query = session.query(Voucher)
+    for item in query.all():
+        items.append(SimpleTerm(item.oid, token=item.oid, title="%s - %s" %(item.title, item.status.strip())))
     return SimpleVocabulary(items)
 
 
@@ -41,7 +54,6 @@ def vouchers(context):
             disabled.add(item.oid)
     vocabulary = SimpleVocabulary(items)
     vocabulary.disabled_items = disabled
-    print vocabulary.disabled_items
     return vocabulary
 
 
@@ -71,6 +83,7 @@ def getNextID(context):
 VOCABULARIES['accounts'] = accounts
 VOCABULARIES['invoices'] = invoices
 VOCABULARIES['vouchers'] = vouchers
+VOCABULARIES['all_vouchers'] = all_vouchers
 VOCABULARIES['addresses'] = addresses
 VOCABULARIES['categories'] = categories
 VOCABULARIES['account'] = getNextID

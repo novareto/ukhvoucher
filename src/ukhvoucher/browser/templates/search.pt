@@ -9,7 +9,7 @@
 	</h4>
       </div>
       <div class="col-md-8">
-	<input type="text" class="form-control"
+	<input type="text" class="form-control" placeholder="Suchen"
 	       tal:attributes="name component.attribute" />
 	<input type="hidden" name="action.search" value="Search" />
       </div>
