@@ -137,6 +137,18 @@ class UserRootIndex(uvclight.Page):
                        Beachten Sie bitte auch, dass diese Personen unter „Andere Betriebe“ abzuziehen sind.</p>
                     <p>Geben Sie an, welches Merkmal für besondere Gefährdung zutrifft.</p>
                     """
+        if name == "IKG7":
+            desc = u"""
+                    <h1>H7: Hier könnte die Hilfe stehen...</h1>
+                    """
+        if name == "IKG8":
+            desc = u"""
+                    <h1>H8: Hier könnte die Hilfe stehen...</h1>
+                    """
+        if name == "IKG9":
+            desc = u"""
+                    <h1>H9: Hier könnte die Hilfe stehen...</h1>
+                    """
         return desc
 
 
@@ -191,13 +203,6 @@ class AdminRootIndex(uvclight.Page):
                         'a',
                         href="%s/accounts/add" % self.application_url(),
                         c="Neuen Account anlegen",)
-                    )
-        else:
-            rc.append(
-                    HTML.tag(
-                        'a',
-                        href="%s/accounts/%s/edit" % (self.application_url(), oid),
-                        c="Account bearbeiten",)
                     )
         return rc
 

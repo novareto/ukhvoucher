@@ -20,16 +20,7 @@ def get_oid(context):
     rc = []
     rcc = []
     session = get_session('ukhvoucher')
-    #if isinstance(context, Accounts):
-    #    try:
-    #        oid = int(session.query(max(Address.oid)).one()[0]) + 1
-    #    except:
-    #        oid = 999000000000001
-    #    #oid = 999000000000001
-#
-     #   rc = [SimpleTerm(oid, oid, u'%s neues Unternehmen' % str(oid))]
-    #@forever.memoize
-    @ram.cache(lambda *args: time() // (60 * 60))
+    @ram.cache(lambda *args: time() // (600 * 60))
     def getValue():
         print " IAM CALLED"
         for x in session.query(Address):
@@ -128,6 +119,8 @@ def get_kategorie(context):
         SimpleTerm(IKG5.getName(), IKG5.getName(), IKG5.getDoc()),
         SimpleTerm(IKG6.getName(), IKG6.getName(), IKG6.getDoc()),
         SimpleTerm(IKG7.getName(), IKG7.getName(), IKG7.getDoc()),
+        SimpleTerm(IKG8.getName(), IKG8.getName(), IKG8.getDoc()),
+        SimpleTerm(IKG9.getName(), IKG9.getName(), IKG9.getDoc()),
         ]
     return SimpleVocabulary(rc)
 
@@ -297,13 +290,23 @@ class ICategory(Interface):
         required=True,
     )
 
+    kat8 = schema.Bool(
+        title=_(u"Kategorie 8 - Angestellte in Schulen"),
+        required=True,
+    )
+
+    kat9 = schema.Bool(
+        title=_(u"Kategorie 9 - Schulbetreuung"),
+        required=True,
+    )
+
 
 class IAddress(Interface):
 
     oid = schema.TextLine(
         title=_(u"Unique user identifier"),
         description=_(u"Internal identifier of the user"),
-        required=True,
+        required=False,
     )
 
     mnr = schema.TextLine(
@@ -356,6 +359,12 @@ class IInvoice(Interface):
         defaultFactory=getInvoiceId,
     )
 
+    vouchers = schema.Set(
+        value_type=schema.Choice(source=get_source('vouchers')),
+        title=_(u"Vouchers"),
+        required=True,
+    )
+
     reason = schema.Choice(
         title=_(u'Begründung'),
         description=_(u'Sind sie mit den Gutscheinen der Rechnung nicht einverstanden?'),
@@ -368,11 +377,6 @@ class IInvoice(Interface):
         required=False,
     )
 
-    vouchers = schema.Set(
-        value_type=schema.Choice(source=get_source('vouchers')),
-        title=_(u"Vouchers"),
-        required=True,
-    )
 
 
 class IVoucher(Interface):
@@ -491,12 +495,29 @@ class IKG7(Interface):
     )
 
 
+class IKG8(Interface):
+    u"""Angestellte in Schulen"""
+
+    mitarbeiter = schema.Int(
+        title=_(u"Angestellte Personen"),
+    )
+
+
+class IKG9(Interface):
+    u"""Schulbetreuung"""
+
+    mitarbeiter = schema.Int(
+        title=_(u"Angestellte Personen"),
+    )
+
+
 class IVoucherSearch(Interface):
 
     oid = schema.Choice(
         source=get_source('all_vouchers'),
         title=_(u"Vouchers"),
         required=False,
+        missing_value=None,
     )
 
     status = schema.TextLine(

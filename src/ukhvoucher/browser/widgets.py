@@ -19,7 +19,7 @@ class MultiSelectFieldWidget(MultiChoiceFieldWidget):
     template = uvclight.get_template('disabled.cpt', __file__)
 
     def update(self):
-        self._disabled = self.component.valueField.vocabularyFactory(None).disabled_items
+        self._disabled = self.component.valueField.vocabularyFactory(self.form.context).disabled_items
         MultiChoiceFieldWidget.update(self)
 
     def disabled(self, token):

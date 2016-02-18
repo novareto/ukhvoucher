@@ -8,7 +8,7 @@ from ukhvoucher import CREATED
 from ukhvoucher.apps import UserRoot
 from ukhvoucher.models import Voucher, Generation
 from ukhvoucher.interfaces import IUserLayer
-from ukhvoucher.interfaces import IKG1, IKG2, IKG3, IKG4, IKG5, IKG6, IKG7
+from ukhvoucher.interfaces import IKG1, IKG2, IKG3, IKG4, IKG5, IKG6, IKG7, IKG8, IKG9
 
 from dolmen.forms.base.markers import FAILURE
 from dolmen.forms.base import Action, SuccessMarker, Actions
@@ -150,3 +150,18 @@ class IKG7Form(KGBaseForm):
     def calculate(self, mitarbeiter):
         return mitarbeiter * 15 / 100
 
+
+class IKG8Form(KGBaseForm):
+    _iface = IKG8
+    label = u""
+
+    def calculate(self, mitarbeiter):
+        return mitarbeiter
+
+
+class IKG9Form(KGBaseForm):
+    _iface = IKG9
+    label = u""
+
+    def calculate(self, mitarbeiter):
+        return mitarbeiter

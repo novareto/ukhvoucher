@@ -3,6 +3,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from zope.i18nmessageid import MessageFactory
 from zope.component.hooks import setSite
+import logging
 
 
 class Site(object):
@@ -28,3 +29,10 @@ DISABLED = u'ungültig'
 CREATED = u"erstellt"
 BOOKED = u"gebucht"
 NOT_BOOKED = u"ausgebucht"
+
+
+logger = logging.getLogger('ukhvoucher')
+
+def log(message, summary='', severity=logging.INFO, extra_data=None):
+    logger.log(severity, '%s %s', summary, message, extra=extra_data)
+

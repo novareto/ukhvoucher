@@ -3,10 +3,14 @@
 # cklinger@novareto.de
 
 from ul.auth import Principal
-from ukhvoucher import models
-from ukhvoucher.interfaces import IKG1, IKG2, IKG3, IKG4, IKG5, IKG6, IKG7
+from ukhvoucher import models, log
+from ukhvoucher.interfaces import IKG1, IKG2, IKG3, IKG4, IKG5, IKG6, IKG7, IKG8, IKG9
 from cromlech.sqlalchemy import get_session
 from sqlalchemy import and_
+
+
+def log(m):
+    print m
 
 
 class ExternalPrincipal(Principal):
@@ -71,33 +75,92 @@ class ExternalPrincipal(Principal):
                     cat.add(IKG6)
                 if category.kat7:
                     cat.add(IKG7)
+                if category.kat8:
+                    cat.add(IKG8)
+                if category.kat9:
+                    cat.add(IKG9)
                 return cat
             return createCategory(category)
-        else:  # LEGACY
-            ##################################################import pdb; pdb.set_trace()
+        else:
             mnr = self.getAddress().mnr
             return self.getCategoryFromMNR(mnr)
         return []
 
+#    def sql_entsorgungsbetriebe(self, mnr):
+#        session = get_session('ukhvoucher')
+#        sql = """SELECT  TRGMNR FROM tstcusadat.mitrg1aa a, tstcusadat.mienr1aa b
+#        WHERE A.TRGRCD = b.Enroid
+#        and a.trgbv in(1, 3) and substr(a.trgmnr, 3, 2) in(10, 30)
+#        and b.enrea1 = 2 and b.enrea2 in(1, 2, 3, 4)"""
+#        res = session.execute(sql).fetchall()
+#        return [x[0].strip() for x in res]
+#
+#    def sql_abwasser(self, mnr):
+#        session = get_session('ukhvoucher')
+#        sql = """SELECT  TRGMNR FROM tstcusadat.mitrg1aa a, tstcusadat.mienr1aa b
+#        WHERE A.TRGRCD = b.Enroid
+#        and a.trgbv in(1, 3) and substr(a.trgmnr, 3, 2) in(10, 30)
+#        and b.enrea1 = 2 and b.enrea2 in(5, 6, 7)"""
+#        res = session.execute(sql).fetchall()
+#        return [x[0].strip() for x in res]
+
+    def sql_base(self, enrea1, enrea2):
+        session = get_session('ukhvoucher')
+        sql = """SELECT  TRGMNR FROM tstcusadat.mitrg1aa a, tstcusadat.mienr1aa b
+        WHERE A.TRGRCD = b.Enroid
+        and a.trgbv in(1, 3) and substr(a.trgmnr, 3, 2) in(10, 30)
+        and b.enrea1  in(%s) and b.enrea2 in(%s)""" % (enrea1, enrea2)
+        res = session.execute(sql).fetchall()
+        return [x[0].strip() for x in res]
+
     def getCategoryFromMNR(self, mnr):
+        origmnr = mnr.strip()
         mnr = mnr[:4]
         cat = set()
         if mnr in ('1.02', '1.03', '1.04'):
-            cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
+            cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6, IKG9])
         elif mnr == '1.05':
             cat = set([IKG1, IKG2])
-        elif mnr == "Abwasserverband":
-            cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
-        elif mnr == "Freie KITA":
-            cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
-        elif mnr == "Staatstehater":
-            cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
-        elif mnr == "Entsorgungsbetrieb":
-            cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
-        elif mnr == "Schule":
-            cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
-        elif mnr == "Gemeinsahftskasse":
-            cat = set([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6])
+        elif mnr in ('1.10', '1.30', '3.10'):
+            if origmnr in self.sql_base('2', '1,2,3,4'):
+                log('%s entsorgungsbetrieb' % origmnr)
+                cat = set([IKG2, IKG4])
+            elif origmnr in self.sql_base('2', '5,6,7'):
+                log('%s abwasserbetrieb' % origmnr)
+                cat = set([IKG2, IKG6])
+            elif origmnr in self.sql_base('1', '1,2,3,4,5,6,7,8'):
+                log('%s Gesundheitsdienst' % origmnr)
+                cat = set([IKG2,])
+            elif origmnr in self.sql_base('2', '7'):
+                log('%s Gas und Wasserversorgung' % origmnr)
+                cat = set([IKG2,])
+            elif origmnr in self.sql_base('3', '6'):
+                log('%s Beschaeftigungsgesellschaften' % origmnr)
+                cat = set([IKG2,])
+            elif origmnr in self.sql_base('4', '1,2,3,4,5,6'):
+                log('%s Bauwesen' % origmnr)
+                cat = set([IKG2,])
+            elif origmnr in self.sql_base('5', '2,3,4'):
+                log('%s Landwirtschaft' % origmnr)
+                cat = set([IKG2,])
+            elif origmnr in self.sql_base('6', '1,2,3,4,5'):
+                log('%s Kulturelle Einrichtungen' % origmnr)
+                cat = set([IKG2,])
+            elif origmnr in self.sql_base('8', '1,2,3,4,5,6'):
+                log('%s Verkehrsunternehmen' % origmnr)
+                cat = set([IKG2,])
+            elif origmnr in self.sql_base('9', '4'):
+                log('%s Forschungseinrichtungen' % origmnr)
+                cat = set([IKG2,])
+            elif origmnr in self.sql_base('7', '1'):
+                log('%s Feuerwehrvereine' % origmnr)
+                cat = set([])
+            else:
+                cat = set([IKG1,])
+        elif mnr in ('2.10.64/00005', '2.10.34/00005', '2.10.65/00010'):
+            cat = set([IKG2, ])
+        elif mnr in ('1.20'):
+            cat = set([IKG1, ])
         return cat
 
     def getVouchers(self, cat=None):

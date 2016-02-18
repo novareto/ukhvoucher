@@ -18,7 +18,7 @@ from zope.interface import Interface
 from ..interfaces import IVouchersCreation, IDisablingVouchers
 from ..interfaces import IModel, IModelContainer, IAdminLayer, IUserLayer
 from ..interfaces import IAccount, IJournalize
-from ..models import Voucher, JournalEntry, Vouchers
+from ..models import Voucher, JournalEntry, Vouchers, Addresses
 from .. import _, resources, DISABLED, CREATED
 from ..apps import UserRoot
 from uvc.entities.browser import IContextualActionsMenu, IDocumentActions
@@ -79,17 +79,28 @@ class CreateModel(Form):
             self.flash(_(u'An error occurred.'))
             return FAILURE
 
+
+        if isinstance(self.context, Addresses):
+            if data.get('oid') == '':
+                data.pop('oid')
+        print data
         item = self.context.model(**data)
         self.context.add(item)
-
+        if 'oid' in data:
+            oid = data['oid']
+        else:
+            session = get_session('ukhvoucher')
+            session.flush()
+            oid = item.oid
 
         # journalize
         entry = JournalEntry(
             date=datetime.now().strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
             action=u"Add:%s" % self.context.model.__label__,
-            oid=data['oid'],
+            oid=oid,
             note=journal_note)
+
         self.context.add(entry)
 
         self.flash(_(u'Added with success.'))

@@ -46,7 +46,7 @@ class PDF(uvclight.Page):
         account = principal.getAccount()
         z1 = 1
         z2 = len(principal.getVouchers())
-        for voucher in principal.getVouchers(cat=self.request.form.get('kat')):
+        for voucher in principal.getVouchers(cat=self.request.form.get('cat')):
             if voucher.status.strip() == CREATED:
                 c.setFont(schriftart, 12)
                 bcp = '%s/static/logo_ukh.JPG' % path.dirname(ukhvoucher.__file__)

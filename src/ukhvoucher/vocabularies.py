@@ -45,7 +45,7 @@ def vouchers(context):
     items = []
     disabled = set()
     query = session.query(Voucher)
-    if isinstance(context, Address):
+    if isinstance(context, Account):
         query = query.filter(Voucher.user_id==context.oid)
     for item in query.all():
         items.append(SimpleTerm(item, token=item.oid, title="%s - %s" %(item.title, item.status.strip())))

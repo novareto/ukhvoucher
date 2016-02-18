@@ -54,7 +54,8 @@
         </tr>
     </table>
 </fieldset>
-<div tal:define="kat request.principal.getCategory()">
+<fieldset tal:define="kat request.principal.getCategory()">
+    <legend> Kategorien</legend>
     <div class="btn-group pull-right">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Aktion <span class="caret"></span>
@@ -65,13 +66,12 @@
             </li>
         </ul>
     </div>
-    <p class="lead"> Kategorien</p>
     <ul tal:repeat="k kat">
         <li tal:content="k.getDoc()"/>
     </ul>
-</div>
-<hr>
-<div tal:define="vouchers request.principal.getVouchers()">
+</fieldset>
+<fieldset tal:define="vouchers request.principal.getVouchers()">
+    <legend> Gutscheine </legend>
     <div class="btn-group pull-right">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Aktion <span class="caret"></span>
@@ -82,7 +82,6 @@
             </li>
         </ul>
     </div>
-    <p class="lead"> Gutscheine </p>
     <table class="table">
         <tr>
             <th> Gutschein id </th>
@@ -99,11 +98,10 @@
             <td tal:content="voucher.displayData"></td>
         </tr>
     </table>
-</div>
-<hr>
+</fieldset>
 
-<div tal:define="entries request.principal.getJournalEntries()">
-    <p class="lead"> Bemerkungen </p>
+<fieldset tal:define="entries request.principal.getJournalEntries()">
+    <legend> Bemerkungen </legend>
     <table class="table">
         <tr>
             <th> Datum </th>
@@ -118,5 +116,5 @@
             <td tal:content="entry.userid"></td>
         </tr>
     </table>
-</div>
+</fieldset>
 </div>
