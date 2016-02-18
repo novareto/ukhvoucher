@@ -34,3 +34,20 @@
     background-color: #777777;
     color: #fff;
 }
+
+h4.panel-title a {
+    display: block;
+}
+
+h4.panel-title a span.sign {
+    float: right;
+    font-weight: bold;
+}
+
+h4.panel-title a span.sign::after {
+    content: " -";
+}
+
+h4.panel-title a.collapsed span.sign::after {
+    content: " +";
+}

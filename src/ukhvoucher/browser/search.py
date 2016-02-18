@@ -138,6 +138,7 @@ class ModelSearch(uvclight.Viewlet):
     def update(self):
         self.target = self.view.url(self.context) + '/search'
         self.attribute = self.context.model.search_attr
+        self.placeholder = "%s (%s)" % (self.context.__label__, self.attribute)
 
 
 class SearchResults(uvclight.Viewlet):

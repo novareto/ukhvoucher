@@ -9,7 +9,8 @@
       <div class="panel-heading" role="tab" id="headingOne" tal:attributes="id string:heading${cat['name']}">
         <h4 class="panel-title">
           <a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" tal:attributes="href string:#collapse${cat['name']}">
-            <span tal:content="cat['doc']"> </span> 
+            <span tal:content="cat['doc']"> </span>
+	    <span class="pull-right sign">&nbsp;</span>
           </a> 
         </h4>
         <div tal:define="cat_vouchers request.principal.getVouchers(cat['name'])">

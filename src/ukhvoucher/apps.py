@@ -21,6 +21,7 @@ from zope.interface import implementer
 from zope.location import Location
 from zope.security.proxy import removeSecurityProxy
 from uvclight.directives import traversable
+from .resources import ukhcss
 
 
 @implementer(ICredentials)
@@ -123,6 +124,7 @@ class Admin(SQLPublication, SecurePublication):
         @transaction_sql(self.engine)
         def publish(environ, start_response):
             layers = self.layers or list()
+            ukhcss.need()
             with ContextualRequest(environ, layers=layers) as request:
                 response = self.publish_traverse(request)
                 return response(environ, start_response)
@@ -176,6 +178,7 @@ class User(SQLPublication, SecurePublication):
         @transaction_sql(self.engine)
         def publish(environ, start_response):
             layers = self.layers or list()
+            ukhcss.need()
             with ContextualRequest(environ, layers=layers) as request:
                 response = self.publish_traverse(request)
                 return response(environ, start_response)
