@@ -29,6 +29,7 @@ setup(name='ukhvoucher',
           "profilehooks",
           "webhelpers",
           "ul.auth",
+          "ordered_set",
       ],
       entry_points={
          'fanstatic.libraries': [
