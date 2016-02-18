@@ -58,9 +58,10 @@ class ExternalPrincipal(Principal):
     def getCategory(self):
         session = get_session('ukhvoucher')
         category = session.query(models.Category).get(self.oid)
+        from ordered_set import OrderedSet
         if category:
             def createCategory(category):
-                cat = set()
+                cat = OrderedSet()
                 if category.kat1:
                     cat.add(IKG1)
                 if category.kat2:

@@ -48,7 +48,7 @@ def vouchers(context):
     if isinstance(context, Account):
         query = query.filter(Voucher.user_id==context.oid)
     for item in query.all():
-        items.append(SimpleTerm(item, token=item.oid, title="%s - %s" %(item.title, item.status.strip())))
+        items.append(SimpleTerm(item, token=item.oid, title="%s - %s %s" %(item.title, item.status.strip(), item.cat)))
         if item.invoice is not None or item.status.strip() in (DISABLED, BOOKED):
             disabled.add(str(item.oid))
             disabled.add(item.oid)

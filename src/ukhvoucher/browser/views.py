@@ -158,12 +158,6 @@ class AdminRootIndex(uvclight.Page):
     uvclight.context(AdminRoot)
     require('manage.vouchers')
 
-    @property
-    def panels(self):
-        for id in uvclight.traversable.bind().get(self.context):
-            panel = getattr(self.context, id)
-            yield {'title': translate(panel.__label__, context=self.request),
-                   'url': self.url(panel)}
     template = uvclight.get_template('adminroot.cpt', __file__)
 
     def update(self):

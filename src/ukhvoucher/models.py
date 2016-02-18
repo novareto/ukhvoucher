@@ -142,6 +142,8 @@ class Category(Base, Location):
     kat5 = Column('kat5', Boolean)
     kat6 = Column('kat6', Boolean)
     kat7 = Column('kat7', Boolean)
+    kat8 = Column('kat8', Boolean)
+    kat9 = Column('kat9', Boolean)
 
     @property
     def title(self):
@@ -346,7 +348,7 @@ class Categories(SQLContainer):
 
     model = Category
     listing_attrs = uvclight.Fields(Category.__schema__).select(
-        'oid', 'kat1', 'kat2', 'kat3', 'kat4', 'kat5', 'kat6', 'kat7')
+        'oid', 'kat1', 'kat2', 'kat3', 'kat4', 'kat5', 'kat6', 'kat7', 'kat8', 'kat9')
 
     def key_reverse(self, obj):
         return str(obj.oid)
