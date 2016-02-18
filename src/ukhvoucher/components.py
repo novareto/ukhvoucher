@@ -7,6 +7,13 @@ from ukhvoucher import models, log
 from ukhvoucher.interfaces import IKG1, IKG2, IKG3, IKG4, IKG5, IKG6, IKG7, IKG8, IKG9
 from cromlech.sqlalchemy import get_session
 from sqlalchemy import and_
+from profilehooks import profile
+from plone.memoize import ram
+
+
+def _render_details_cachekey(method, self):
+    print "CHACE ON self.oid", self.oid
+    return (self.oid, method.__name__)
 
 
 def log(m):
@@ -43,6 +50,7 @@ class ExternalPrincipal(Principal):
         account = session.query(models.Account).filter(and_(models.Account.login==self.id, models.Account.az=="00"))
         return account.one()
 
+    @ram.cache(_render_details_cachekey)
     def getAddress(self):
         session = get_session('ukhvoucher')
         address = session.query(models.Address).get(str(self.oid))

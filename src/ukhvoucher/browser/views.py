@@ -20,6 +20,7 @@ from zope.i18n import translate
 from zope.interface import Interface
 
 
+
 class UserRootIndex(uvclight.Page):
     uvclight.name('index')
     uvclight.layer(IUserLayer)
@@ -150,7 +151,6 @@ class UserRootIndex(uvclight.Page):
                     <h1>H9: Hier könnte die Hilfe stehen...</h1>
                     """
         return desc
-
 
 class AdminRootIndex(uvclight.Page):
     uvclight.name('index')

@@ -18,10 +18,18 @@ from uvclight import GlobalUtility, name
 from uvclight.backends.sql import SQLPublication
 from zope.component import getGlobalSiteManager
 from zope.interface import implementer
+from zope.location import ILocation, LocationProxy, locate
 from zope.location import Location
 from zope.security.proxy import removeSecurityProxy
 from uvclight.directives import traversable
 from .resources import ukhcss
+
+
+USERS = {
+    'admin': dict(login="admin", passwort="admin"),
+    'mseibert': dict(login="mseibert", passwort="mseibert"),
+    }
+
 
 
 @implementer(ICredentials)
@@ -29,7 +37,8 @@ class Access(GlobalUtility):
     name('admins')
 
     def log_in(self, request, username, password, **kws):
-        if username == "admin" and password == "admin":
+        user = USERS.get(username)
+        if user and user['passwort'] == password:
             return True
         return None
 
@@ -47,7 +56,7 @@ class AdminUsers(GlobalUtility):
                 return user
         return None
 
-from zope.location import ILocation, Location, LocationProxy, locate
+
 class AccountTraverser(Location):
 
     def __init__(self, parent, name):
