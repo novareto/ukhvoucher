@@ -53,6 +53,8 @@ class Username(uvclight.MenuItem):
     @property
     def title(self):
         try:
+            if self.request.principal.title == "Unauthenticated principal":
+                return u"Bitte anmelden"
             return u"Sie sind angemeldet als: %s" % self.request.principal.title
         except:
             return "HHH"

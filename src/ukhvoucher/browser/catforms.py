@@ -139,7 +139,7 @@ class IKG6Form(KGBaseForm):
     _iface = IKG6
     label = u""
 
-    def calculate(self, mitarbeiter):
+    def calculate(self, merkmal, mitarbeiter):
         return mitarbeiter
 
 

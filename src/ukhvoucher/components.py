@@ -41,7 +41,7 @@ class ExternalPrincipal(Principal):
 
     def getAddress(self):
         session = get_session('ukhvoucher')
-        address = session.query(models.Address).get(self.oid)
+        address = session.query(models.Address).get(str(self.oid))
         if address:
             return address
         address = session.query(models.AddressTraeger).get(self.oid)
