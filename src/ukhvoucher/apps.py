@@ -28,6 +28,9 @@ from .resources import ukhcss
 USERS = {
     'admin': dict(login="admin", passwort="admin"),
     'mseibert': dict(login="mseibert", passwort="mseibert"),
+    'hgabt': dict(login="hgabt", passwort="hgabt"),
+    'ckraft': dict(login="ckraft", passwort="ckraft"),
+    'aburkhard': dict(login="aburkhard", passwort="aburkhard"),
     }
 
 
@@ -49,7 +52,7 @@ class AdminUsers(GlobalUtility):
 
     def log_in(self, request, username, password, **kws):
         session = get_session('ukhvoucher')
-        user = session.query(Account).filter(Account.login == username)
+        user = session.query(Account).filter(Account.login == username, Account.az == "eh")
         if user.count():
             user = user.one()
             if user.password.strip() == password:

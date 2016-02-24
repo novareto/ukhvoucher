@@ -280,6 +280,10 @@ class Accounts(SQLContainer):
     listing_attrs = uvclight.Fields(Account.__schema__).select(
         'oid', 'login', 'email', 'name')
 
+    def query_filters(self, query):
+        query = query.filter(self.model.az == "eh")
+        return query
+
     def key_converter(self, id):
         keys = unquote(id)
         try:

@@ -41,9 +41,11 @@ class CalculateInsert(Action):
             except:
                 oid = 100000
 
-            p = 1
-            p = int(session.query(max(Generation.oid)).one()[0]) + 1
-            print "GENERATION OID", 2
+            try:
+                p = int(session.query(max(Generation.oid)).one()[0]) + 1
+            except:
+                p=1
+            print "GENERATION OID", p
             generation = Generation(
                 oid=p,
                 date=now.strftime('%Y-%m-%d'),

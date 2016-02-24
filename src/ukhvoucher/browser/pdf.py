@@ -9,7 +9,7 @@ import ukhvoucher
 from os import path
 from ..apps import UserRoot
 from ukhvoucher import CREATED
-from time import gmtime, strftime
+#from time import gmtime, strftime
 from ..interfaces import IUserLayer
 
 
@@ -40,12 +40,12 @@ class PDF(uvclight.Page):
         c.setTitle(u'Erste Hilfe')
         schriftart = "Helvetica"
         schriftartfett = "Helvetica-Bold"
-        datum = strftime("%d.%m.%Y", gmtime())
+        #datum = strftime("%d.%m.%Y", gmtime())
         principal = self.request.principal
         adr = principal.getAddress()
         account = principal.getAccount()
         z1 = 1
-        z2 = len(principal.getVouchers())
+        #z2 = len(principal.getVouchers())
         for voucher in principal.getVouchers(cat=self.request.form.get('cat')):
             if voucher.status.strip() == CREATED:
                 c.setFont(schriftart, 12)
@@ -83,20 +83,47 @@ class PDF(uvclight.Page):
                 c.drawString(2.5 * cm, x * cm, str(adr.zip_code) + ' ' + adr.city.strip())
                 #####################################################
                 # Überschrift
+                ikg = str(voucher.cat.strip())
+                if ikg == 'IKG1':
+                    kattext = u'Verwaltung, Büro'
+                elif ikg == 'IKG2':
+                    kattext = u'Andere Betriebe'
+                elif ikg == 'IKG3':
+                    kattext = u'Kinderbetreuungseinrichtungen'
+                elif ikg == 'IKG4':
+                    kattext = u'Entsorgung/Bauhof'
+                elif ikg == 'IKG5':
+                    kattext = u'Einrichtungen mit spezieller Gefährdung'
+                elif ikg == 'IKG6':
+                    kattext = u'Einrichtungen mit spezieller Gefährdung'
+                elif ikg == 'IKG7':
+                    kattext = u'Schulen'
+                elif ikg == 'IKG8':
+                    kattext = u'Schulstandorte'
+                elif ikg == 'IKG9':
+                    kattext = u'Schulbetreuung'
+                else:
+                    kattext = u''
                 c.setFillColor(black)
                 c.setFont(schriftartfett, 14)
-                c.drawString(2.5 * cm, 18.5 * cm, u'Gutschein / Berechtigungsschein ' + str(z1) + ' von ' + str(z2))
-                c.drawString(2.5 * cm, 18.0 * cm, u'Kontingentgruppe: ' + str(voucher.cat.strip()))
+                c.drawString(2.5 * cm, 18.5 * cm, u'Gutschein / Berechtigungsschein ')  # + str(z1) + ' von ' + str(z2))
+                c.drawString(2.5 * cm, 17.9 * cm, u'Kontingentgruppe: ' + str(voucher.cat.strip()) + ' ' + kattext)
                 # Überschrift 2. Zeile
                 c.setFont(schriftartfett, 10)
-                y = 16.9
+                y = 16.8
                 c.drawString(2.5 * cm, y * cm, u'Diese Bescheinigung berechtigt eine Person zu einer einmaligen Teilnahme an einer')
                 y = y - 0.6
                 c.drawString(2.5 * cm, y * cm, u'Erste-Hilfe-Aus- oder Fortbildung im Sinne der Unfallverhütungsvorschrift')
                 y = y - 0.6
                 c.drawString(2.5 * cm, y * cm, u'(UVV) DGUV Vorschrift 1 "Grundsätze der Prävention"')
                 y = y - 1.2
-                c.drawString(2.5 * cm, y * cm, u'Ausstellungsdatum: ' + datum)
+                # Datum der Erstellung
+                d = str(voucher.creation_date)
+                tag = d[8:10]
+                monat = d[5:7]
+                jahr = d[:4]
+                erstelldatum = tag + '.' + monat + '.' + jahr
+                c.drawString(2.5 * cm, y * cm, u'Ausstellungsdatum: ' + erstelldatum)
                 y = y - 2.5
                 # Barcode Value....
                 barcode_value = str(voucher.oid)

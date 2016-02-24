@@ -213,7 +213,7 @@ class IAccount(Interface):
         title=_(u"Mitbenutzerkennung"),
         description=_(u"Mitbenutzerkennung"),
         required=True,
-        default=u"00",
+        default=u"eh",
     )
 
     vname = schema.TextLine(
@@ -291,7 +291,7 @@ class ICategory(Interface):
     )
 
     kat8 = schema.Bool(
-        title=_(u"Kategorie 8 - Angestellte in Schulen"),
+        title=_(u"Kategorie 8 - Schulstandorte"),
         required=True,
     )
 
@@ -496,10 +496,10 @@ class IKG7(Interface):
 
 
 class IKG8(Interface):
-    u"""Angestellte in Schulen"""
+    u"""Schulstandorte"""
 
     mitarbeiter = schema.Int(
-        title=_(u"Angestellte Personen"),
+        title=_(u"Schulstandorte"),
     )
 
 
@@ -507,7 +507,7 @@ class IKG9(Interface):
     u"""Schulbetreuung"""
 
     mitarbeiter = schema.Int(
-        title=_(u"Angestellte Personen"),
+        title=_(u"Gruppen"),
     )
 
 

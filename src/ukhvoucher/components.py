@@ -47,7 +47,7 @@ class ExternalPrincipal(Principal):
 
     def getAccount(self):
         session = get_session('ukhvoucher')
-        account = session.query(models.Account).filter(and_(models.Account.login==self.id, models.Account.az=="00"))
+        account = session.query(models.Account).filter(and_(models.Account.login==self.id, models.Account.az=="eh"))
         return account.one()
 
     @ram.cache(_render_details_cachekey)
@@ -200,7 +200,7 @@ class AdminPrincipal(ExternalPrincipal):
 
     def getAccount(self):
         session = get_session('ukhvoucher')
-        accounts = session.query(models.Account).filter(models.Account.oid==self.oid)
+        accounts = session.query(models.Account).filter(models.Account.oid==self.oid, models.Account.az == "eh")
         return accounts
 
     def getVouchers(self, cat=None):
