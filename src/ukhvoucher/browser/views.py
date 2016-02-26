@@ -217,7 +217,7 @@ class AdminRootIndex(uvclight.Page):
                     HTML.tag(
                         'a',
                         href="%s/categories/add?form.field.oid=%s" % (self.application_url(), oid),
-                        c="Neuen Kategorien anlegen",)
+                        c="Neue Kategorien anlegen",)
                     )
         return rc
 
@@ -234,7 +234,7 @@ class AdminRootIndex(uvclight.Page):
                 HTML.tag(
                     'a',
                     href="%s/account/%s/disable.vouchers" % (self.application_url(), oid),
-                    c=u"Gutscheine löschen",)
+                    c=u"Gutscheine sperren",)
                 )
         return rc
 

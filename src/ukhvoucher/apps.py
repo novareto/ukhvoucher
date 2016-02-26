@@ -26,11 +26,12 @@ from .resources import ukhcss
 
 
 USERS = {
-    'admin': dict(login="admin", passwort="admin"),
-    'mseibert': dict(login="mseibert", passwort="mseibert"),
-    'hgabt': dict(login="hgabt", passwort="hgabt"),
-    'ckraft': dict(login="ckraft", passwort="ckraft"),
-    'aburkhard': dict(login="aburkhard", passwort="aburkhard"),
+    'admin': dict(login="admin", passwort="!admin!"),
+    'mseibert': dict(login="mseibert", passwort="susanne09"),
+    'mleber': dict(login="mleber", passwort="ehr17!"),
+    'hgabt': dict(login="hgabt", passwort="AB471!"),
+    'ckraft': dict(login="ckraft", passwort="QX392!"),
+    'aburkhard': dict(login="aburkhard", passwort="NY259!"),
     }
 
 

@@ -11,6 +11,41 @@
             </li>
         </ul>
     </div>
+    <table>
+        <tr>
+            <th></th>
+            <th></th>
+        </tr>
+        <tr>
+            <td width="100px">
+              Name:  
+            </td>
+            <td>
+              <span tal:content="adr.name1" />
+              <span tal:content="adr.name2" />
+              <span tal:content="adr.name3" />
+            </td>
+        </tr>
+        <tr>
+            <td width="100px">
+              Straße, Nr.:  
+            </td>
+            <td>
+              <span tal:content="adr.street" />
+              <span tal:content="adr.number" />
+            </td>
+        </tr>
+        <tr>
+            <td width="100px">
+              Plz, Ort:  
+            </td>
+            <td>
+              <span tal:content="adr.zip_code" />
+              <span tal:content="adr.city" />
+            </td>
+        </tr>
+    </table>
+    <!--
     <p tal:content="adr.name1"/>
     <p tal:content="adr.name2"/>
     <p tal:content="adr.name3"/>
@@ -18,6 +53,7 @@
     <p tal:content="adr.number"/>
     <p tal:content="adr.zip_code"/>
     <p tal:content="adr.city"/>
+    -->
 </fieldset>
 <fieldset tal:define="accounts request.principal.getAccount()">
     <legend> Benutzer </legend>

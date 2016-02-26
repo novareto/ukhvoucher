@@ -43,7 +43,7 @@ msgid "Kat 2"
 msgstr "Kategorie 2 - Andere Betriebe"
 
 msgid "Kat 3"
-msgstr "Kategorie 3 - Kinderbetreuungseinrichtungen"
+msgstr "Kategorie 3 - Kinderbetreuungs- einrichtungen"
 
 msgid "Kat 4"
 msgstr "Kategorie 4 - Entsorgung / Bauhof"

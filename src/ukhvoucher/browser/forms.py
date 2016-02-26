@@ -34,7 +34,7 @@ MULTI_DISABLED = set((
 class DisableVoucherMenuItem(uvclight.MenuItem):
     menu(IContextualActionsMenu)
     context(Vouchers)
-    title(u'Gutscheine löschen')
+    title(u'Gutscheine sperren')
     name('disable_vouchers')
     order(50)
 
@@ -76,7 +76,7 @@ class CreateModel(Form):
         journal_note = data.pop('note')
 
         if errors:
-            self.flash(_(u'An error occurred.'))
+            self.flash(_(u'Es ist ein Fehler aufgetreten!'))
             return FAILURE
 
 
@@ -94,16 +94,23 @@ class CreateModel(Form):
             oid = item.oid
 
         # journalize
+        if str(self.context.model.__label__) == "Kategorie":
+            aktion = u"Kategorien manuell angelegt"
+        elif str(self.context.model.__label__) == "Address":
+            aktion = u"Adresse angelegt"
+        elif str(self.context.model.__label__) == "Account":
+            aktion = u"Neuen Benutzer angelegt"
+        else:
+            aktion = str(self.context.model.__label__)
         entry = JournalEntry(
             date=datetime.now().strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
-            action=u"Add:%s" % self.context.model.__label__,
+            action=aktion,
+            #action=u"Bearbeitet: %s" % self.context.model.__label__,
             oid=oid,
             note=journal_note)
-
         self.context.add(entry)
-
-        self.flash(_(u'Added with success.'))
+        self.flash(_(u'Eintrag in der Historie hinzugefügt.'))
         self.redirect(self.application_url())
         return SUCCESS
 
@@ -151,23 +158,40 @@ class EditModel(Form):
         journal_note = data.pop('note')
 
         if errors:
-            self.flash(_(u"An error occured"))
+            self.flash(_(u'Es ist ein Fehler aufgetreten!'))
             return FAILURE
 
         # apply new content values
         apply_data_event(self.fields, self.getContentData(), data)
-        self.flash(_(u"Content updated"))
+        #self.flash(_(u"Content updated"))
 
         # journalize
-
-        entry = JournalEntry(
-            date=datetime.now(),# .strftime('%Y-%m-%d'),
-            userid=self.request.principal.id,
-            action=u"Edited : %s" % self.context.__label__,
-            oid=data['oid'],
-            note=journal_note)
         session = get_session('ukhvoucher')
-        #session.add(entry)
+        if str(self.context.__label__) == "Kategorie":
+            aktion = u"Kategorien bearbeitet"
+        elif str(self.context.__label__) == "Address":
+            aktion = u"Adresse bearbeitet"
+        elif str(self.context.__label__) == "Account":
+            aktion = u"Benutzer bearbeitet"
+        else:
+            aktion = str(self.context.__label__)
+        entry = JournalEntry(
+            date=datetime.now().strftime('%Y-%m-%d'),
+            userid=self.request.principal.id,
+            action=aktion,
+            oid=str(self.context.oid),
+            note=journal_note)
+        session.add(entry)
+        self.flash(_(u'Eintrag in der Historie hinzugefügt.'))
+
+        #entry = JournalEntry(
+        #    date=datetime.now(),# .strftime('%Y-%m-%d'),
+        #    userid=self.request.principal.id,
+        #    action=u"Edited : %s" % self.context.__label__,
+        #    oid=data['oid'],
+        #    note=journal_note)
+        #session = get_session('ukhvoucher')
+        ##session.add(entry)
 
         self.redirect(self.application_url())
         return SUCCESS
@@ -197,6 +221,14 @@ class ModelIndex(uvclight.Form):
         fields = Fields(self.context.__schema__)
         return fields
 
+from dolmen.forms.base import Action, SuccessMarker
+class CancelAction(Action):
+    """Cancel the current form and return on the default content view.
+     """
+    def __call__(self, form):
+        url = form.application_url()
+        return SuccessMarker('Aborted', True, url=url)
+
 
 class EditAccount(uvclight.EditForm):
     uvclight.name('edit_account')
@@ -213,6 +245,14 @@ class EditAccount(uvclight.EditForm):
         super(EditAccount, self).__init__(context, request)
         content = self.request.principal.getAccount()
         self.setContentData(content)
+
+    @property
+    def actions(self):
+        actions = super(EditAccount, self).actions
+        #import pdb; pdb.set_trace()
+        #if 'abbrechen' not in actions.keys():
+        #    actions.extend(CancelAction(u"Abbrechen"))
+        return actions.omit('cancel')
 
 
 @menuentry(IDocumentActions, order=10)
@@ -244,7 +284,7 @@ class AskForVouchers(Form):
         now = datetime.now()
 
         if errors:
-            self.flash(_(u"An error occured"))
+            self.flash(_(u'Es ist ein Fehler aufgetreten!'))
             return FAILURE
         number = data.get('number', 0)
         if number:
@@ -283,13 +323,14 @@ class AskForVouchers(Form):
             entry = JournalEntry(
                 date=datetime.now().strftime('%Y-%m-%d'),
                 userid=self.request.principal.id,
-                action=u"Add:%s" % self.context.model.__label__,
+                action=u"Gutscheine manuell erstellt",
+                #action=u"Add:%s" % self.context.model.__label__,
                 oid=str(self.context.oid),
                 note=journal_note)
             session.add(entry)
 
             # redirect
-            self.flash(_(u"%i Gutscheine erstellt" % number))
+            self.flash(_(u"%s Gutscheine erstellt" % number))
             self.redirect(self.application_url())
             return SUCCESS
         else:
@@ -333,7 +374,7 @@ class DisableVouchers(Form):
         data, errors = self.extractData()
         journal_note = data.pop('note')
         if errors:
-            self.flash(_(u"An error occured"))
+            self.flash(_(u'Es ist ein Fehler aufgetreten!'))
             return FAILURE
         for voucher in data['vouchers']:
             voucher.status = DISABLED
@@ -342,13 +383,14 @@ class DisableVouchers(Form):
         session = get_session('ukhvoucher')
         entry = JournalEntry(
             date=datetime.now().strftime('%Y-%m-%d'),
-            userid="admin", #str(self.request.principal.id),
-            action=u"%s Gutscheine rm" % len(data['vouchers']),
+            userid=self.request.principal.id,
+            #userid="admin", #str(self.request.principal.id),
+            action=u"%s Gutscheine gesperrt" % len(data['vouchers']),
             oid=self.context.oid,
             note=journal_note)
         session.add(entry)
 
-        self.flash(_(u"Voucher(s) disabled"))
+        self.flash(_(u"Gutschein(e) gesperrt"))
         self.redirect(self.application_url())
         return SUCCESS
 

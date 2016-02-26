@@ -166,12 +166,12 @@ class Account(Base, Location):
     model = Address
 
     oid = Column('oid', Integer, primary_key=True)
-    email = Column('email', String)
+    email = Column('email', StrippedString)
     login = Column('login', String, primary_key=True)
     az = Column('az', String, primary_key=True)
-    vname = Column('vname', String)
-    nname = Column('nname', String)
-    phone = Column('tlnr', String)
+    vname = Column('vname', StrippedString)
+    nname = Column('nname', StrippedString)
+    phone = Column('tlnr', StrippedString)
     rechte = Column('rechte', String)
     password = Column('passwort', String)
     merkmal = Column('merkmal', String)
@@ -235,7 +235,7 @@ class Invoice(Base, Location):
 
     __tablename__ = 'z1ehrrch_t'
     __schema__ = IInvoice
-    __label__ = _(u"Invoice")
+    __label__ = _(u"Neue Rechnung erstellt")
     if schema:
         __table_args__ = {"schema": schema[:-1]}
 
