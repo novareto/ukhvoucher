@@ -20,19 +20,22 @@ def get_oid(context):
     rc = []
     rcc = []
     session = get_session('ukhvoucher')
+    for x in session.query(Address):
+        rc.append(SimpleTerm(int(x.oid), x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+        rcc.append(int(x.oid))
     @ram.cache(lambda *args: time() // (600 * 60))
     def getValue():
-        print " IAM CALLED"
-        for x in session.query(Address):
-            rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
-            rcc.append(x.oid)
+        res = []
         for x in session.query(AddressTraeger):
-            if x.oid not in rcc:
-                rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+            res.append(SimpleTerm(int(x.oid), x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
         for x in session.query(AddressEinrichtung):
-            rc.append(SimpleTerm(x.oid, x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
-        return SimpleVocabulary(rc)
-    return getValue()
+            res.append(SimpleTerm(int(x.oid), x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+        return res
+    for term in getValue():
+        if term.value not in rcc:
+            rc.append(term)
+    print len(rc)
+    return SimpleVocabulary(rc)
 
 
 def getInvoiceId():

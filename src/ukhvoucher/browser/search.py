@@ -64,7 +64,7 @@ class SearchAction(uvclight.Action):
         data, errors = view.extractData()
         if errors:
             view.submissionError = errors
-            view.flash(_(u"An error occured."))
+            view.flash(_(u"Es ist ein Fehler aufgetreten!"))
             return uvclight.FAILURE
 
         model = view.context.model

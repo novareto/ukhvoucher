@@ -7,13 +7,12 @@ from ukhvoucher import models, log
 from ukhvoucher.interfaces import IKG1, IKG2, IKG3, IKG4, IKG5, IKG6, IKG7, IKG8, IKG9
 from cromlech.sqlalchemy import get_session
 from sqlalchemy import and_
-from profilehooks import profile
 from plone.memoize import ram
 from ordered_set import OrderedSet
 
 
-def _render_details_cachekey(method, self):
-    return (self.oid, method.__name__)
+def _render_details_cachekey(method, oid):
+    return (oid, method.__name__)
 
 
 def log(m):
@@ -50,18 +49,21 @@ class ExternalPrincipal(Principal):
         account = session.query(models.Account).filter(and_(models.Account.login==self.id, models.Account.az=="eh"))
         return account.one()
 
-    @ram.cache(_render_details_cachekey)
     def getAddress(self):
         session = get_session('ukhvoucher')
         address = session.query(models.Address).get(str(self.oid))
         if address:
             return address
-        address = session.query(models.AddressTraeger).get(self.oid)
-        if address:
-            return address
-        address = session.query(models.AddressEinrichtung).get(self.oid)
-        if address:
-            return address
+        @ram.cache(_render_details_cachekey)
+        def getSlowAdr(oid):
+            print "ADR FROM CAHCE"
+            address = session.query(models.AddressTraeger).get(oid)
+            if address:
+                return address
+            address = session.query(models.AddressEinrichtung).get(oid)
+            if address:
+                return address
+        return getSlowAdr(self.oid)
 
     def getCategory(self):
         session = get_session('ukhvoucher')
@@ -107,8 +109,7 @@ class ExternalPrincipal(Principal):
         session = get_session('ukhvoucher')
         sql = """SELECT  TRGMNR FROM tstcusadat.mitrg1aa a, tstcusadat.mienr1aa b
         WHERE A.TRGRCD = b.Enroid
-        and a.trgbv in(1, 3) and substr(a.trgmnr, 3, 2) in(10, 30)
-        and b.enrea1  in(%s) and b.enrea2 in(%s) and b.enrea3 = 'E'""" % (enrea1, enrea2)
+        and b.enrea1  in(%s) and b.enrea2 in(%s) and b.enrea3 = 'N'""" % (enrea1, enrea2)
         res = session.execute(sql).fetchall()
         return [x[0].strip() for x in res]
 
@@ -160,6 +161,9 @@ class ExternalPrincipal(Principal):
             cat = OrderedSet([IKG2, ])
         elif mnr in ('1.20'):
             cat = OrderedSet([IKG1, ])
+        elif self.sql_schulen('3','2'):
+            log('%s Schule' % origmnr)
+            cat = OrderedSet([IKG7, ])
         return cat
 
     def getVouchers(self, cat=None):
