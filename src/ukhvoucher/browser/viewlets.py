@@ -4,13 +4,28 @@ import uvclight
 import json
 from ..models import Voucher
 from ..interfaces import IAccount, IAdminLayer
-from .forms import ModelIndex
+from .forms import ModelIndex, CreateModel
 from dolmen.menu import menu
 from ukhtheme.uvclight.viewlets import BelowContent
 from uvc.entities.browser.menus import IPersonalMenu, INavigationMenu
 from zope.interface import Interface
 from cromlech.browser import getSession
 
+
+class Sound(uvclight.Viewlet):
+    uvclight.context(Interface)
+    uvclight.view(CreateModel)
+    uvclight.viewletmanager(BelowContent)
+    
+    def render(self):
+	return """
+	  <audio id="success" preload='auto' src='/fanstatic/ukhvoucher/success.wav'>
+	    <b>Your browser does not support the audio tag.</b>
+	  </audio>
+          <audio id="failure" preload='auto' src='/fanstatic/ukhvoucher/failure.wav'>
+            <b>Your browser does not support the audio tag.</b>
+          </audio>
+	"""
 
 class Categories(uvclight.Viewlet):
     uvclight.context(IAccount)
@@ -38,7 +53,35 @@ class VoucherGeneration(uvclight.Viewlet):
 
     def update(self):
         if self.context.generation is not None:
-            self.data = json.loads(self.context.generation.data)
+            #self.data = json.loads(self.context.generation.data)
+            rc = ""
+            data = json.loads(self.context.generation.data)
+
+            if isinstance(data, dict):
+                z = 0
+                for k, v in json.loads(self.context.generation.data).items():
+                    #print "###",k,"###"
+                    if k == 'mitarbeiter':
+                        k = u'Beschäftigte'
+                    if k == 'standorte':
+                        k = u'Standorte'
+                    if k == 'kitas':
+                        k = u'Kitas'
+                    if k == 'merkmal':
+                        k = u'Merkmal'
+                    if k == 'kolonne':
+                        k = u'Kolonnen'
+                    if k == 'gruppen':
+                        k = u'Gruppen'
+                    if k == 'lehrkraefte':
+                        k = u'Lehrkräfte'
+                    if z is 0:
+                        rc = rc + ("%s: %s" % (k, v))
+                    if z > 0:
+                        rc = rc + " und " + ("%s: %s" % (k, v))
+                    z = z + 1
+                data = rc
+            self.data = data
         else:
             self.data = None
 
@@ -115,7 +158,7 @@ class MenuKategorien(BaseNavMenu):
 class MenuVouchers(BaseNavMenu):
     uvclight.order(5)
     attribute = "vouchers"
-    title = "Gutscheine"
+    title = "Berechtigungsscheine"
 
 class Journal(BaseNavMenu):
     uvclight.order(6)

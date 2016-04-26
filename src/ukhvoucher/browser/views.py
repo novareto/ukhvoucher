@@ -5,7 +5,7 @@ from webhelpers.html.builder import HTML
 from ukhvoucher import models
 from ..apps import AdminRoot, UserRoot
 from ..interfaces import IAdminLayer, IUserLayer
-from ..interfaces import IModelContainer
+from ..interfaces import IModelContainer, get_oid
 from ..models import JournalEntry
 from ..resources import ukhcss
 from ..resources import ukhvouchers
@@ -18,6 +18,28 @@ from zope.component import getMultiAdapter
 from zope.component.hooks import getSite
 from zope.i18n import translate
 from zope.interface import Interface
+from profilehooks import profile
+
+
+class SearchUnternehmen(uvclight.JSON):
+    uvclight.name('search_unternehmen')
+    uvclight.layer(IAdminLayer)
+    uvclight.context(Interface)
+    require('manage.vouchers')
+
+    #@profile
+    def update(self):
+        self.term = self.request.form['data[q]']
+        self.vocabulary = get_oid(self.context)
+
+    #@profile
+    def render(self):
+        terms = []
+        matcher = self.term.lower()
+        for item in self.vocabulary:
+            if matcher in item.title.lower():
+                terms.append({'id': item.token, 'text': item.title})
+        return {'q': self.term, 'results': terms}
 
 
 
@@ -62,7 +84,7 @@ class UserRootIndex(uvclight.Page):
         desc = ""
         if name == "IKG1":
             desc = u"""
-                    <h1>H1: Verwaltung / Büro</h1>
+                    <h2>K1: Verwaltung / Büro</h2>
                     <h4><u>Beschäftigte:</u></h4>
                     <p>Bitte tragen Sie <u>alle</u> bei der UKH versicherten Beschäftigten ein, die in Ihren Verwaltungsbereichen
                        arbeiten. Zählen Sie dazu die Personen, nicht die Vollzeitstellen. Beamte sind keine Beschäftigten
@@ -74,14 +96,14 @@ class UserRootIndex(uvclight.Page):
                     """
         if name == "IKG2":
             desc = u"""
-                    <h1>H2: Andere Betriebe und Hochschulen</h1>
-                    <h4><u>Andere Betriebe:</u></h4>
+                    <h2>K2: Sonstige Betriebe und Hochschulen</h2>
+                    <h4><u>Sonstige Betriebe:</u></h4>
                     <p>Alle Betriebe, die nicht in der Hauptsache Verwaltungs- oder Bürobetriebe sind beispielsweise:</p>
                     <p>-  Technische Betriebe</p>
                     <p>-  Landwirtschaftliche und gärtnerische Betriebe</p>
                     <p>-  Hauswirtschaftliche Betriebe</p>
                     <p>-  Betriebe für öffentliche Sicherheit und Ordnung mit Streifendienst</p>
-                    <p>-  Zoos</p>
+                    <p>-  Zoos (ohne Beschäftigte in der Tierpflege)</p>
                     <p>-  Theater- und Musikbetriebe</p>
                     <p>-  Betreuungseinrichtungen</p>
                     <p>-  Entsorgungsbetriebe und Bauhöfe ohne Einteilung in Kolonnen.</p>
@@ -94,10 +116,11 @@ class UserRootIndex(uvclight.Page):
                     <p>Bitte tragen Sie <u>alle</u> bei der UKH versicherten beschäftigten Personen (ohne Beamte) ein, die in
                        anderen Bereichen als Verwaltung / Büros arbeiten abzüglich</p>
                     <p>a) Beschäftigte in Kindertageseinrichtungen</p>
-                    <p>b) Beschäftigte in Kolonnen (Entsorgung, Bauhof)</p>
+                    <p>b) Beschäftigte in Kolonnen (Bauhof, Entsorgung)</p>
                     <p>c) Beschäftigte mit spezieller Gefährdung gemäß unten stehenden Sonderkontingenteni</p>
                     <p>d) Beschäftigte in Betrieben mit beruflich qualifizierten Ersthelfern
-                          wie Gesundheits- und Pflegediensten, Schwimmbädern.</p>
+                          wie Gesundheits- und Pflegediensten, Schwimmbädern.
+                          (Diese Beschäftigten werden in keiner Kontingentkategorie erfasst.)</p>
                     <h4><u>Standorte:</u></h4>
                     <p>Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens zwei versicherte
                        Beschäftigte üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
@@ -105,7 +128,7 @@ class UserRootIndex(uvclight.Page):
                     """
         if name == "IKG3":
             desc = u"""
-                    <h1>H3: Kindertageseinrichtungen</h1>
+                    <h2>K3: Kindertageseinrichtungen</h2>
                     <h4><u>Kindergruppen:</u></h4>
                     <p>Bitte tragen Sie ein, wie viele Kindergruppen in Ihren Einrichtungen  maximal gleichzeitig betrieben werden.
                        Beispiel: 4 Vormittagsgruppen und 2 Nachmittagsgruppen sind maximal 4 Gruppen gleichzeitig.</p>
@@ -115,40 +138,54 @@ class UserRootIndex(uvclight.Page):
                     """
         if name == "IKG4":
             desc = u"""
-                    <h1>H4: In Kolonnen tätige Beschäftigte</h1>
+                    <h2>K4: In Kolonnen tätige Beschäftigte</h2>
                     <h4><u>Kolonnen:</u></h4>
                     <p>Bitte tragen Sie die maximale Zahl der Kolonnen ein, in denen Beschäftigte in der Entsorgung oder im Bauhof
                        außerhalb gleichzeitig tätig sind.</p>
                     <p>Hinweis: Die übrigen Beschäftigten des Betriebs, die an festen Standorten tätig sind, sind mit der Personenzahl
-                       unter „Andere Betriebe“ zu erfassen.</p>
+                       unter der Kontingent Kategorie 2 „Sonstige Betriebe“ zu erfassen.</p>
                     """
         if name == "IKG5":
             desc = u"""
-                    <h1>H5: Betriebe mit besonderer Gefährdung I</h1>
+                    <h2>K5: Beschäftigte und Einrichtungen mit eröhter Gefährdung</h2>
                     <h4><u>Beschäftigte:</u></h4>
                     <p>Bitte tragen Sie die bei der UKH versicherten Beschäftigten ein, die eine dieser Tätigkeiten ausüben.
-                       Beachten Sie bitte auch, dass diese Personen unter „Andere Betriebe“ abzuziehen sind.</p>
-                    <p>Geben Sie an, welches Merkmal für besondere Gefährdung zutrifft.</p>
+                       Beachten Sie bitte auch, dass diese Personen unter der Kontingent Kategorie 2 „Sonstige Betriebe“ abzuziehen sind.</p>
+                    <p>Geben Sie an, welches Merkmal für erhöhte Gefährdung zutrifft.</p>
                     """
         if name == "IKG6":
             desc = u"""
-                    <h1>H6: Betriebe mit besonderer Gefährdung II</h1>
+                    <h2>K6: Betriebe mit besonders hoher Gefährdung</h2>
                     <h4><u>Beschäftigte:</u></h4>
                     <p>Bitte tragen Sie die bei der UKH versicherten Beschäftigten ein, die eine dieser Tätigkeiten ausüben.
                        Beachten Sie bitte auch, dass diese Personen unter „Andere Betriebe“ abzuziehen sind.</p>
-                    <p>Geben Sie an, welches Merkmal für besondere Gefährdung zutrifft.</p>
+                    <p>Geben Sie an, welches Merkmal für die besonders hohe Gefährdung zutrifft.</p>
                     """
         if name == "IKG7":
             desc = u"""
-                    <h1>H7: Hier könnte die Hilfe stehen...</h1>
+                    <h2>K7: Schulen (nur Lehrkräfte)</h2>
+                    <h4><u>Lehrkräfte:</u></h4>
+                    <p>Bitte tragen Sie die Zahl der Lehrkräfte ein, die an der Schule und ggf. an den Außenstellen der Schule tätig sind.
+                       Wir übernehmen Lehrgangsgebühren für die Teilnahme an Erste Hilfe-Fortbildungen im Sinne des DGUV Grundsatzes 304-001
+                       oder für Erste Hilfe-Fortbildungen Schule für 15 % des gesamten Kollegiums in einem Zeitraum von 2 Jahren.</p>
+                    <p>Hinweis: Bitte zählen Sie Personal in anderen Bereichen, bspw. in der Schulbetreuung, Reinigung,
+                       Sekretariat oder Hausmeister nicht mit. Für dieses Personal beantragt der Arbeitgeber die Kostenübernahme
+                       der Lehrgangsgebühren bei der zuständigen Fach-Berufsgenossenschaft oder bei uns als Mitgliedsunternehmen.</p>
                     """
         if name == "IKG8":
             desc = u"""
-                    <h1>H8: Hier könnte die Hilfe stehen...</h1>
+                    <h2>K9: Schulstandorte </h2>
+                    <h4><u>Standorte:</u></h4>
+                    <p>Bitte tragen Sie ein, an wie vielen Schulstandorten Personal in den Bereichen Reinigung,
+                       Sekretariat oder Hausmeister beschäftigt wird.</p>
+                    <p>Als Schulstandort gilt eine Schule, wobei Außenstellen von Schulen als eigener Standort gezählt werden.</p>
                     """
         if name == "IKG9":
             desc = u"""
-                    <h1>H9: Hier könnte die Hilfe stehen...</h1>
+                    <h2>K9: Schulbetreuung</h2>
+                    <h4><u>Gruppen:</u></h4>
+                    <p>Bitte tragen Sie ein, wie viele Schulbetreuungsgruppen höchstens gleichzeitig betrieben werden.
+                       Beispiel: 3 Gruppen dienstags und 2 Gruppen donnerstags sind 3 Gruppen gleichzeitig.</p>
                     """
         return desc
 
@@ -228,13 +265,13 @@ class AdminRootIndex(uvclight.Page):
                 HTML.tag(
                     'a',
                     href="%s/account/%s/ask.vouchers" % (self.application_url(), oid),
-                    c=u"Zusätzliche Gutscheine erzeugen",)
+                    c=u"Zusätzliche Berechtigungsscheine erzeugen",)
                 )
         rc.append(
                 HTML.tag(
                     'a',
                     href="%s/account/%s/disable.vouchers" % (self.application_url(), oid),
-                    c=u"Gutscheine sperren",)
+                    c=u"Berechtigungsscheine sperren",)
                 )
         return rc
 

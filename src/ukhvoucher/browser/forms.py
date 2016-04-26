@@ -34,7 +34,7 @@ MULTI_DISABLED = set((
 class DisableVoucherMenuItem(uvclight.MenuItem):
     menu(IContextualActionsMenu)
     context(Vouchers)
-    title(u'Gutscheine sperren')
+    title(u'Berechtigungsscheine sperren')
     name('disable_vouchers')
     order(50)
 
@@ -261,8 +261,8 @@ class AskForVouchers(Form):
     name('ask.vouchers')
     layer(IAdminLayer)
     require('manage.vouchers')
-    title(u'Gutscheine bearbeiten')
-    label = 'Gutscheine erzeugen'
+    title(u'Berechtigungsscheine bearbeiten')
+    label = 'Berechtigungsscheine erzeugen'
     description = "Beschreibung"
 
     ignoreContent = True
@@ -323,14 +323,14 @@ class AskForVouchers(Form):
             entry = JournalEntry(
                 date=datetime.now().strftime('%Y-%m-%d'),
                 userid=self.request.principal.id,
-                action=u"Gutscheine manuell erstellt",
+                action=u"Berechtigungsscheine manuell erstellt",
                 #action=u"Add:%s" % self.context.model.__label__,
                 oid=str(self.context.oid),
                 note=journal_note)
             session.add(entry)
 
             # redirect
-            self.flash(_(u"%s Gutscheine erstellt" % number))
+            self.flash(_(u"%s Berechtigungsscheine erstellt" % number))
             self.redirect(self.application_url())
             return SUCCESS
         else:
@@ -349,8 +349,8 @@ class DisableVouchers(Form):
     name('disable.vouchers')
     layer(IAdminLayer)
     require('manage.vouchers')
-    title(u'Gutscheine sperren')
-    label = 'Gutscheine sperren'
+    title(u'Berechtigungsscheine sperren')
+    label = 'Berechtigungsscheine sperren'
     description = "Beschreibung"
 
     ignoreContent = True
@@ -369,7 +369,7 @@ class DisableVouchers(Form):
     def action_url(self):
         return self.request.path
 
-    @action(_(u'Gutscheine sperren'))
+    @action(_(u'Berechtigungsscheine sperren'))
     def handle_save(self):
         data, errors = self.extractData()
         journal_note = data.pop('note')
@@ -385,12 +385,12 @@ class DisableVouchers(Form):
             date=datetime.now().strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
             #userid="admin", #str(self.request.principal.id),
-            action=u"%s Gutscheine gesperrt" % len(data['vouchers']),
+            action=u"%s Berechtigungsscheine gesperrt" % len(data['vouchers']),
             oid=self.context.oid,
             note=journal_note)
         session.add(entry)
 
-        self.flash(_(u"Gutschein(e) gesperrt"))
+        self.flash(_(u"Berechtigungsschein(e) gesperrt"))
         self.redirect(self.application_url())
         return SUCCESS
 

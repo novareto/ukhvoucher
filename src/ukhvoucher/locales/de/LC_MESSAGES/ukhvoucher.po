@@ -37,25 +37,31 @@ msgid "Internal identifier of the user"
 msgstr "Eindeutiger Schlüssel für den Benutzer"
 
 msgid "Kat 1"
-msgstr "Kategorie 1 - Verwaltung, Büro"
+msgstr "Kontingent 1 - Verwaltung, Büro"
 
 msgid "Kat 2"
-msgstr "Kategorie 2 - Andere Betriebe"
+msgstr "Kontingent 2 - Sonstige Betriebe"
 
 msgid "Kat 3"
-msgstr "Kategorie 3 - Kinderbetreuungs- einrichtungen"
+msgstr "Kontingent 3 - Kindertageseinrichtungen"
 
 msgid "Kat 4"
-msgstr "Kategorie 4 - Entsorgung / Bauhof"
+msgstr "Kontingent 4 - Bauhof / Entsorgung"
 
 msgid "Kat 5"
-msgstr "Kategorie 5 - Einrichtungen mit spezieller Gefährdung"
+msgstr "Kontingent 5 - Beschäftigte und Einrichtungen mit erhöhter Gefährdung"
 
 msgid "Kat 6"
-msgstr "Kategorie 6 - Beschäftigte und Einrichtungen mit spezieller Gefährdung"
+msgstr "Kontingent 6 - Beschäftigte und Einrichtungen mit besonders hoher Gefährdung"
 
 msgid "Kat 7"
-msgstr "Kategorie 7 - Schulen"
+msgstr "Kontingent 7 - Schulen (Nur Lehrkräfte)"
+
+msgid "Kat 8"
+msgstr "Kontingent 8 - Schulpersonal (Ohne Lehrkräfte und Schulbetreuung)"
+
+msgid "Kat 9"
+msgstr "Kontingent 9 - Schulbetreuung"
 
 msgid "Address Name1"
 msgstr "Name"
@@ -79,16 +85,22 @@ msgid "Address City"
 msgstr "Ort"
 
 msgid "Vouchers"
-msgstr "Barcodes"
+msgstr "Berechtigungsschein"
 
 msgid "Description"
 msgstr "Beschreibung"
 
-msgid "Unique Invoice identifier"
+msgid "Titel oid Rechnung"
 msgstr "Rechnungsnummer"
 
-msgid "Internal identifier of the invoice"
+msgid "oid Rechnung"
 msgstr "Rechnungsnummer"
+
+msgid "Titel oid Berechtigungsschein"
+msgstr "Berechtigungsschein Nummer"
+
+msgid "oid Berechtigungsschein"
+msgstr "Berechtigungsschein"
 
 msgid "Creation date"
 msgstr "Erstellungsdatum"

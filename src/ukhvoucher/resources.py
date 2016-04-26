@@ -11,6 +11,7 @@ chosenjs = Resource(library, 'chosen.jquery.js', depends=[jquery, chosencss])
 
 #chosencss = Resource(library, 'select2.min.css')
 #chosenjs = Resource(library, 'select2.min.js', depends=[jquery, chosencss])
+chosenajax = Resource(library, 'chosen.ajaxaddition.jquery.js', depends=[chosenjs])
 
 
 ukhvouchers = Resource(library, 'ukh.js', depends=[chosenjs])

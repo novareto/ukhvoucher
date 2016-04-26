@@ -48,6 +48,9 @@ class PDF(uvclight.Page):
         #z2 = len(principal.getVouchers())
         for voucher in principal.getVouchers(cat=self.request.form.get('cat')):
             if voucher.status.strip() == CREATED:
+                # ikg = Kategorie für Überschriften etc.
+                ikg = str(voucher.cat.strip())
+                # ######################################
                 c.setFont(schriftart, 12)
                 bcp = '%s/static/logo_ukh.JPG' % path.dirname(ukhvoucher.__file__)
                 c.drawImage(bcp, 15.5 * cm, 27.2 * cm, width=4.5 * cm, height=1.3 * cm)
@@ -58,20 +61,25 @@ class PDF(uvclight.Page):
                 c.drawString(15.5 * cm, 25.2 * cm, u'Telefon')
                 c.drawString(17.3 * cm, 25.2 * cm, u'069 29972-440')
                 c.drawString(15.5 * cm, 24.8 * cm, u'Fax')
-                c.drawString(17.3 * cm, 24.8 * cm, u'069 29972-8440')
+                c.drawString(17.3 * cm, 24.8 * cm, u'069 29972-8459')
                 c.drawString(15.5 * cm, 24.4 * cm, u'Internet')
                 c.drawString(17.3 * cm, 24.4 * cm, u'www.ukh.de')
                 c.drawString(15.5 * cm, 24.0 * cm, u'E-Mail')
-                c.drawString(17.3 * cm, 24.0 * cm, u'ukh@ukh.de')
+                c.drawString(17.3 * cm, 24.0 * cm, u'erste-hilfe@ukh.de')
                 c.drawString(15.5 * cm, 23.2 * cm, u'Durchwahl')
-                c.drawString(17.3 * cm, 23.2 * cm, u'069 29972-440')
+                c.drawString(17.3 * cm, 23.2 * cm, u'069 29972-459')
                 # Adressdaten
                 c.setFont(schriftartfett, 12)
                 x = 23.5
                 # Namensfelder werden nur ausgegeben wenn diese gefuellt sind
                 mnr = adr.mnr.strip()
                 if mnr != '':
-                    c.drawString(2.5 * cm, x * cm, u'Mitglieds-Nr.: ' + mnr)
+                    if ikg == 'IKG7':
+                        c.drawString(2.5 * cm, x * cm, u'Einrichtungsnummer: ' + mnr)
+                    elif ikg == 'IKG9':
+                        c.drawString(2.5 * cm, x * cm, u'Mitglieds- oder Betriebsnummer: ' + mnr)
+                    else:
+                        c.drawString(2.5 * cm, x * cm, u'Mitgliedsnummer: ' + mnr)
                 x = x - 1.0
                 # Namensfelder werden nur ausgegeben wenn diese gefuellt sind
                 c.drawString(2.5 * cm, x * cm, adr.name1.strip() + ' ' + adr.name2.strip())
@@ -83,40 +91,57 @@ class PDF(uvclight.Page):
                 c.drawString(2.5 * cm, x * cm, str(adr.zip_code) + ' ' + adr.city.strip())
                 #####################################################
                 # Überschrift
-                ikg = str(voucher.cat.strip())
                 if ikg == 'IKG1':
-                    kattext = u'Verwaltung, Büro'
+                    kattext = u'K1 - Verwaltung, Büro'
                 elif ikg == 'IKG2':
-                    kattext = u'Andere Betriebe'
+                    kattext = u'K2 - Sonstige Betriebe'
                 elif ikg == 'IKG3':
-                    kattext = u'Kinderbetreuungseinrichtungen'
+                    kattext = u'K3 - Kindertageseinrichtungen'
                 elif ikg == 'IKG4':
-                    kattext = u'Entsorgung/Bauhof'
+                    kattext = u'K4 - Bauhof / Entsorgung'
                 elif ikg == 'IKG5':
-                    kattext = u'Einrichtungen mit spezieller Gefährdung'
+                    kattext = u'K5 - Beschäftigte und Einrichtungen mit erhöhter Gefährdung'
                 elif ikg == 'IKG6':
-                    kattext = u'Einrichtungen mit spezieller Gefährdung'
+                    kattext = u'K6 - Einrichtungen mit besonders hoher Gefährdung'
                 elif ikg == 'IKG7':
-                    kattext = u'Schulen'
+                    kattext = u'K7 - Schulen'
                 elif ikg == 'IKG8':
-                    kattext = u'Schulstandorte'
+                    kattext = u'K8 - Schulpersonal'
                 elif ikg == 'IKG9':
-                    kattext = u'Schulbetreuung'
+                    kattext = u'K9 - Schulbetreuung'
                 else:
                     kattext = u''
                 c.setFillColor(black)
-                c.setFont(schriftartfett, 14)
-                c.drawString(2.5 * cm, 18.5 * cm, u'Gutschein / Berechtigungsschein ')  # + str(z1) + ' von ' + str(z2))
-                c.drawString(2.5 * cm, 17.9 * cm, u'Kontingentgruppe: ' + str(voucher.cat.strip()) + ' ' + kattext)
+                c.setFont(schriftartfett, 12)
+                c.drawString(2.5 * cm, 18.5 * cm, u'Berechtigungsschein ')  # + str(z1) + ' von ' + str(z2))
+                c.drawString(2.5 * cm, 17.9 * cm, u'Kontingentkategorie ' + kattext)
                 # Überschrift 2. Zeile
                 c.setFont(schriftartfett, 10)
                 y = 16.8
                 c.drawString(2.5 * cm, y * cm, u'Diese Bescheinigung berechtigt eine Person zu einer einmaligen Teilnahme an einer')
                 y = y - 0.6
-                c.drawString(2.5 * cm, y * cm, u'Erste-Hilfe-Aus- oder Fortbildung im Sinne der Unfallverhütungsvorschrift')
-                y = y - 0.6
-                c.drawString(2.5 * cm, y * cm, u'(UVV) DGUV Vorschrift 1 "Grundsätze der Prävention"')
-                y = y - 1.2
+                if ikg == 'IKG3':
+                    c.drawString(2.5 * cm, y * cm, u'Erste Hilfe-Aus- oder Fortbildung oder einer Erste Hilfe-Aus- oder Fortbildung')
+                    y = y - 0.6
+                    c.drawString(2.5 * cm, y * cm, u'in Bildungs- und Betreuungseinrichtungen für Kinder im Sinne des DGUV Grundsatzes 304-001.')
+                    y = y - 2.5
+                elif ikg == 'IKG7':
+                    c.drawString(2.5 * cm, y * cm, u'Erste Hilfe-Fortbildung im Sinne des DGUV Grundsatzes 304-001')
+                    y = y - 0.6
+                    c.drawString(2.5 * cm, y * cm, u'oder einer Erste Hilfe-Fortbildung Schule.')
+                    y = y - 1.2
+                    c.drawString(2.5 * cm, y * cm, u'Lehrgangsgebühren für die Erste Hilfe-Ausbildung werden nicht übernommen.')
+                    y = y - 1.3
+                elif ikg == 'IKG9':
+                    c.drawString(2.5 * cm, y * cm, u'Erste Hilfe-Aus- oder Fortbildung im Sinne des DGUV Grundsatzes 304-001.')
+                    y = y - 1.2
+                    c.drawString(2.5 * cm, y * cm, u'Lehrgangsgebühren für die Erste Hilfe-Aus- oder Fortbildung in Bildungs-')
+                    y = y - 0.6
+                    c.drawString(2.5 * cm, y * cm, u'und Betreuungseinrichtungen für Kinder werden nicht übernommen.')
+                    y = y - 1.3
+                else:
+                    c.drawString(2.5 * cm, y * cm, u'Erste Hilfe-Aus- oder Fortbildung im Sinne des DGUV Grundsatzes 304-001.')
+                    y = y - 3.1
                 # Datum der Erstellung
                 d = str(voucher.creation_date)
                 tag = d[8:10]
@@ -124,18 +149,30 @@ class PDF(uvclight.Page):
                 jahr = d[:4]
                 erstelldatum = tag + '.' + monat + '.' + jahr
                 c.drawString(2.5 * cm, y * cm, u'Ausstellungsdatum: ' + erstelldatum)
-                y = y - 2.5
+                y = y - 0.6
+                c.drawString(2.5 * cm, y * cm, u'Gültigkeit: 01.01.2016 bis 31.12.2017')
+                y = y - 2.7
                 # Barcode Value....
                 barcode_value = str(voucher.oid)
-                barcode = code128.Code128(barcode_value, barWidth = 0.2 * mm, barHeight = 10 * mm)
-                barcode.drawOn(c, 19 * mm, 120 * mm)
-                c.drawString(2.5 * cm, 11.0 * cm, barcode_value)
+                barcode = code128.Code128(barcode_value, barWidth = 0.4 * mm, barHeight = 9 * mm)
+                #barcode = code128.Code128(barcode_value, barWidth = 0.2 * mm, barHeight = 10 * mm)
+                barcode.drawOn(c, 19 * mm, 100 * mm)
+
+
+                y = 9.5
+                c.drawString(2.5 * cm, y * cm, 'Nummer des Berechtigungsscheins:')
+                y = y - 0.6
+                c.drawString(2.5 * cm, y * cm, barcode_value)
 
                 #Ansprechpartner
-                c.drawString(2.5 * cm, 9.0 *cm, u'Ansprechpartner')
-                c.drawString(2.5 * cm, 8.0 * cm, "%s %s" % (account.vname.strip(), account.nname.strip()))
-                c.drawString(2.5 * cm, 7.5 * cm, "%s" % (account.phone.strip()))
-                c.drawString(2.5 * cm, 7.0 * cm, "%s" % (account.email.strip()))
+                y = y - 3.0
+                c.drawString(2.5 * cm, y *cm, u'Ansprechpartner')
+                y = y - 0.8
+                c.drawString(2.5 * cm, y * cm, "%s %s" % (account.vname.strip(), account.nname.strip()))
+                y = y - 0.5
+                c.drawString(2.5 * cm, y * cm, "Telefon: %s" % (account.phone.strip()))
+                y = y - 0.5
+                c.drawString(2.5 * cm, y * cm, "E-Mail: %s" % (account.email.strip()))
                 z1 = z1 + 1
                 # Seitenumbruch
                 c.showPage()

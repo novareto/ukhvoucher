@@ -2,8 +2,8 @@
   address request.principal.getAddress();
   vouchers request.principal.getVouchers();
   categories request.principal.getCategory()">
-  <p class="lead"> Wertscheck für Erste-Hilfe </p>
-  <p> Sie können für folgende Kontingentgruppen Wertschecks anfordern </p>
+  <p class="lead"> Antrag auf Kostenübernahme für Erste Hilfe-Lehrgänge </p>
+  <p> Sie können für folgende Kontingentkategorien (K) Berechtigungsscheine anfordern </p>
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default" tal:repeat="cat view.categories">
       <div class="panel-heading" role="tab" id="headingOne" tal:attributes="id string:heading${cat['name']}">
@@ -14,9 +14,44 @@
           </a> 
         </h4>
         <div tal:define="cat_vouchers request.principal.getVouchers(cat['name'])">
-          <p tal:condition="cat_vouchers"> Sie haben in dieser Kontigentgruppe <span tal:content="len(cat_vouchers)" /> Gutscheine. </p>
-          <button tal:condition="not: cat_vouchers" type="button" class="btn btn-primary btn-lg" data-toggle="modal" tal:attributes="data-target '#' + cat['name']"> Gutschein anfordern </button>
-        </div>
+          <p tal:condition="cat_vouchers"> Sie haben in dieser Kontingentkategorie <span tal:content="len(cat_vouchers)" /> Berechtigungsscheine. </p>
+          <button tal:condition="not: cat_vouchers" type="button" class="btn btn-primary btn-lg" data-toggle="modal" tal:attributes="data-target '#' + cat['name']"> Berechtigungsscheine anfordern </button>
+
+        <!-- Info Buttons -->
+        <button tal:condition="cat['name'].strip() == 'IKG1'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/uploads/media/UKH_MB_Erste_Hilfe_in_Verwaltungs-B%C3%BCrobetrieben_1.pdf')">
+          Info / Merkblatt
+        </button>
+        <button tal:condition="cat['name'].strip() == 'IKG2'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/uploads/media/Merkblatt_2_Erste_Hilfe_in_anderen_Betrieben_und_Hochschulen.pdf')">
+          Info / Merkblatt
+        </button>
+        <button tal:condition="cat['name'].strip() == 'IKG3'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/uploads/media/Merkblatt_3__Erste_Hilfe_in_Kindertageseinrichtungen_2016.pdf')">
+          Info / Merkblatt
+        </button>
+        <button tal:condition="cat['name'].strip() == 'IKG4'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/uploads/media/Merkblatt_4_Erste_Hilfe_f%C3%BCr_Besch%C3%A4ftigte_in_Kolonnen_2016.pdf')">
+          Info / Merkblatt
+        </button>
+        <button tal:condition="cat['name'].strip() == 'IKG5'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/uploads/media/Merkblatt_5_Erste_Hilfe_bei_besonderer_Gef%C3%A4hrdung.pdf')">
+          Info / Merkblatt
+        </button>
+        <button tal:condition="cat['name'].strip() == 'IKG6'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/uploads/media/Merkblatt_5_Erste_Hilfe_bei_besonderer_Gef%C3%A4hrdung.pdf')">
+          Info / Merkblatt
+        </button>
+        <button tal:condition="cat['name'].strip() == 'IKG7'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/uploads/media/Merkblatt_6_Erste_Hilfe_in_Schulen_01.pdf')">
+          Info / Merkblatt
+        </button>
+        <button tal:condition="cat['name'].strip() == 'IKG9'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/uploads/media/Merkblatt_3__Erste_Hilfe_in_Kindertageseinrichtungen_2016.pdf')">
+          Info / Merkblatt
+        </button>
+          
+          
 
         <div class="modal fade" tal:attributes="id cat['name']">
           <div class="modal-dialog" role="document">
@@ -26,7 +61,9 @@
                                       data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title" id="myModalLabel" tal:content="cat['doc']" > </h4>
+                <!--Nachfolgende Zeile wurde ausgeblendet, doppelter Titel...-->
+                <!--<h4 class="modal-title" id="myModalLabel" tal:content="cat['doc']" > </h4>-->
+                <h4>Kontingent Kategorie</h4>
                 <p tal:content="structure cat['desc']"> </p>
               </div>
               <div class="modal-body" tal:content="structure cat['form'].render()"> </div>
@@ -37,11 +74,11 @@
       <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" tal:attributes="id string:collapse${cat['name']}">
         <div class="panel-body" tal:define="cat_vouchers request.principal.getVouchers(cat['name'])">
           <div tal:condition="cat_vouchers">
-            <a href="" tal:attributes="href string:${view.application_url()}/pdf?cat=${cat['name']}"> Gutscheine für diese Kategorie Downloaden </a>
-            <table class="table">
+            <a href="" tal:attributes="href string:${view.application_url()}/pdf?cat=${cat['name']}"><h2> Berechtigungsscheine nur für diese Kategorie Downloaden </h2></a>
+            <table class="EHtable">
               <tr>
-                <th> Gutschein id </th>
-                <th> Datum </th>
+                <th width="75"> Nummer / id </th>
+                <th width="80"> Datum </th>
                 <th> Status </th>
                 <th> Grundlage </th>
               </tr>
@@ -59,6 +96,6 @@
     </div>
   </div>
   <div class="well" tal:condition="vouchers">
-    <a href="" tal:attributes="href string:${view.application_url()}/pdf"> Gutscheine Downloaden </a>
+    <a href="" tal:attributes="href string:${view.application_url()}/pdf"> Berechtigungsscheine Downloaden </a>
   </div>
 </div>

@@ -51,3 +51,56 @@ h4.panel-title a span.sign::after {
 h4.panel-title a.collapsed span.sign::after {
     content: " +";
 }
+
+
+
+
+
+ table.EHtable {
+   border: 1px solid #ccc;
+   width: 100%;
+   border-collapse: collapse;
+   margin-bottom: 0.5em;
+   box-shadow: 0px 1px 2px #ccc;
+ }   
+     
+ table.EHtable caption {
+   text-align: left;
+   font-weight: bold;
+   font-size: 14px;
+   line-height: 28px;
+   margin-bottom: 6px;
+ }
+ 
+ table.EHtable th {
+   background: url(images/bg-tableheader.png) left top repeat-x #f0f1f1;
+   border-bottom: 1px solid #ccc;
+   text-align: left;
+ }
+   
+ table.EHtable tr.even {
+   background: #e9eff5;
+ }
+   
+ table.EHtable tr.odd {
+   background: #fff;
+ } 
+ 
+ table.EHtable td {
+   padding: 3px 8px;
+   text-align: left;
+   border: 1px solid #ccc;
+ }
+
+ table.vertical-listing th {
+     text-align: left;
+ } 
+   
+ table td.center {
+   text-align: center;
+ }
+     
+ table td.right {
+   text-align: right;
+ }
+

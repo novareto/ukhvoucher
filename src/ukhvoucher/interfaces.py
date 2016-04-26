@@ -104,6 +104,45 @@ def get_reason(context):
     ]
     return SimpleVocabulary(rc)
 
+@grok.provider(IContextSourceBinder)
+def get_reason2(context):
+    rc = [
+        SimpleTerm(u'Freilichtmuseum Hessenpark',
+                   u'Beschaeftigte im Freilichtmuseum Hessenpark',
+                   u'Beschäftigte im Freilichtmuseum Hessenpark'),
+        SimpleTerm(u'in der Tierpflege',
+                   u'Beschaeftigte in der Tierpflege',
+                   u'Beschäftigte in der Tierpflege'),
+    ]
+    return SimpleVocabulary(rc)
+
+@grok.provider(IContextSourceBinder)
+def get_reason3(context):
+    rc = [
+        SimpleTerm(u'von Hessen-Forst (Waldarbeiten)',
+                   u'Beschaeftigte von Hessen-Forst (Waldarbeiten)',
+                   u'Beschäftigte von Hessen-Forst (Waldarbeiten)'),
+        SimpleTerm(u'von Hessen mobil (Straßendienst)',
+                   u'Beschaeftigte von Hessen mobil (Strassendienst)',
+                   u'Beschäftigte von Hessen mobil (Straßendienst)'),
+        SimpleTerm(u'bei der Hessischen Verwaltung für Bodenmanagement (Außendienst)',
+                   u'Beschaeftigte bei der Hessischen Verwaltung fuer Bodenmanagement (Aussendienst)',
+                   u'Beschäftigte bei der Hessischen Verwaltung für Bodenmanagement (Außendienst)'),
+        SimpleTerm(u'in Abwasserbetrieben (Arbeiten im Kanalnetz)',
+                   u'Beschaeftigte in Abwasserbetrieben (Arbeiten im Kanalnetz)',
+                   u'Beschäftigte in Abwasserbetrieben (Arbeiten im Kanalnetz)'),
+        SimpleTerm(u'in Wasserversorgungsbetrieben (Arbeiten in Schächten)',
+                   u'Beschaeftigte in Wasserversorgungsbetrieben (Arbeiten in Schaechten)',
+                   u'Beschäftigte in Wasserversorgungsbetrieben (Arbeiten in Schächten)'),
+        SimpleTerm(u'auf Deponien',
+                   u'Beschaeftigte auf Deponien',
+                   u'Beschäftigte auf Deponien'),
+        SimpleTerm(u'von N*ICE (ohne Leiharbeitnehmer)',
+                   u'Beschaeftigte von N*ICE (ohne Leiharbeitnehmer)',
+                   u'Beschäftigte von N*ICE (ohne Leiharbeitnehmer)'),
+    ]
+    return SimpleVocabulary(rc)
+
 
 def get_source(name):
     @grok.provider(IContextSourceBinder)
@@ -131,14 +170,14 @@ def get_kategorie(context):
 class IVouchersCreation(Interface):
 
     number = schema.Int(
-        title=_(u"Anzahl der Gutscheine"),
-        description=_(u"Wie viele Gutscheine sollen angelegt werden?"),
+        title=_(u"Anzahl der Berechtigungsscheine"),
+        description=_(u"Wie viele Berechtigungsscheine sollen angelegt werden?"),
         required=True,
         )
 
     kategorie = schema.Choice(
         title=u"Kategorie",
-        description=u"Für welche Kategorie wollen sie Gutscheine anlegen",
+        description=u"Für welche Kategorie wollen sie Berechtigungsscheine anlegen",
         source=get_kategorie,
         )
 
@@ -170,7 +209,7 @@ class IModelContainer(Interface):
 class IDisablingVouchers(Interface):
     vouchers = schema.Set(
         value_type=schema.Choice(source=get_source('vouchers')),
-        title=_(u"Gutscheine"),
+        title=_(u"Berechtigungsscheine"),
         required=True,
     )
 
@@ -294,12 +333,14 @@ class ICategory(Interface):
     )
 
     kat8 = schema.Bool(
-        title=_(u"Kategorie 8 - Schulstandorte"),
+        title=_(u"Kat 8"),
+        #title=_(u"Kategorie 8 - Schulstandorte"),
         required=True,
     )
 
     kat9 = schema.Bool(
-        title=_(u"Kategorie 9 - Schulbetreuung"),
+        title=_(u"Kat 9"),
+        #title=_(u"Kategorie 9 - Schulbetreuung"),
         required=True,
     )
 
@@ -356,8 +397,8 @@ class IAddress(Interface):
 class IInvoice(Interface):
 
     oid = schema.TextLine(
-        title=_(u"Unique Invoice identifier"),
-        description=_(u"Internal identifier of the invoice"),
+        title=_(u"Titel oid Rechnung"),
+        description=_(u"oid Rechnung"),
         required=True,
         defaultFactory=getInvoiceId,
     )
@@ -370,7 +411,7 @@ class IInvoice(Interface):
 
     reason = schema.Choice(
         title=_(u'Begründung'),
-        description=_(u'Sind sie mit den Gutscheinen der Rechnung nicht einverstanden?'),
+        description=_(u'Sind sie mit den Berechtigungsscheinen der Rechnung nicht einverstanden?'),
         source=get_reason,
         required = False,
     )
@@ -385,8 +426,8 @@ class IInvoice(Interface):
 class IVoucher(Interface):
 
     oid = schema.TextLine(
-        title=_(u"Unique Invoice identifier"),
-        description=_(u"Internal identifier of the invoice"),
+        title=_(u"Titel oid Berechtigungsschein"),
+        description=_(u"oid Berechtigungsschein"),
         required=True,
     )
 
@@ -414,10 +455,10 @@ class IVoucher(Interface):
 
 
 class IKG1(Interface):
-    u"""Verwaltung, Büro"""
+    u"""Verwaltung, Büro (K1)"""
 
     mitarbeiter = schema.Int(
-        title=_(u"Beschäftigte"),
+        title=_(u"Beschäftigte (ohne Beamte)"),
     )
 
     standorte = schema.Int(
@@ -426,10 +467,10 @@ class IKG1(Interface):
 
 
 class IKG2(Interface):
-    u"""Andere Betriebe"""
+    u"""Sonstige Betriebe und Hochschulen (K2)"""
 
     mitarbeiter = schema.Int(
-        title=_(u"Beschäftigte"),
+        title=_(u"Beschäftigte (ohne Beamte)"),
     )
 
     standorte = schema.Int(
@@ -438,19 +479,19 @@ class IKG2(Interface):
 
 
 class IKG3(Interface):
-    u"""Kinderbetreuungseinrichtungen"""
+    u"""Kindertageseinrichtungen (K3)"""
 
     gruppen = schema.Int(
         title=_(u"Anzahl der Kindergruppen"),
     )
 
     kitas = schema.Int(
-        title=_(u"Anzahl Kommunale Kitas"),
+        title=_(u"Anzahl Kita Standorte"),
     )
 
 
 class IKG4(Interface):
-    u"""Entsorgung / Bauhof (Kolonne)"""
+    u"""Bauhof (Kolonne) / Entsorgung (K4)"""
 
     kolonne = schema.Int(
         title=_(u"Anzahl der Kolonnen"),
@@ -458,48 +499,73 @@ class IKG4(Interface):
 
 
 class IKG5(Interface):
-    u"""Einrichtungen mit spezieller Gefährdung"""
+    u"""Beschäftigte und Einrichtungen mit erhöhter Gefährdung (K5)"""
 
-    merkmal = schema.Choice(
-        title=u"Welches Merkmal trifft für die besondere Gefährdung zu:",
-        values=(u'',
-                u'Beschaeftigte im Freilichtmuseum Hessenpark',
-                u'Beschaeftigte in der Tierpflege'))
+    #merkmal = schema.Choice(
+    #    title=u"Welches Merkmal trifft für die erhöhte Gefährdung zu:",
+    #    values=(u'',
+    #            u'Beschaeftigte im Freilichtmuseum Hessenpark',
+    #            u'Beschaeftigte in der Tierpflege'))
+    #mysource = SimpleVocabulary([
+    #    SimpleTerm('',
+    #               '',
+    #               ''),
+    #    SimpleTerm('Beschaeftigte im Freilichtmuseum Hessenpark',
+    #               'Beschaeftigte im Freilichtmuseum Hessenpark',
+    #               u'Bescheaftigte im Freilichtmuseum Hessenpark'),
+    #    SimpleTerm('Beschaeftigte in der Tierpflege',
+    #               'Beschaeftigte in der Tierpflege',
+    #               u'Beschaeftigte in der Tierpflege'),
+    #])
+
+    merkmal = schema.Set(
+        title=u"Welches Merkmal trifft für die erhöhte Gefährdung zu:",
+        value_type=schema.Choice(
+            title=u'',
+            source=get_reason2,))
+
 
     mitarbeiter = schema.Int(
-        title=_(u"Beschäftigte"),
+        title=_(u"Beschäftigte (ohne Beamte)"),
     )
 
 
 class IKG6(Interface):
-    u"""Beschäftigte und Einrichtungen mit spezieller Gefährdung"""
+    u"""Beschäftigte und Einrichtungen mit besonders hoher Gefährdung (K6)"""
 
-    merkmal = schema.Choice(
+    merkmal = schema.Set(
         title=u"Welches Merkmal trifft für die besondere Gefährdung zu:",
-        values=(u'',
-                u'mit Waldarbeiten Beschaeftigte von Hessen-Forst',
-                u'im Strassendienst Beschaeftigte von Hessen mobil',
-                u'im Aussendienst Beschaeftigte bei der Hessischen Verwaltung fuer Bodenmanagement',
-                u'mit Arbeiten im Kanalnetz Beschaeftigte in Abwasserbetrieben',
-                u'mit Arbeiten im Schaechten Beschaeftigte in Wasserversorgungsbetrieben',
-                u'auf Deponien Beschaeftigte',
-                u'Beschaeftigte von N*ICE (ohne Leiharbeitnehmer)'))
+        value_type=schema.Choice(
+            title=u'',
+            source=get_reason3,))
+
+    #merkmal = schema.Choice(
+    #    title=u"Welches Merkmal trifft für die besondere Gefährdung zu:",
+    #    values=(u'',
+    #            u'Beschaeftigte von Hessen-Forst (Waldarbeiten)',
+    #            u'Beschaeftigte von Hessen mobil (Strassendienst)',
+    #            u'Beschaeftigte bei der Hessischen Verwaltung fuer Bodenmanagement (Aussendienst)',
+    #            u'Beschaeftigte in Abwasserbetrieben (Arbeiten im Kanalnetz)',
+    #            u'Beschaeftigte in Wasserversorgungsbetrieben (Arbeiten in Schaechten)',
+    #            u'Beschaeftigte auf Deponien',
+    #            u'Beschaeftigte von N*ICE (ohne Leiharbeitnehmer)'))
 
     mitarbeiter = schema.Int(
-        title=_(u"Beschäftigte"),
+        title=_(u"Beschäftigte (ohne Beamte)"),
     )
 
 
 class IKG7(Interface):
-    u"""Schulen"""
+    u"""Schulen (nur Lehrkräfte) (K7)"""
 
-    mitarbeiter = schema.Int(
-        title=_(u"Anzahl Lehrkräfte"),
+    #mitarbeiter = schema.Int(
+    lehrkraefte = schema.Int(
+        title=_(u"Anzahl Lehrkräfte (ohne Schulbetreuung, Sekretariat, Reinigungs- und Hausmeistertätigkeiten)"),
     )
 
 
 class IKG8(Interface):
-    u"""Schulstandorte"""
+    u"""Schulpersonal (ohne Lehrkräfte und Schulbetreuung) (K8)"""
 
     mitarbeiter = schema.Int(
         title=_(u"Schulstandorte"),
@@ -507,9 +573,10 @@ class IKG8(Interface):
 
 
 class IKG9(Interface):
-    u"""Schulbetreuung"""
+    u"""Schulbetreuung (K9)"""
 
-    mitarbeiter = schema.Int(
+    #mitarbeiter = schema.Int(
+    gruppen = schema.Int(
         title=_(u"Gruppen"),
     )
 
@@ -546,7 +613,7 @@ class IInvoiceSearch(Interface):
 
     reason = schema.Choice(
         title=_(u'Begründung'),
-        description=_(u'Sind sie mit den Gutscheinen der Rechnung nicht einvers\
+        description=_(u'Sind sie mit den Berechtigungsscheinen der Rechnung nicht einvers\
 tanden?'),
         source=get_reason,
         required=False,

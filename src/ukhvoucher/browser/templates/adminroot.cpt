@@ -107,7 +107,7 @@
     </ul>
 </fieldset>
 <fieldset tal:define="vouchers request.principal.getVouchers()">
-    <legend> Gutscheine </legend>
+    <legend> Berechtigungsscheine </legend>
     <div class="btn-group pull-right">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Aktion <span class="caret"></span>
@@ -118,10 +118,10 @@
             </li>
         </ul>
     </div>
-    <table class="table">
+    <table class="EHtable">
         <tr>
-            <th> Gutschein id </th>
-            <th> Datum </th>
+            <th width="75"> Nummer / id </th>
+            <th width="80"> Datum </th>
             <th> Status </th>
             <th> Kategorie </th>
             <th> Grundlage </th>
@@ -130,7 +130,8 @@
             <td tal:content="voucher.oid"></td>
             <td tal:content="voucher.creation_date"></td>
             <td tal:content="voucher.status"></td>
-            <td tal:content="voucher.cat"></td>
+            <!--<td tal:content="voucher.cat"></td>-->
+            <td tal:content="voucher.displayKat"></td>
             <td tal:content="voucher.displayData"></td>
         </tr>
     </table>

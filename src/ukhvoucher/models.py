@@ -211,7 +211,7 @@ class Voucher(Base, Location):
 
     @property
     def title(self):
-        return "Gutschein %s" % self.oid
+        return "Berechtigungsschein %s" % self.oid
 
     # search attributes
     search_attr = "oid"
@@ -224,11 +224,46 @@ class Voucher(Base, Location):
         data = json.loads(self.generation.data)
         if isinstance(data, dict):
             for k, v in json.loads(self.generation.data).items():
+                if k == 'mitarbeiter':
+                    k = u'Beschäftigte'
+                if k == 'standorte':
+                    k = u'Standorte'
+                if k == 'kitas':
+                    k = u'Kitas'
+                if k == 'merkmal':
+                    k = u'Merkmal'
+                if k == 'kolonne':
+                    k = u'Kolonnen'
+                if k == 'gruppen':
+                    k = u'Gruppen'
+                if k == 'lehrkraefte':
+                    k = u'Lehrkräfte'
                 rc.append("%s: %s" % (k, v))
             return '; '.join(rc)
         return data
 
-
+    @property
+    def displayKat(self):
+        dat = ''
+        if self.cat.strip() == 'IKG1':
+            dat = u'K1 - Verwaltung'
+        elif self.cat.strip() == 'IKG2':
+            dat = u'K2 - Sonstige Betriebe'
+        elif self.cat.strip() == 'IKG3':
+            dat = u'K3 - Kitas'
+        elif self.cat.strip() == 'IKG4':
+            dat = u'K4 - Bauhof'
+        elif self.cat.strip() == 'IKG5':
+            dat = u'K4 - Erhöhte Gefährdung'
+        elif self.cat.strip() == 'IKG6':
+            dat = u'K6 - Besonders hohe Gefährdung'
+        elif self.cat.strip() == 'IKG7':
+            dat = u'K7 - Lehrkräfte'
+        elif self.cat.strip() == 'IKG8':
+            dat = u'K8 - Schulpersonal'
+        elif self.cat.strip() == 'IKG9':
+            dat = u'K9 - Schulbetreuung'
+        return dat
 
 @implementer(IModel, IIdentified, IInvoice)
 class Invoice(Base, Location):
@@ -318,7 +353,7 @@ class Vouchers(SQLContainer):
 
     model = Voucher
     listing_attrs = uvclight.Fields(Voucher.__schema__).select(
-        'oid', 'cat', 'status',' user_id', 'displayData')
+        'oid', 'cat', 'status',' user_id', 'displayData' 'displayKat')
 
     search_fields = uvclight.Fields(IVoucherSearch).omit('user_id')
 
@@ -348,7 +383,7 @@ class Invoices(SQLContainer):
 
 @implementer(IContent, IModelContainer)
 class Categories(SQLContainer):
-    __label__ = u"Kategorien"
+    __label__ = u"Kontingentkategorien"
 
     model = Category
     listing_attrs = uvclight.Fields(Category.__schema__).select(
