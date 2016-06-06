@@ -1,0 +1,19 @@
+<h1> Statistik </h1>
+
+<div metal:use-macro="macro['editform']"/>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th> Kontingentgruppe </th>
+            <th> Anzahl </th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr tal:repeat="data view.statdata">
+        <td tal:content="data[0]"> </td>
+        <td tal:content="data[1]"> </td>
+    </tr>
+    </tbody>
+</table>
