@@ -30,6 +30,7 @@ setup(name='ukhvoucher',
           "webhelpers",
           "ul.auth",
           "ordered_set",
+          "natsort",
           "js.jquery_tablesorter",
 
       ],

@@ -7,6 +7,7 @@ from ukhvoucher import _
 from zope import schema
 from zope.interface import Interface, Attribute
 from zope.schema.interfaces import IContextSourceBinder
+from zope.interface import taggedValue
 from cromlech.sqlalchemy import get_session
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 from plone.memoize import ram
@@ -482,6 +483,9 @@ class K1(Interface):
     standorte = schema.Int(
         title=_(u"Standorte"),
     )
+
+    taggedValue('info', 'Something')
+    taggedValue('descr', 'BLA')
 
 
 class K2(Interface):

@@ -208,3 +208,9 @@ class Logout(uvclight.View):
     def render(self):
         return self.redirect(self.application_url())
 
+
+from ul.browser.components import DisplayMenuItem
+
+
+class DisplayMenuItem(DisplayMenuItem):
+    available = False

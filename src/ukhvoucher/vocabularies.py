@@ -73,10 +73,9 @@ def categories(context):
 
 @provider(IContextAwareDefaultFactory)
 def getNextID(context):
-    print "i am called"
     session = get_session('ukhvoucher')
     from sqlalchemy.sql.functions import max
-    oid = int(session.query(max(Account.login)).one()[0]) + 1
+    oid = int(session.query(max(Account.login)).one()[0] or 0 ) + 1
     return unicode(oid)
 
 

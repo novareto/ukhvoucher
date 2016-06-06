@@ -5,7 +5,7 @@ from .interfaces import IVoucher, IInvoice, IAddress, IAccount, ICategory
 from .interfaces import IModel, IModelContainer, IIdentified
 from .interfaces import IVoucherSearch, IInvoiceSearch
 from . import _
-from zope.location import ILocation, Location, LocationProxy, locate
+from zope.location import Location
 
 import uvclight
 from urllib import quote, unquote
@@ -15,13 +15,12 @@ from sqlalchemy import *
 from sqlalchemy.orm import relationship, backref
 from uvc.content.interfaces import IContent
 from zope.interface import implementer
-from zope.location import Location
 
 from sqlalchemy import types
 
 
 schema = ''
-schema = 'UKHINTERN.'
+# schema = 'UKHINTERN.'
 
 print "SCHEMA", schema
 
@@ -44,7 +43,6 @@ class StrippedString(types.TypeDecorator):
     def copy(self):
         "Make a copy of this type"
         return StrippedString(self.impl.length)
-
 
 
 @implementer(IModel, IIdentified, IAddress)
@@ -77,6 +75,18 @@ class Address(Base, Location):
     searchable_attrs = ("oid", "name1", "street", 'zip_code', 'city')
 
     mnr = ""
+
+    @staticmethod
+    def widget_arrangements(fields):
+        fields['oid'].readonly = True
+        fields['mnr'].readonly = True
+        fields['name1'].htmlAttributes = {'maxlength': 28}
+        fields['name2'].htmlAttributes = {'maxlength': 28}
+        fields['name3'].htmlAttributes = {'maxlength': 28}
+        fields['street'].htmlAttributes = {'maxlength': 46}
+        fields['number'].htmlAttributes = {'maxlength': 3}
+        fields['zip_code'].htmlAttributes = {'maxlength': 5}
+        fields['city'].htmlAttributes = {'maxlength': 24}
 
 
 class JournalEntry(Base):
@@ -155,6 +165,10 @@ class Category(Base, Location):
     search_attr = "oid"
     searchable_attrs = ("oid",)
 
+    @staticmethod
+    def widget_arrangements(fields):
+        fields['oid'].readonly = True
+
 
 @implementer(IModel, IIdentified, IAccount)
 class Account(Base, Location):
@@ -191,6 +205,18 @@ class Account(Base, Location):
     search_attr = "oid"
     searchable_attrs = ("oid", "email", "name")
 
+    @staticmethod
+    def widget_arrangements(fields):
+        fields['oid'].readonly = True
+        fields['login'].readonly = True
+        fields['az'].readonly = True
+        fields['vname'].htmlAttributes = {'maxlength': 30}
+        fields['nname'].htmlAttributes = {'maxlength': 30}
+        fields['phone'].htmlAttributes = {'maxlength': 15}
+        fields['email'].htmlAttributes = {'maxlength': 50}
+        fields['password'].htmlAttributes = {'maxlength': 8}
+
+
 @implementer(IModel, IIdentified, IVoucher)
 class Voucher(Base, Location):
 
@@ -205,8 +231,10 @@ class Voucher(Base, Location):
     status = Column('status', String)
     cat = Column('kat', String)
     user_id = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
-    invoice_id = Column('rech_oid', Integer, ForeignKey(schema + 'z1ehrrch_t.rech_oid'))
-    generation_id = Column('gen_oid', Integer, ForeignKey(schema + 'z1ehrbgl_t.bgl_oid'))
+    invoice_id = Column(
+        'rech_oid', Integer, ForeignKey(schema + 'z1ehrrch_t.rech_oid'))
+    generation_id = Column(
+        'gen_oid', Integer, ForeignKey(schema + 'z1ehrbgl_t.bgl_oid'))
 
     # relations
     user = relationship('Account')
@@ -283,6 +311,7 @@ class Voucher(Base, Location):
             dat = u'K11 - Gesundheitsdienste'
         return dat
 
+
 @implementer(IModel, IIdentified, IInvoice)
 class Invoice(Base, Location):
 
@@ -307,6 +336,10 @@ class Invoice(Base, Location):
     search_attr = "rech_oid"
     searchable_attrs = ("oid", "reason")
 
+    @staticmethod
+    def widget_arrangements(fields):
+        fields['oid'].readonly = True
+
 
 class Generation(Base):
     __tablename__ = 'z1ehrbgl_t'
@@ -320,9 +353,7 @@ class Generation(Base):
     user = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
     uoid = Column('oid', Integer)
 
-    voucher = relationship("Voucher", backref=backref('generation') )
-
-
+    voucher = relationship("Voucher", backref=backref('generation'))
 
 
 @implementer(IContent, IModelContainer)
@@ -349,7 +380,6 @@ class Accounts(SQLContainer):
         return quote('%s %s %s' % (obj.oid, obj.login, obj.az))
 
 
-
 @implementer(IContent, IModelContainer)
 class Addresses(SQLContainer):
     __label__ = _(u"Addresses")
@@ -371,7 +401,7 @@ class Vouchers(SQLContainer):
 
     model = Voucher
     listing_attrs = uvclight.Fields(Voucher.__schema__).select(
-        'oid', 'cat', 'status',' user_id', 'displayData' 'displayKat')
+        'oid', 'cat', 'status', 'user_id', 'displayData', 'displayKat')
 
     search_fields = uvclight.Fields(IVoucherSearch).omit('user_id')
 
@@ -405,7 +435,8 @@ class Categories(SQLContainer):
 
     model = Category
     listing_attrs = uvclight.Fields(Category.__schema__).select(
-        'oid', 'kat1', 'kat2', 'kat3', 'kat4', 'kat5', 'kat6', 'kat7', 'kat8', 'kat9', 'kat10', 'kat11')
+        'oid', 'kat1', 'kat2', 'kat3', 'kat4', 'kat5',
+        'kat6', 'kat7', 'kat8', 'kat9', 'kat10', 'kat11')
 
     def key_reverse(self, obj):
         return str(obj.oid)
