@@ -1,22 +1,28 @@
 <div>
   <h1>Historie</h1>
-  <table class="table table-bordered table-striped">
-    <theader>
+  <table class="tablesorter table table-bordered table-striped table-condensed" tal:define="content view.entries" tal:condition="content">
+    <thead>
       <tr>
-	<th>Mitglied</th>
-	<th>Datum</th>
-	<th>Author</th>
-	<th>Aktion</th>
-	<th>Bemerkung</th>
+	    <th>Mitglied / Zuordnung</th>
+	    <th>Datum</th>
+    	<th>Autor</th>
+	    <th>Aktion</th>
+	    <th>Bemerkung</th>
       </tr>
-    </theader>
+    </thead>
     <tbody>
-      <tr tal:repeat="content view.entries">
-	<td tal:content="content.oid" />
-	<td tal:content="content.date.strftime('%d.%m.%Y')" />
-	<td tal:content="content.userid" />
-	<td tal:content="content.action" />
-	<td tal:content="content.note" />
+    <!--<tr tal:repeat="content view.entries">-->
+      <tr tal:repeat="result content" tal:attributes="class repeat['result'].odd() and 'odd' or 'even'">
+	    <td><span tal:content="result.oid">
+        </td>
+	    <td><span tal:content="result.date.strftime('%d.%m.%Y')">
+        </td>
+	    <td><span tal:content="result.userid">
+        </td>
+	    <td><span tal:content="result.action">
+        </td>
+	    <td><span tal:content="result.note">
+        </td>
       </tr>
     </tbody>
   </table>

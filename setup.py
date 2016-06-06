@@ -30,6 +30,8 @@ setup(name='ukhvoucher',
           "webhelpers",
           "ul.auth",
           "ordered_set",
+          "js.jquery_tablesorter",
+
       ],
       entry_points={
          'fanstatic.libraries': [

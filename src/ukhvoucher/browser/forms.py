@@ -61,10 +61,42 @@ class CreateModel(Form):
         journal = Fields(IJournalize)
         journal['note'].ignoreContent = True
 
+        from ukhvoucher.models import Addresses
+        if isinstance(self.context, Addresses):
+            fields['oid'].readonly = True
+            fields['mnr'].readonly = True
+            fields['name1'].htmlAttributes = {'maxlength': 28}
+            fields['name2'].htmlAttributes = {'maxlength': 28}
+            fields['name3'].htmlAttributes = {'maxlength': 28}
+            fields['street'].htmlAttributes = {'maxlength': 46}
+            fields['number'].htmlAttributes = {'maxlength': 3}
+            fields['zip_code'].htmlAttributes = {'maxlength': 5}
+            fields['city'].htmlAttributes = {'maxlength': 24}
+
+        from ukhvoucher.models import Accounts
+        if isinstance(self.context, Accounts):
+            fields['oid'].readonly = True
+            fields['login'].readonly = True
+            fields['az'].readonly = True
+            fields['vname'].htmlAttributes = {'maxlength': 30}
+            fields['nname'].htmlAttributes = {'maxlength': 30}
+            fields['phone'].htmlAttributes = {'maxlength': 15}
+            fields['email'].htmlAttributes = {'maxlength': 50}
+            fields['password'].htmlAttributes = {'maxlength': 8}
+
+        from ukhvoucher.models import Invoices
+        if isinstance(self.context, Invoices):
+            fields['oid'].readonly = True
+
+        from ukhvoucher.models import Categories
+        if isinstance(self.context, Categories):
+            fields['oid'].readonly = True
+
         return fields + journal
 
     def update(self):
         resources.ukhvouchers.need()
+        resources.ehcss.need()
 
     @property
     def action_url(self):
@@ -74,16 +106,12 @@ class CreateModel(Form):
     def handle_save(self):
         data, errors = self.extractData()
         journal_note = data.pop('note')
-
         if errors:
             self.flash(_(u'Es ist ein Fehler aufgetreten!'))
             return FAILURE
-
-
         if isinstance(self.context, Addresses):
             if data.get('oid') == '':
                 data.pop('oid')
-        print data
         item = self.context.model(**data)
         self.context.add(item)
         if 'oid' in data:
@@ -92,7 +120,6 @@ class CreateModel(Form):
             session = get_session('ukhvoucher')
             session.flush()
             oid = item.oid
-
         # journalize
         if str(self.context.model.__label__) == "Kategorie":
             aktion = u"Kategorien manuell angelegt"
@@ -143,10 +170,42 @@ class EditModel(Form):
         journal = Fields(IJournalize)
         journal['note'].ignoreContent = True
 
+        from ukhvoucher.models import Address
+        if isinstance(self.context, Address):
+            fields['oid'].readonly = True
+            fields['mnr'].readonly = True
+            fields['name1'].htmlAttributes = {'maxlength': 28}
+            fields['name2'].htmlAttributes['maxlength'] = 28
+            fields['name3'].htmlAttributes = {'maxlength': 28}
+            fields['street'].htmlAttributes = {'maxlength': 46}
+            fields['number'].htmlAttributes = {'maxlength': 3}
+            fields['zip_code'].htmlAttributes = {'maxlength': 5}
+            fields['city'].htmlAttributes = {'maxlength': 24}
+
+        from ukhvoucher.models import Account
+        if isinstance(self.context, Account):
+            fields['oid'].readonly = True
+            fields['login'].readonly = True
+            fields['az'].readonly = True
+            fields['vname'].htmlAttributes = {'maxlength': 30}
+            fields['nname'].htmlAttributes = {'maxlength': 30}
+            fields['phone'].htmlAttributes = {'maxlength': 15}
+            fields['email'].htmlAttributes = {'maxlength': 50}
+            fields['password'].htmlAttributes = {'maxlength': 8}
+
+        from ukhvoucher.models import Invoice
+        if isinstance(self.context, Invoice):
+            fields['oid'].readonly = True
+
+        from ukhvoucher.models import Category
+        if isinstance(self.context, Category):
+            fields['oid'].readonly = True
+
         return fields + journal
 
     def update(self):
         resources.ukhvouchers.need()
+        resources.ehcss.need()
 
     @property
     def action_url(self):
@@ -240,10 +299,16 @@ class EditAccount(uvclight.EditForm):
     description = u"Bitte geben Sie uns Ihre Stammdaten für Rückfragen"
 
     fields = Fields(IAccount).select('vname', 'nname', 'phone', 'email')
+    fields['vname'].htmlAttributes = {'maxlength': 30}
+    fields['nname'].htmlAttributes = {'maxlength': 30}
+    fields['phone'].htmlAttributes = {'maxlength': 15}
+    fields['email'].htmlAttributes = {'maxlength': 50}
+
 
     def __init__(self, context, request, content=_marker):
         super(EditAccount, self).__init__(context, request)
         content = self.request.principal.getAccount()
+        resources.ehcss.need()
         self.setContentData(content)
 
     @property
@@ -269,6 +334,7 @@ class AskForVouchers(Form):
     ignoreRequest = True
 
     fields = Fields(IVouchersCreation) + Fields(IJournalize)
+    fields['number'].htmlAttributes = {'maxlength': 3}
 
     @property
     def action_url(self):
@@ -276,6 +342,7 @@ class AskForVouchers(Form):
 
     def update(self):
         resources.ukhvouchers.need()
+        resources.ehcss.need()
 
     @action(_(u'Erstellen'))
     def handle_save(self):

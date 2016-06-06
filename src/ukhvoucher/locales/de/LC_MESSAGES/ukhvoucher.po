@@ -63,6 +63,12 @@ msgstr "Kontingent 8 - Schulpersonal (Ohne Lehrkräfte und Schulbetreuung)"
 msgid "Kat 9"
 msgstr "Kontingent 9 - Schulbetreuung"
 
+msgid "Kat 10"
+msgstr "Kontingent 10 - Freiwillige Feuerwehren"
+
+msgid "Kat 11"
+msgstr "Kontingent 11 - Gesundheitsdienste"
+
 msgid "Address Name1"
 msgstr "Name"
 
@@ -90,11 +96,11 @@ msgstr "Berechtigungsschein"
 msgid "Description"
 msgstr "Beschreibung"
 
-msgid "Titel oid Rechnung"
-msgstr "Rechnungsnummer"
+msgid "Titel oid Zuordnung"
+msgstr "Zuordnungsnummer"
 
-msgid "oid Rechnung"
-msgstr "Rechnungsnummer"
+msgid "oid Zuordnung"
+msgstr "Zuordnungsnummer"
 
 msgid "Titel oid Berechtigungsschein"
 msgstr "Berechtigungsschein Nummer"
@@ -112,13 +118,13 @@ msgid "User id"
 msgstr "Benutzer"
 
 msgid "Invoice id"
-msgstr "Rechnungsnummer"
+msgstr "Zuordnungsnummer"
 
 msgid "Search : "
 msgstr "Suche : "
 
 msgid "Invoice"
-msgstr "Rechnung"
+msgstr "Zuordnung"
 
 msgid "Account"
 msgstr "Benutzer"
@@ -139,7 +145,7 @@ msgid "Accounts"
 msgstr "Benutzer"
 
 msgid "Invoices"
-msgstr "Rechnungen"
+msgstr "Zuordnungen"
 
 msgid "Phone"
 msgstr "Telefon"

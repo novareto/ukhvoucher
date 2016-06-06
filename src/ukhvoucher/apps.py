@@ -32,6 +32,9 @@ USERS = {
     'hgabt': dict(login="hgabt", passwort="AB471!"),
     'ckraft': dict(login="ckraft", passwort="QX392!"),
     'aburkhard': dict(login="aburkhard", passwort="NY259!"),
+    'rknittel': dict(login="rknittel", passwort="XA056!"),
+    'evstraub': dict(login="evstraub", passwort="AH221!"),
+    'bsvejda': dict(login="bsvejda", passwort="ZT780!"),
     }
 
 

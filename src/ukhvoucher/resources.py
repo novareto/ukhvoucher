@@ -2,6 +2,7 @@
 
 from fanstatic import Library, Resource
 from js.jquery import jquery
+from js.jquery_tablesorter import tablesorter
 
 library = Library('ukhvoucher', 'static')
 
@@ -14,4 +15,7 @@ chosenjs = Resource(library, 'chosen.jquery.js', depends=[jquery, chosencss])
 chosenajax = Resource(library, 'chosen.ajaxaddition.jquery.js', depends=[chosenjs])
 
 
-ukhvouchers = Resource(library, 'ukh.js', depends=[chosenjs])
+ukhvouchers = Resource(library, 'ukh.js', depends=[chosenjs, tablesorter])
+
+
+ehcss = Resource(library, 'eh.css')

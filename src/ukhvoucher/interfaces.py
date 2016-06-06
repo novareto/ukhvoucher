@@ -9,14 +9,14 @@ from zope.interface import Interface, Attribute
 from zope.schema.interfaces import IContextSourceBinder
 from cromlech.sqlalchemy import get_session
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
-from plone.memoize import forever, ram
+from plone.memoize import ram
 from time import time
 
 
 
 @grok.provider(IContextSourceBinder)
 def get_oid(context):
-    from ukhvoucher.models import Accounts, AddressTraeger, Address, AddressEinrichtung
+    from ukhvoucher.models import AddressTraeger, Address, AddressEinrichtung
     rc = []
     rcc = []
     session = get_session('ukhvoucher')
@@ -154,15 +154,17 @@ def get_source(name):
 @grok.provider(IContextSourceBinder)
 def get_kategorie(context):
     rc = [
-        SimpleTerm(IKG1.getName(), IKG1.getName(), IKG1.getDoc()),
-        SimpleTerm(IKG2.getName(), IKG2.getName(), IKG2.getDoc()),
-        SimpleTerm(IKG3.getName(), IKG3.getName(), IKG3.getDoc()),
-        SimpleTerm(IKG4.getName(), IKG4.getName(), IKG4.getDoc()),
-        SimpleTerm(IKG5.getName(), IKG5.getName(), IKG5.getDoc()),
-        SimpleTerm(IKG6.getName(), IKG6.getName(), IKG6.getDoc()),
-        SimpleTerm(IKG7.getName(), IKG7.getName(), IKG7.getDoc()),
-        SimpleTerm(IKG8.getName(), IKG8.getName(), IKG8.getDoc()),
-        SimpleTerm(IKG9.getName(), IKG9.getName(), IKG9.getDoc()),
+        SimpleTerm(K1.getName(), K1.getName(), K1.getDoc()),
+        SimpleTerm(K2.getName(), K2.getName(), K2.getDoc()),
+        SimpleTerm(K3.getName(), K3.getName(), K3.getDoc()),
+        SimpleTerm(K4.getName(), K4.getName(), K4.getDoc()),
+        SimpleTerm(K5.getName(), K5.getName(), K5.getDoc()),
+        SimpleTerm(K6.getName(), K6.getName(), K6.getDoc()),
+        SimpleTerm(K7.getName(), K7.getName(), K7.getDoc()),
+        SimpleTerm(K8.getName(), K8.getName(), K8.getDoc()),
+        SimpleTerm(K9.getName(), K9.getName(), K9.getDoc()),
+        SimpleTerm(K10.getName(), K10.getName(), K10.getDoc()),
+        SimpleTerm(K11.getName(), K11.getName(), K11.getDoc()),
         ]
     return SimpleVocabulary(rc)
 
@@ -237,11 +239,17 @@ class IAccount(Interface):
 #        required=True,
 #    )
 
-    oid = schema.Choice(
+#    oid = schema.Choice(
+#        title=_(u"Unique identifier"),
+#        description=_(u"Eindeutiger Schlüssel OID"),
+#        required=True,
+#        source=get_oid,
+#    )
+
+    oid = schema.TextLine(
         title=_(u"Unique identifier"),
         description=_(u"Eindeutiger Schlüssel OID"),
         required=True,
-        source=get_oid,
     )
 
     login = schema.TextLine(
@@ -344,6 +352,16 @@ class ICategory(Interface):
         required=True,
     )
 
+    kat10 = schema.Bool(
+        title=_(u"Kat 10"),
+        required=True,
+    )
+
+    kat11 = schema.Bool(
+        title=_(u"Kat 11"),
+        required=True,
+    )
+
 
 class IAddress(Interface):
 
@@ -397,8 +415,8 @@ class IAddress(Interface):
 class IInvoice(Interface):
 
     oid = schema.TextLine(
-        title=_(u"Titel oid Rechnung"),
-        description=_(u"oid Rechnung"),
+        title=_(u"Titel oid Zuordnung"),
+        description=_(u"oid Zuordnung"),
         required=True,
         defaultFactory=getInvoiceId,
     )
@@ -454,7 +472,7 @@ class IVoucher(Interface):
     )
 
 
-class IKG1(Interface):
+class K1(Interface):
     u"""Verwaltung, Büro (K1)"""
 
     mitarbeiter = schema.Int(
@@ -466,7 +484,7 @@ class IKG1(Interface):
     )
 
 
-class IKG2(Interface):
+class K2(Interface):
     u"""Sonstige Betriebe und Hochschulen (K2)"""
 
     mitarbeiter = schema.Int(
@@ -478,7 +496,7 @@ class IKG2(Interface):
     )
 
 
-class IKG3(Interface):
+class K3(Interface):
     u"""Kindertageseinrichtungen (K3)"""
 
     gruppen = schema.Int(
@@ -490,33 +508,16 @@ class IKG3(Interface):
     )
 
 
-class IKG4(Interface):
-    u"""Bauhof (Kolonne) / Entsorgung (K4)"""
+class K4(Interface):
+    u"""Bauhof / Entsorgung (Kolonnen) (K4)"""
 
     kolonne = schema.Int(
         title=_(u"Anzahl der Kolonnen"),
     )
 
 
-class IKG5(Interface):
+class K5(Interface):
     u"""Beschäftigte und Einrichtungen mit erhöhter Gefährdung (K5)"""
-
-    #merkmal = schema.Choice(
-    #    title=u"Welches Merkmal trifft für die erhöhte Gefährdung zu:",
-    #    values=(u'',
-    #            u'Beschaeftigte im Freilichtmuseum Hessenpark',
-    #            u'Beschaeftigte in der Tierpflege'))
-    #mysource = SimpleVocabulary([
-    #    SimpleTerm('',
-    #               '',
-    #               ''),
-    #    SimpleTerm('Beschaeftigte im Freilichtmuseum Hessenpark',
-    #               'Beschaeftigte im Freilichtmuseum Hessenpark',
-    #               u'Bescheaftigte im Freilichtmuseum Hessenpark'),
-    #    SimpleTerm('Beschaeftigte in der Tierpflege',
-    #               'Beschaeftigte in der Tierpflege',
-    #               u'Beschaeftigte in der Tierpflege'),
-    #])
 
     merkmal = schema.Set(
         title=u"Welches Merkmal trifft für die erhöhte Gefährdung zu:",
@@ -530,7 +531,7 @@ class IKG5(Interface):
     )
 
 
-class IKG6(Interface):
+class K6(Interface):
     u"""Beschäftigte und Einrichtungen mit besonders hoher Gefährdung (K6)"""
 
     merkmal = schema.Set(
@@ -539,23 +540,12 @@ class IKG6(Interface):
             title=u'',
             source=get_reason3,))
 
-    #merkmal = schema.Choice(
-    #    title=u"Welches Merkmal trifft für die besondere Gefährdung zu:",
-    #    values=(u'',
-    #            u'Beschaeftigte von Hessen-Forst (Waldarbeiten)',
-    #            u'Beschaeftigte von Hessen mobil (Strassendienst)',
-    #            u'Beschaeftigte bei der Hessischen Verwaltung fuer Bodenmanagement (Aussendienst)',
-    #            u'Beschaeftigte in Abwasserbetrieben (Arbeiten im Kanalnetz)',
-    #            u'Beschaeftigte in Wasserversorgungsbetrieben (Arbeiten in Schaechten)',
-    #            u'Beschaeftigte auf Deponien',
-    #            u'Beschaeftigte von N*ICE (ohne Leiharbeitnehmer)'))
-
     mitarbeiter = schema.Int(
         title=_(u"Beschäftigte (ohne Beamte)"),
     )
 
 
-class IKG7(Interface):
+class K7(Interface):
     u"""Schulen (nur Lehrkräfte) (K7)"""
 
     #mitarbeiter = schema.Int(
@@ -564,20 +554,52 @@ class IKG7(Interface):
     )
 
 
-class IKG8(Interface):
-    u"""Schulpersonal (ohne Lehrkräfte und Schulbetreuung) (K8)"""
+class K8(Interface):
+    u"""Schulpersonal der Schulträger (ohne Schulbetreuung) (K8)"""
 
     mitarbeiter = schema.Int(
         title=_(u"Schulstandorte"),
     )
 
 
-class IKG9(Interface):
+class K9(Interface):
     u"""Schulbetreuung (K9)"""
 
     #mitarbeiter = schema.Int(
     gruppen = schema.Int(
         title=_(u"Gruppen"),
+    )
+
+
+class K10(Interface):
+    u"""Freiwillige Feuerwehren (K10)"""
+
+    einsatzkraefte = schema.Int(
+        title=_(u"Anzahl der aktiven Einsatzkräfte"),
+    )
+
+    betreuer = schema.Int(
+        title=_(u"Betreuer/innen der Jugendfeuerwehr"),
+    )
+
+
+class K11(Interface):
+    u"""Gesundheitsdienste (K11)"""
+
+    ma_verwaltung = schema.Int(
+        title=_(u"Beschäftigte (ohne Beamte) in der Verwaltung"),
+    )
+
+    st_verwaltung = schema.Int(
+        title=_(u"Standorte der Verwaltung"),
+    )
+
+    ma_technik = schema.Int(
+        title=_(u"Beschäftigte (ohne Beamte) im technischen Bereich"),
+    )
+
+    st_technik = schema.Int(
+        title=_(u"Standorte des technischen Bereichs"),
     )
 
 

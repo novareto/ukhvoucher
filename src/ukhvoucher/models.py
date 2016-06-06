@@ -144,6 +144,8 @@ class Category(Base, Location):
     kat7 = Column('kat7', Boolean)
     kat8 = Column('kat8', Boolean)
     kat9 = Column('kat9', Boolean)
+    kat10 = Column('kat10', Boolean)
+    kat11 = Column('kat11', Boolean)
 
     @property
     def title(self):
@@ -238,6 +240,18 @@ class Voucher(Base, Location):
                     k = u'Gruppen'
                 if k == 'lehrkraefte':
                     k = u'Lehrkräfte'
+                if k == 'einsatzkraefte':
+                    k = u'Einsatzkräfte'
+                if k == 'betreuer':
+                    k = u'Betreuer'
+                if k == 'ma_verwaltung':
+                    k = u'Mitarbeiter-Verwaltung'
+                if k == 'st_verwaltung':
+                    k = u'Standorte-Verwaltung'
+                if k == 'ma_technik':
+                    k = u'Mitarbeiter-Technik'
+                if k == 'st_technik':
+                    k = u'Standorte-Technik'
                 rc.append("%s: %s" % (k, v))
             return '; '.join(rc)
         return data
@@ -245,24 +259,28 @@ class Voucher(Base, Location):
     @property
     def displayKat(self):
         dat = ''
-        if self.cat.strip() == 'IKG1':
+        if self.cat.strip() == 'K1':
             dat = u'K1 - Verwaltung'
-        elif self.cat.strip() == 'IKG2':
+        elif self.cat.strip() == 'K2':
             dat = u'K2 - Sonstige Betriebe'
-        elif self.cat.strip() == 'IKG3':
+        elif self.cat.strip() == 'K3':
             dat = u'K3 - Kitas'
-        elif self.cat.strip() == 'IKG4':
+        elif self.cat.strip() == 'K4':
             dat = u'K4 - Bauhof'
-        elif self.cat.strip() == 'IKG5':
+        elif self.cat.strip() == 'K5':
             dat = u'K4 - Erhöhte Gefährdung'
-        elif self.cat.strip() == 'IKG6':
+        elif self.cat.strip() == 'K6':
             dat = u'K6 - Besonders hohe Gefährdung'
-        elif self.cat.strip() == 'IKG7':
+        elif self.cat.strip() == 'K7':
             dat = u'K7 - Lehrkräfte'
-        elif self.cat.strip() == 'IKG8':
+        elif self.cat.strip() == 'K8':
             dat = u'K8 - Schulpersonal'
-        elif self.cat.strip() == 'IKG9':
+        elif self.cat.strip() == 'K9':
             dat = u'K9 - Schulbetreuung'
+        elif self.cat.strip() == 'K10':
+            dat = u'K10 - Freiwillige Feuerwehren'
+        elif self.cat.strip() == 'K11':
+            dat = u'K11 - Gesundheitsdienste'
         return dat
 
 @implementer(IModel, IIdentified, IInvoice)
@@ -270,7 +288,7 @@ class Invoice(Base, Location):
 
     __tablename__ = 'z1ehrrch_t'
     __schema__ = IInvoice
-    __label__ = _(u"Neue Rechnung erstellt")
+    __label__ = _(u"Neue Zuordnung erstellt")
     if schema:
         __table_args__ = {"schema": schema[:-1]}
 
@@ -284,7 +302,7 @@ class Invoice(Base, Location):
 
     @property
     def title(self):
-        return "Rechnung %s" % self.oid
+        return "Zuordnung %s" % self.oid
 
     search_attr = "rech_oid"
     searchable_attrs = ("oid", "reason")
@@ -366,7 +384,7 @@ class Vouchers(SQLContainer):
 
 @implementer(IContent, IModelContainer)
 class Invoices(SQLContainer):
-    __label__ = u"Rechnungen"
+    __label__ = u"Zuordnungen"
 
     model = Invoice
     listing_attrs = uvclight.Fields(Invoice.__schema__).select(
@@ -387,7 +405,7 @@ class Categories(SQLContainer):
 
     model = Category
     listing_attrs = uvclight.Fields(Category.__schema__).select(
-        'oid', 'kat1', 'kat2', 'kat3', 'kat4', 'kat5', 'kat6', 'kat7', 'kat8', 'kat9')
+        'oid', 'kat1', 'kat2', 'kat3', 'kat4', 'kat5', 'kat6', 'kat7', 'kat8', 'kat9', 'kat10', 'kat11')
 
     def key_reverse(self, obj):
         return str(obj.oid)

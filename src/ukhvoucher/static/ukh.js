@@ -1,5 +1,7 @@
 $(document).ready(function() {
 
+   $('table.tablesorter').tablesorter();
+
    function play(id) {
      var audio = document.getElementById(id);
      audio.play();

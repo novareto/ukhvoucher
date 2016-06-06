@@ -2,7 +2,7 @@
   address request.principal.getAddress();
   vouchers request.principal.getVouchers();
   categories request.principal.getCategory()">
-  <p class="lead"> Antrag auf Kostenübernahme für Erste Hilfe-Lehrgänge </p>
+  <h1 class="lead"> Antrag auf Kostenübernahme für Erste Hilfe-Lehrgänge </h1>
   <p> Sie können für folgende Kontingentkategorien (K) Berechtigungsscheine anfordern </p>
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default" tal:repeat="cat view.categories">
@@ -15,43 +15,62 @@
         </h4>
         <div tal:define="cat_vouchers request.principal.getVouchers(cat['name'])">
           <p tal:condition="cat_vouchers"> Sie haben in dieser Kontingentkategorie <span tal:content="len(cat_vouchers)" /> Berechtigungsscheine. </p>
-          <button tal:condition="not: cat_vouchers" type="button" class="btn btn-primary btn-lg" data-toggle="modal" tal:attributes="data-target '#' + cat['name']"> Berechtigungsscheine anfordern </button>
+          <button tal:condition="not: cat_vouchers" type="button" class="btn btn-primary btn-lg" data-toggle="modal" tal:attributes="data-target '#' + cat['name']">
+            Berechtigungsscheine anfordern
+          </button>
+
+
+          <a href="" tal:attributes="href string:${view.application_url()}/pdf?cat=${cat['name']}">
+            <button tal:condition="cat_vouchers" type="button" class="btn btn-primary btn-lg" data-toggle="modal">
+              Berechtigungsscheine downloaden
+            </button>
+          </a>
 
         <!-- Info Buttons -->
-        <button tal:condition="cat['name'].strip() == 'IKG1'" type="button" class="btn btn-primary btn-lg"
-          onClick="window.open('http://www.ukh.de/uploads/media/UKH_MB_Erste_Hilfe_in_Verwaltungs-B%C3%BCrobetrieben_1.pdf')">
-          Info / Merkblatt
+        <button tal:condition="cat['name'].strip() == 'K1'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Verwaltungs-Buerobetrieben_K1.pdf')">
+          Info 
         </button>
-        <button tal:condition="cat['name'].strip() == 'IKG2'" type="button" class="btn btn-primary btn-lg"
-          onClick="window.open('http://www.ukh.de/uploads/media/Merkblatt_2_Erste_Hilfe_in_anderen_Betrieben_und_Hochschulen.pdf')">
-          Info / Merkblatt
+        <button tal:condition="cat['name'].strip() == 'K2'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Betrieben-Hochschulen_K2.pdf')">
+          Info 
         </button>
-        <button tal:condition="cat['name'].strip() == 'IKG3'" type="button" class="btn btn-primary btn-lg"
-          onClick="window.open('http://www.ukh.de/uploads/media/Merkblatt_3__Erste_Hilfe_in_Kindertageseinrichtungen_2016.pdf')">
-          Info / Merkblatt
+        <button tal:condition="cat['name'].strip() == 'K3'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_in_Kindertageseinrichtungen_K3.pdf')">
+          Info 
         </button>
-        <button tal:condition="cat['name'].strip() == 'IKG4'" type="button" class="btn btn-primary btn-lg"
-          onClick="window.open('http://www.ukh.de/uploads/media/Merkblatt_4_Erste_Hilfe_f%C3%BCr_Besch%C3%A4ftigte_in_Kolonnen_2016.pdf')">
-          Info / Merkblatt
+        <button tal:condition="cat['name'].strip() == 'K4'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Betrieben-Beschaeftigten-Kolonnen_K4-Bauhoefe-Entsorgung.pdf')">
+          Info 
         </button>
-        <button tal:condition="cat['name'].strip() == 'IKG5'" type="button" class="btn btn-primary btn-lg"
-          onClick="window.open('http://www.ukh.de/uploads/media/Merkblatt_5_Erste_Hilfe_bei_besonderer_Gef%C3%A4hrdung.pdf')">
-          Info / Merkblatt
+        <button tal:condition="cat['name'].strip() == 'K5'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Beschaeftigte-Einrichtungen-besonderer-Gefaehrdung_K5-_K6.pdf')">
+          Info 
         </button>
-        <button tal:condition="cat['name'].strip() == 'IKG6'" type="button" class="btn btn-primary btn-lg"
-          onClick="window.open('http://www.ukh.de/uploads/media/Merkblatt_5_Erste_Hilfe_bei_besonderer_Gef%C3%A4hrdung.pdf')">
-          Info / Merkblatt
+        <button tal:condition="cat['name'].strip() == 'K6'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Beschaeftigte-Einrichtungen-besonderer-Gefaehrdung_K5-_K6.pdf')">
+          Info 
         </button>
-        <button tal:condition="cat['name'].strip() == 'IKG7'" type="button" class="btn btn-primary btn-lg"
-          onClick="window.open('http://www.ukh.de/uploads/media/Merkblatt_6_Erste_Hilfe_in_Schulen_01.pdf')">
-          Info / Merkblatt
+        <button tal:condition="cat['name'].strip() == 'K7'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Lehrkraefte-Schulen_K7.pdf')">
+          Info 
         </button>
-        <button tal:condition="cat['name'].strip() == 'IKG9'" type="button" class="btn btn-primary btn-lg"
-          onClick="window.open('http://www.ukh.de/uploads/media/Merkblatt_3__Erste_Hilfe_in_Kindertageseinrichtungen_2016.pdf')">
-          Info / Merkblatt
+        <button tal:condition="cat['name'].strip() == 'K8'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Schulpersonal-Schultraeger_K8.pdf')">
+          Info 
         </button>
-          
-          
+        <button tal:condition="cat['name'].strip() == 'K9'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Tagespflegepersonen.pdf')">
+          Info 
+        </button>
+        <button tal:condition="cat['name'].strip() == 'K10'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Freiwilligen-Feuerwehr_K10.pdf')">
+          Info 
+        </button>
+        <button tal:condition="cat['name'].strip() == 'K11'" type="button" class="btn btn-primary btn-lg"
+          onClick="window.open('http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Gesundheitsdiensten_K11.pdf')">
+          Info 
+        </button>
 
         <div class="modal fade" tal:attributes="id cat['name']">
           <div class="modal-dialog" role="document">
@@ -96,6 +115,6 @@
     </div>
   </div>
   <div class="well" tal:condition="vouchers">
-    <a href="" tal:attributes="href string:${view.application_url()}/pdf"> Berechtigungsscheine Downloaden </a>
+    <a href="" tal:attributes="href string:${view.application_url()}/pdf"> Alle Berechtigungsscheine Downloaden </a>
   </div>
 </div>

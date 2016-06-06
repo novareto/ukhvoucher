@@ -8,13 +8,62 @@ from ukhvoucher import CREATED
 from ukhvoucher.apps import UserRoot
 from ukhvoucher.models import Voucher, Generation
 from ukhvoucher.interfaces import IUserLayer
-from ukhvoucher.interfaces import IKG1, IKG2, IKG3, IKG4, IKG5, IKG6, IKG7, IKG8, IKG9
+from ukhvoucher.interfaces import K1, K2, K3, K4, K5, K6, K7, K8, K9, K10, K11
 
 from dolmen.forms.base.markers import FAILURE
 from dolmen.forms.base import Action, SuccessMarker, Actions
 
 from sqlalchemy.sql.functions import max
 from cromlech.sqlalchemy import get_session
+from .. import resources
+
+from dolmen.forms.base.errors import Error
+
+
+FEHLER01 = u"""
+<h2> Ihre Angaben sind nicht plausibel. </h2>
+<h3> Bitte prüfen Sie Ihre Angaben hinsichtlich der </h3>
+<h3> - Anzahl der Beschäftigten </h3>
+<h3> - Anzahl der angegebenen Standorte </h3>
+<h3> Bitte beachten Sie, dass nur die Standorte zu berücksichtigen sind, </h3>
+<h3> an denen gleichzeitig mindestens zwei Beschäftigte tätig sind. </h3>
+<h3> Bei Fragen zur Antragsstellung wenden Sie sich bitte an das Service-Telefon </h3>
+<h3> (069 29972-440, montags bis freitags von 7:30 bis 18:00 Uhr E-Mail: ukh@ukh.de).</h3>
+"""
+
+
+class KontingentValidator(object):
+
+    def __init__(self, fields, form):
+        self.form = form
+        self.fields = fields
+        self.errors = []
+
+    def validate(self, data):
+        # K1 und K2
+        if data.get('mitarbeiter'):
+            mitarbeiter = data.get('mitarbeiter')
+            standorte = data.get('standorte')
+            if str(mitarbeiter).isdigit() and str(standorte).isdigit():
+                mitarbeiter = mitarbeiter / 2
+                if mitarbeiter < standorte:
+                    self.errors.append(Error(FEHLER01, identifier="form",),)
+        # K11
+        z = 0
+        for i in range(2):
+            if z == 0:
+                mitarbeiter = data.get('ma_verwaltung')
+                standorte = data.get('st_verwaltung')
+            if z == 1:
+                mitarbeiter = data.get('ma_technik')
+                standorte = data.get('st_technik')
+            if str(mitarbeiter).isdigit() and str(standorte).isdigit():
+                mitarbeiter = mitarbeiter / 2
+                if mitarbeiter < standorte:
+                    if len(self.errors) < 1:
+                        self.errors.append(Error(FEHLER01, identifier="form",),)
+            z = z + 1
+        return self.errors
 
 
 class CancelAction(Action):
@@ -29,6 +78,7 @@ class CalculateInsert(Action):
     def __call__(self, form):
         data, errors = form.extractData()
         if 'merkmal' in data:
+            # Das hier, ist für die Merkmale in K5 und K6 zuständig...
             z = 0
             s = data['merkmal']
             a = [ x for x in iter(s) ]
@@ -41,6 +91,11 @@ class CalculateInsert(Action):
                 z = z + 1
             data['merkmal'] = merkmal
         if errors:
+            for x in errors:
+                if x.title == "There were errors.":
+                    x.title = "Es sind Fehler aufgetreten!"
+                if x.title == "Missing required value.":
+                    x.title = "Bitte tragen Sie zur Berechnung in diesem Feld eine Zahl ein!"
             form.submissionError = errors
             return FAILURE
 
@@ -102,8 +157,18 @@ class KGBaseForm(uvclight.Form):
     def fields(self):
         return uvclight.Fields(self._iface)
 
+    @property
+    def formErrors(self):
+        return [x for x in self.errors if x.identifier == "form"]
 
-class IKG1Form(KGBaseForm):
+    def getErrorField(self, error):
+        return ""
+        field_name = error.identifier.split('.')[-1:][0]
+        field = self.fields.get(field_name)
+        return field.title
+
+
+class K1Form(KGBaseForm):
     # ##############################################################################
     # # Kontingentgruppe 1 (K1) - Verwaltung, Büro                                 #
     # # Berechnung:                                                                #
@@ -112,8 +177,18 @@ class IKG1Form(KGBaseForm):
     # # Standorte -1 (Der Hauptsitz wird abgezogen!)                               #
     # # mindestens 2 * Standorte                                                   #
     # ##############################################################################
-    _iface = IKG1
+    _iface = K1
     label = u""
+    dataValidators = [KontingentValidator]
+
+    @property
+    def fields(self):
+        #    print "HALLO 1", self._iface
+        fields = uvclight.Fields(self._iface)
+        fields['mitarbeiter'].htmlAttributes = {'max': 999}
+        #    fields['mitarbeiter'].htmlAttributes['max'] = 999
+        #    #fields['mitarbeiter'].htmlAttributes['maxlength'] = 3
+        return fields
 
     def calculate(self, mitarbeiter, standorte):
         originalstandorte = standorte
@@ -139,7 +214,7 @@ class IKG1Form(KGBaseForm):
         return kontingent
 
 
-class IKG2Form(KGBaseForm):
+class K2Form(KGBaseForm):
     # ##############################################################################
     # # Kontingentgruppe 2 (K2) - Sonstige Betriebe                                #
     # # Berechnung:                                                                #
@@ -148,8 +223,9 @@ class IKG2Form(KGBaseForm):
     # # Standorte -1 (Der Hauptsitz wird abgezogen!)                               #
     # # mindestens 2 * Standorte                                                   #
     # ##############################################################################
-    _iface = IKG2
+    _iface = K2
     label = u""
+    dataValidators = [KontingentValidator]
 
     def calculate(self, mitarbeiter, standorte):
         originalstandorte = standorte
@@ -174,14 +250,14 @@ class IKG2Form(KGBaseForm):
         return kontingent
 
 
-class IKG3Form(KGBaseForm):
+class K3Form(KGBaseForm):
     # ##############################################################################
     # # Kontingentgruppe 3 (K3) - Kindertageseinrichtungen                         #
     # # Berechnung:                                                                #
     # # Gruppen + Kitas                                                            #
     # # mindestens 2 * Standorte                                                   #
     # ##############################################################################
-    _iface = IKG3
+    _iface = K3
     label = u""
 
     def calculate(self, gruppen, kitas):
@@ -193,26 +269,26 @@ class IKG3Form(KGBaseForm):
         return kontingent
 
 
-class IKG4Form(KGBaseForm):
+class K4Form(KGBaseForm):
     # ##############################################################################
     # # Kontingentgruppe 4 (K4) - Bauhof Entsorgung                                #
     # # Berechnung:                                                                #
     # # Kolonnen: Eingabe = Ausgabe                                                #
     # ##############################################################################
-    _iface = IKG4
+    _iface = K4
     label = u""
 
     def calculate(self, kolonne):
         return kolonne
 
 
-class IKG5Form(KGBaseForm):
+class K5Form(KGBaseForm):
     # ##############################################################################
     # # Kontingentgruppe 5 (K5) - Erhöhte Gefährdung                               #
     # # Berechnung:                                                                #
     # # 50% der Beschäftigten (immer aufrunden !!!) KEIN Mathematisches runden!    #
     # ##############################################################################
-    _iface = IKG5
+    _iface = K5
     label = u""
 
     def calculate(self, merkmal, mitarbeiter):
@@ -231,26 +307,26 @@ class IKG5Form(KGBaseForm):
         return mitarbeiter
 
 
-class IKG6Form(KGBaseForm):
+class K6Form(KGBaseForm):
     # ##############################################################################
     # # Kontingentgruppe 6 (K6) - Besonders hohe Gefährdung                        #
     # # Berechnung:                                                                #
     # # Kolonnen: Eingabe = Ausgabe                                                #
     # ##############################################################################
-    _iface = IKG6
+    _iface = K6
     label = u""
 
     def calculate(self, merkmal, mitarbeiter):
         return mitarbeiter
 
 
-class IKG7Form(KGBaseForm):
+class K7Form(KGBaseForm):
     # ##############################################################################
     # # Kontingentgruppe 7 (K7) - Lehrkräfte                                       #
     # # Berechnung:                                                                #
     # # 15% der Beschäftigten (immer aufrunden !!!) KEIN Mathematisches runden!    #
     # ##############################################################################
-    _iface = IKG7
+    _iface = K7
     label = u""
 
     def calculate(self, lehrkraefte):
@@ -270,27 +346,132 @@ class IKG7Form(KGBaseForm):
         return mitarbeiter
 
 
-class IKG8Form(KGBaseForm):
+class K8Form(KGBaseForm):
     # ##############################################################################
     # # Kontingentgruppe 8 (K8) - Schulstandorte                                   #
     # # Berechnung:                                                                #
     # # Standort: Eingabe = Ausgabe                                                #
     # ##############################################################################
-    _iface = IKG8
+    _iface = K8
     label = u""
 
     def calculate(self, mitarbeiter):
         return mitarbeiter
 
 
-class IKG9Form(KGBaseForm):
+class K9Form(KGBaseForm):
     # ##############################################################################
     # # Kontingentgruppe 9 (K9) - Schulbetreuung                                   #
     # # Berechnung:                                                                #
     # # Gruppen: Eingabe = Ausgabe                                                 #
     # ##############################################################################
-    _iface = IKG9
+    _iface = K9
     label = u""
 
     def calculate(self, gruppen):
         return gruppen
+
+
+class K10Form(KGBaseForm):
+    # ##############################################################################
+    # # Kontingentgruppe 10 (K10) - Freiwillige Feuerwehren                        #
+    # # Berechnung:                                                                #
+    # # Einsatzkräfte: 10% (immer aufrunden !!!) KEIN Mathematisches runden!       #
+    # # Betreuer/innen: Eingabe = Ausgabe                                          #
+    # ##############################################################################
+    _iface = K10
+    label = u""
+
+    def calculate(self, einsatzkraefte, betreuer):
+        mitarbeiter = einsatzkraefte
+        # Immer Aufrunden !
+        mitarbeiter = float(mitarbeiter)
+        ma = mitarbeiter * 10 / 100
+        mitarbeiter = str(ma)
+        lma = len(mitarbeiter) - 2
+        rundung = mitarbeiter[lma:]
+        mitarbeiter = float(mitarbeiter)
+        mitarbeiter = int(mitarbeiter)
+        if rundung[:1] == '.':
+            rundung = rundung[1:]
+        if rundung != '0':
+            mitarbeiter = mitarbeiter + 1
+        # mitarbeiter + betreuer
+        return mitarbeiter + betreuer
+
+
+class K11Form(KGBaseForm):
+    # ##############################################################################
+    # # Kontingentgruppe 11 (K11) - Gesundheitsdienste                             #
+    # # Berechnung Verwaltung:                                                     #
+    # # 5% der Beschäftigten (immer aufrunden !!!) KEIN Mathematisches runden!     #
+    # # + 1 pro zusätzlichem Standort                                              #
+    # # Standorte -1 (Der Hauptsitz wird abgezogen!)                               #
+    # # Berechnung Technische Bereiche:                                            #
+    # # 10% der Beschäftigten (immer aufrunden !!!) KEIN Mathematisches runden!    #
+    # # + 1 pro zusätzlichem Standort                                              #
+    # # Standorte -1 (Der Hauptsitz wird abgezogen!)                               #
+    # ##############################################################################
+    _iface = K11
+    label = u""
+    dataValidators = [KontingentValidator]
+
+    def calculate(self, ma_verwaltung, st_verwaltung, ma_technik, st_technik):
+        ##############################################
+        ### Verwaltung                             ###
+        ##############################################
+        mitarbeiter = ma_verwaltung
+        standorte = st_verwaltung
+        ##############################################
+        originalstandorte = standorte
+        standorte = standorte - 1
+        # Immer Aufrunden !
+        mitarbeiter = float(mitarbeiter)
+        ma = mitarbeiter * 5 / 100
+        mitarbeiter = str(ma)
+        lma = len(mitarbeiter) - 2
+        rundung = mitarbeiter[lma:]
+        mitarbeiter = float(mitarbeiter)
+        mitarbeiter = int(mitarbeiter)
+        if rundung[:1] == '.':
+            rundung = rundung[1:]
+        if rundung != '0':
+            mitarbeiter = mitarbeiter + 1
+        # mitarbeiter + standorte
+        ergebniseingabe = mitarbeiter + standorte
+        mindestmenge_2_je_standort = originalstandorte * 2
+        kontingent = ergebniseingabe
+        if mindestmenge_2_je_standort > kontingent:
+            kontingent = mindestmenge_2_je_standort
+        kontingent1 = kontingent
+        ##############################################
+
+        ##############################################
+        ### Technische Bereiche                    ###
+        ##############################################
+        mitarbeiter = ma_technik
+        standorte = st_technik
+        ##############################################
+        originalstandorte = standorte
+        standorte = standorte - 1
+        # Immer Aufrunden !
+        mitarbeiter = float(mitarbeiter)
+        ma = mitarbeiter * 10 / 100
+        mitarbeiter = str(ma)
+        lma = len(mitarbeiter) - 2
+        rundung = mitarbeiter[lma:]
+        mitarbeiter = float(mitarbeiter)
+        mitarbeiter = int(mitarbeiter)
+        if rundung[:1] == '.':
+            rundung = rundung[1:]
+        if rundung != '0':
+            mitarbeiter = mitarbeiter + 1
+        # mitarbeiter + standorte
+        ergebniseingabe = mitarbeiter + standorte
+        mindestmenge_2_je_standort = originalstandorte * 2
+        kontingent = ergebniseingabe
+        if mindestmenge_2_je_standort > kontingent:
+            kontingent = mindestmenge_2_je_standort
+        kontingent2 = kontingent
+        self.flash(u'TEST TEST TEST')
+        return kontingent1 + kontingent2

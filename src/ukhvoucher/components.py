@@ -4,7 +4,7 @@
 
 from ul.auth import Principal
 from ukhvoucher import models, log
-from ukhvoucher.interfaces import IKG1, IKG2, IKG3, IKG4, IKG5, IKG6, IKG7, IKG8, IKG9
+from ukhvoucher.interfaces import K1, K2, K3, K4, K5, K6, K7, K8, K9, K10, K11
 from cromlech.sqlalchemy import get_session
 from sqlalchemy import and_
 from plone.memoize import ram
@@ -72,23 +72,27 @@ class ExternalPrincipal(Principal):
             def createCategory(category):
                 cat = OrderedSet()
                 if category.kat1:
-                    cat.add(IKG1)
+                    cat.add(K1)
                 if category.kat2:
-                    cat.add(IKG2)
+                    cat.add(K2)
                 if category.kat3:
-                    cat.add(IKG3)
+                    cat.add(K3)
                 if category.kat4:
-                    cat.add(IKG4)
+                    cat.add(K4)
                 if category.kat5:
-                    cat.add(IKG5)
+                    cat.add(K5)
                 if category.kat6:
-                    cat.add(IKG6)
+                    cat.add(K6)
                 if category.kat7:
-                    cat.add(IKG7)
+                    cat.add(K7)
                 if category.kat8:
-                    cat.add(IKG8)
+                    cat.add(K8)
                 if category.kat9:
-                    cat.add(IKG9)
+                    cat.add(K9)
+                if category.kat10:
+                    cat.add(K10)
+                if category.kat11:
+                    cat.add(K11)
                 return cat
             return createCategory(category)
         else:
@@ -117,53 +121,55 @@ class ExternalPrincipal(Principal):
         origmnr = mnr.strip()
         mnr = mnr[:4]
         cat = OrderedSet()
+        #if mnr in ('1.01'):
+        #    cat = OrderedSet([K1, K2, K3, K4, K5, K6, K8, K9, K10])
         if mnr in ('1.02', '1.03', '1.04'):
-            cat = OrderedSet([IKG1, IKG2, IKG3, IKG4, IKG5, IKG6, IKG9])
+            cat = OrderedSet([K1, K2, K3, K4, K5, K6, K9, K10])
         elif mnr == '1.05':
-            cat = OrderedSet([IKG1, IKG2])
+            cat = OrderedSet([K1, K2, K6, K8])
         elif mnr in ('1.10', '1.30', '3.10'):
             if origmnr in self.sql_base('2', '1,2,3,4'):
                 log('%s entsorgungsbetrieb' % origmnr)
-                cat = OrderedSet([IKG2, IKG4])
+                cat = OrderedSet([K2, K4])
             elif origmnr in self.sql_base('2', '5,6,7'):
                 log('%s abwasserbetrieb' % origmnr)
-                cat = OrderedSet([IKG2, IKG6])
+                cat = OrderedSet([K2, K6])
             elif origmnr in self.sql_base('1', '1,2,3,4,5,6,7,8'):
                 log('%s Gesundheitsdienst' % origmnr)
-                cat = OrderedSet([IKG2,])
+                cat = OrderedSet([K2,])
             elif origmnr in self.sql_base('2', '7'):
                 log('%s Gas und Wasserversorgung' % origmnr)
-                cat = OrderedSet([IKG2,])
+                cat = OrderedSet([K2,])
             elif origmnr in self.sql_base('3', '6'):
                 log('%s Beschaeftigungsgesellschaften' % origmnr)
-                cat = OrderedSet([IKG2,])
+                cat = OrderedSet([K2,])
             elif origmnr in self.sql_base('4', '1,2,3,4,5,6'):
                 log('%s Bauwesen' % origmnr)
-                cat = OrderedSet([IKG2,])
+                cat = OrderedSet([K2,])
             elif origmnr in self.sql_base('5', '2,3,4'):
                 log('%s Landwirtschaft' % origmnr)
-                cat = OrderedSet([IKG2,])
+                cat = OrderedSet([K2,])
             elif origmnr in self.sql_base('6', '1,2,3,4,5'):
                 log('%s Kulturelle Einrichtungen' % origmnr)
-                cat = OrderedSet([IKG2,])
+                cat = OrderedSet([K2,])
             elif origmnr in self.sql_base('8', '1,2,3,4,5,6'):
                 log('%s Verkehrsunternehmen' % origmnr)
-                cat = OrderedSet([IKG2,])
+                cat = OrderedSet([K2,])
             elif origmnr in self.sql_base('9', '4'):
                 log('%s Forschungseinrichtungen' % origmnr)
-                cat = OrderedSet([IKG2,])
+                cat = OrderedSet([K2,])
             elif origmnr in self.sql_base('7', '1'):
                 log('%s Feuerwehrvereine' % origmnr)
                 cat = OrderedSet([])
             else:
-                cat = OrderedSet([IKG1,])
+                cat = OrderedSet([K1,])
         elif mnr in ('2.10.64/00005', '2.10.34/00005', '2.10.65/00010'):
-            cat = OrderedSet([IKG2, ])
+            cat = OrderedSet([K2, ])
         elif mnr in ('1.20'):
-            cat = OrderedSet([IKG1, ])
+            cat = OrderedSet([K1, ])
         elif self.sql_schulen('3','2'):
             log('%s Schule' % origmnr)
-            cat = OrderedSet([IKG7, ])
+            cat = OrderedSet([K7, ])
         return cat
 
     def getVouchers(self, cat=None):

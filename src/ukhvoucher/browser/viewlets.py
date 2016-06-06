@@ -16,7 +16,7 @@ class Sound(uvclight.Viewlet):
     uvclight.context(Interface)
     uvclight.view(CreateModel)
     uvclight.viewletmanager(BelowContent)
-    
+
     def render(self):
 	return """
 	  <audio id="success" preload='auto' src='/fanstatic/ukhvoucher/success.wav'>
@@ -75,6 +75,10 @@ class VoucherGeneration(uvclight.Viewlet):
                         k = u'Gruppen'
                     if k == 'lehrkraefte':
                         k = u'Lehrkräfte'
+                    if k == 'einsatzkraefte':
+                        k = u'Einsatzkräfte'
+                    if k == 'betreuer':
+                        k = u'Betreuer'
                     if z is 0:
                         rc = rc + ("%s: %s" % (k, v))
                     if z > 0:
@@ -134,31 +138,32 @@ class Startseite(BaseNavMenu):
 class MenuInvoice(BaseNavMenu):
     uvclight.order(2)
     attribute = "invoices"
-    title = "Rechnung"
+    title = u"Übersicht Zuordnungen"
 
 
-class MenuAccounts(BaseNavMenu):
-    uvclight.order(3)
-    attribute = "accounts"
-    title = "Benutzer"
+#class MenuAccounts(BaseNavMenu):
+#    uvclight.order(3)
+#    attribute = "accounts"
+#    title = "Benutzer"
 
 
-class MenuAddresses(BaseNavMenu):
-    uvclight.order(3)
-    attribute = "addresses"
-    title = "Adressen"
+#class MenuAddresses(BaseNavMenu):
+#    uvclight.order(3)
+#    attribute = "addresses"
+#    title = "Adressen"
 
 
-class MenuKategorien(BaseNavMenu):
-    uvclight.order(4)
-    attribute = "categories"
-    title = "Kategorien"
+#class MenuKategorien(BaseNavMenu):
+#    uvclight.order(4)
+#    attribute = "categories"
+#    title = "Kategorien"
 
 
-class MenuVouchers(BaseNavMenu):
+class MenuStat(BaseNavMenu):
     uvclight.order(5)
-    attribute = "vouchers"
-    title = "Berechtigungsscheine"
+    attribute = "statistik"
+    title = "Statistik"
+
 
 class Journal(BaseNavMenu):
     uvclight.order(6)
