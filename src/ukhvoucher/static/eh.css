@@ -1,0 +1,18 @@
+#form-field-name1,
+#form-field-name2,
+#form-field-name3,
+#form-field-street,
+#form-field-number,
+#form-field-zip_code,
+#form-field-city,
+#form-field-oid,
+#form-field-mnr,
+#form-field-login,
+#form-field-az,
+#form-field-vname,
+#form-field-nname,
+#form-field-phone,
+#form-field-email, 
+#form-field-password {
+    width: 400px;
+}
