@@ -39,7 +39,7 @@ class DisableVoucherMenuItem(uvclight.MenuItem):
     order(50)
 
 
-@menuentry(AddMenu, order=10)
+#@menuentry(AddMenu, order=10)
 class CreateModel(Form):
     name('add')
     context(IModelContainer)
@@ -61,36 +61,8 @@ class CreateModel(Form):
         journal = Fields(IJournalize)
         journal['note'].ignoreContent = True
 
-        from ukhvoucher.models import Addresses
-        if isinstance(self.context, Addresses):
-            fields['oid'].readonly = True
-            fields['mnr'].readonly = True
-            fields['name1'].htmlAttributes = {'maxlength': 28}
-            fields['name2'].htmlAttributes = {'maxlength': 28}
-            fields['name3'].htmlAttributes = {'maxlength': 28}
-            fields['street'].htmlAttributes = {'maxlength': 46}
-            fields['number'].htmlAttributes = {'maxlength': 3}
-            fields['zip_code'].htmlAttributes = {'maxlength': 5}
-            fields['city'].htmlAttributes = {'maxlength': 24}
-
-        from ukhvoucher.models import Accounts
-        if isinstance(self.context, Accounts):
-            fields['oid'].readonly = True
-            fields['login'].readonly = True
-            fields['az'].readonly = True
-            fields['vname'].htmlAttributes = {'maxlength': 30}
-            fields['nname'].htmlAttributes = {'maxlength': 30}
-            fields['phone'].htmlAttributes = {'maxlength': 15}
-            fields['email'].htmlAttributes = {'maxlength': 50}
-            fields['password'].htmlAttributes = {'maxlength': 8}
-
-        from ukhvoucher.models import Invoices
-        if isinstance(self.context, Invoices):
-            fields['oid'].readonly = True
-
-        from ukhvoucher.models import Categories
-        if isinstance(self.context, Categories):
-            fields['oid'].readonly = True
+        if hasattr(self.context.model, 'widget_arrangements'):
+            self.context.model.widget_arrangements(fields)
 
         return fields + journal
 
@@ -130,7 +102,7 @@ class CreateModel(Form):
         else:
             aktion = str(self.context.model.__label__)
         entry = JournalEntry(
-            date=datetime.now().strftime('%Y-%m-%d'),
+            date=datetime.now(), #  BBB IBM .strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
             action=aktion,
             #action=u"Bearbeitet: %s" % self.context.model.__label__,
@@ -147,7 +119,7 @@ class CreateModel(Form):
         return SUCCESS
 
 
-@menuentry(IDocumentActions, order=10)
+#@menuentry(IDocumentActions, order=10)
 class EditModel(Form):
     context(IModel)
     name('edit')
@@ -170,37 +142,8 @@ class EditModel(Form):
         journal = Fields(IJournalize)
         journal['note'].ignoreContent = True
 
-        from ukhvoucher.models import Address
-        if isinstance(self.context, Address):
-            fields['oid'].readonly = True
-            fields['mnr'].readonly = True
-            fields['name1'].htmlAttributes = {'maxlength': 28}
-            fields['name2'].htmlAttributes['maxlength'] = 28
-            fields['name3'].htmlAttributes = {'maxlength': 28}
-            fields['street'].htmlAttributes = {'maxlength': 46}
-            fields['number'].htmlAttributes = {'maxlength': 3}
-            fields['zip_code'].htmlAttributes = {'maxlength': 5}
-            fields['city'].htmlAttributes = {'maxlength': 24}
-
-        from ukhvoucher.models import Account
-        if isinstance(self.context, Account):
-            fields['oid'].readonly = True
-            fields['login'].readonly = True
-            fields['az'].readonly = True
-            fields['vname'].htmlAttributes = {'maxlength': 30}
-            fields['nname'].htmlAttributes = {'maxlength': 30}
-            fields['phone'].htmlAttributes = {'maxlength': 15}
-            fields['email'].htmlAttributes = {'maxlength': 50}
-            fields['password'].htmlAttributes = {'maxlength': 8}
-
-        from ukhvoucher.models import Invoice
-        if isinstance(self.context, Invoice):
-            fields['oid'].readonly = True
-
-        from ukhvoucher.models import Category
-        if isinstance(self.context, Category):
-            fields['oid'].readonly = True
-
+        if hasattr(self.context, 'widget_arrangements'):
+            self.context.widget_arrangements(fields)
         return fields + journal
 
     def update(self):
@@ -220,9 +163,7 @@ class EditModel(Form):
             self.flash(_(u'Es ist ein Fehler aufgetreten!'))
             return FAILURE
 
-        # apply new content values
         apply_data_event(self.fields, self.getContentData(), data)
-        #self.flash(_(u"Content updated"))
 
         # journalize
         session = get_session('ukhvoucher')
@@ -242,15 +183,6 @@ class EditModel(Form):
             note=journal_note)
         session.add(entry)
         self.flash(_(u'Eintrag in der Historie hinzugefügt.'))
-
-        #entry = JournalEntry(
-        #    date=datetime.now(),# .strftime('%Y-%m-%d'),
-        #    userid=self.request.principal.id,
-        #    action=u"Edited : %s" % self.context.__label__,
-        #    oid=data['oid'],
-        #    note=journal_note)
-        #session = get_session('ukhvoucher')
-        ##session.add(entry)
 
         self.redirect(self.application_url())
         return SUCCESS
@@ -279,6 +211,7 @@ class ModelIndex(uvclight.Form):
     def fields(self):
         fields = Fields(self.context.__schema__)
         return fields
+
 
 from dolmen.forms.base import Action, SuccessMarker
 class CancelAction(Action):
@@ -314,13 +247,10 @@ class EditAccount(uvclight.EditForm):
     @property
     def actions(self):
         actions = super(EditAccount, self).actions
-        #import pdb; pdb.set_trace()
-        #if 'abbrechen' not in actions.keys():
-        #    actions.extend(CancelAction(u"Abbrechen"))
         return actions.omit('cancel')
 
 
-@menuentry(IDocumentActions, order=10)
+#@menuentry(IDocumentActions, order=10)
 class AskForVouchers(Form):
     context(IAccount)
     name('ask.vouchers')
@@ -364,10 +294,10 @@ class AskForVouchers(Form):
             from ukhvoucher.models import Generation
             import json
 
-            p = int(session.query(max(Generation.oid)).one()[0]) + 1
+            p = int(session.query(max(Generation.oid)).one()[0] or 0) + 1
             generation = Generation(
                 oid=p,
-                date=now.strftime('%Y-%m-%d'),
+                date=now, ### BBB IBM .strftime('%Y-%m-%d'),
                 type=data['kategorie'],
                 data=json.dumps('Manuelle Erzeugung'),
                 user=self.request.principal.id,
@@ -376,7 +306,7 @@ class AskForVouchers(Form):
 
             for idx in range(number):
                 voucher = Voucher(
-                    creation_date=datetime.now().strftime('%Y-%m-%d'),
+                    creation_date=datetime.now(), ### BBB IBM.strftime('%Y-%m-%d'),
                     status=CREATED,
                     cat = data['kategorie'],
                     user_id=self.context.oid,
@@ -388,7 +318,7 @@ class AskForVouchers(Form):
 
             # journalize
             entry = JournalEntry(
-                date=datetime.now().strftime('%Y-%m-%d'),
+                date=datetime.now(), ### BBB IBM.strftime('%Y-%m-%d'),
                 userid=self.request.principal.id,
                 action=u"Berechtigungsscheine manuell erstellt",
                 #action=u"Add:%s" % self.context.model.__label__,

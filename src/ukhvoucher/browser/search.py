@@ -7,7 +7,7 @@ from .. import _
 from ..apps import AdminRoot, UserRoot
 from ..interfaces import IModel, IModelContainer
 from ..interfaces import IAdminLayer, IUserLayer
-from ..models import Accounts, Account, Addresses, Address, Vouchers, Voucher
+from ..models import Invoices, Accounts, Account, Addresses, Address, Vouchers, Voucher
 from ..resources import ukhvouchers
 from zope.component import getMultiAdapter
 from zope.interface import Interface
@@ -31,7 +31,6 @@ class SearchAction(uvclight.Action):
         relationships = details.relationships.keys()
 
         query = session.query(model)
-        print model.searchable_attrs
         for attr in model.searchable_attrs:
 
             if attr in data:
@@ -47,7 +46,6 @@ class SearchAction(uvclight.Action):
                         query = query.join(relation.mapper).filter(
                             modelcls.id == value.id)
                     elif value:
-                        print [elm.id for elm in value]
                         query = query.join(getattr(model, attr)).filter(
                             modelcls.id.in_([elm.id for elm in value]))
                 elif value:
@@ -57,7 +55,6 @@ class SearchAction(uvclight.Action):
                         query = query.filter(column.like("%%%s%%" % value))
                     else:
                         query = query.filter(column == value)
-        print query
         return query
 
     def __call__(self, view):
@@ -69,7 +66,6 @@ class SearchAction(uvclight.Action):
 
         model = view.context.model
         session = view.context.session
-        print data
         view.results = [
             LocationProxy(res, view.context, str(res.oid))
             for res in self.search(session, model, **data)]
@@ -128,6 +124,7 @@ class ModelSearch(uvclight.Viewlet):
     uvclight.context(IModelContainer)
     uvclight.viewletmanager(managers.IAboveContent)
     require('manage.vouchers')
+    uvclight.baseclass()
 
     template = uvclight.get_template('search.pt', __file__)
 
@@ -139,6 +136,10 @@ class ModelSearch(uvclight.Viewlet):
         self.target = self.view.url(self.context) + '/search'
         self.attribute = self.context.model.search_attr
         self.placeholder = "%s (%s)" % (self.context.__label__, self.attribute)
+
+
+class InvoicesSearch(ModelSearch):
+    uvclight.context(Invoices)
 
 
 class SearchResults(uvclight.Viewlet):
