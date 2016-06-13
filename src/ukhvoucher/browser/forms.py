@@ -18,7 +18,7 @@ from zope.interface import Interface
 from ..interfaces import IVouchersCreation, IDisablingVouchers
 from ..interfaces import IModel, IModelContainer, IAdminLayer, IUserLayer
 from ..interfaces import IAccount, IJournalize
-from ..models import Voucher, JournalEntry, Vouchers, Addresses
+from ..models import Voucher, JournalEntry, Vouchers, Addresses, Invoices
 from .. import _, resources, DISABLED, CREATED
 from ..apps import UserRoot
 from uvc.entities.browser import IContextualActionsMenu, IDocumentActions
@@ -48,6 +48,15 @@ class CreateModel(Form):
     title(u'Objekt hinzufügen')
 
     dataValidators = []
+
+    @property
+    def label(self):
+        return u"Neue %s hinzufügen" % self.context.model.__label__
+
+
+    def getErrorField(self, error):
+        return ""
+
 
     @property
     def fields(self):
@@ -84,9 +93,13 @@ class CreateModel(Form):
         if isinstance(self.context, Addresses):
             if data.get('oid') == '':
                 data.pop('oid')
+        print data
+        if isinstance(self.context, Invoices):
+            if data.get('oid') == '':
+                data.pop('oid')
         item = self.context.model(**data)
         self.context.add(item)
-        if 'oid' in data:
+        if 'oid' in data and data['oid'] != '':
             oid = data['oid']
         else:
             session = get_session('ukhvoucher')
@@ -102,7 +115,7 @@ class CreateModel(Form):
         else:
             aktion = str(self.context.model.__label__)
         entry = JournalEntry(
-            date=datetime.now(), #  BBB IBM .strftime('%Y-%m-%d'),
+            date=datetime.now().strftime('%Y-%m-%d'),
             userid=self.request.principal.id,
             action=aktion,
             #action=u"Bearbeitet: %s" % self.context.model.__label__,
@@ -110,6 +123,8 @@ class CreateModel(Form):
             note=journal_note)
         self.context.add(entry)
         self.flash(_(u'Eintrag in der Historie hinzugefügt.'))
+        if isinstance(self.context, Invoices):
+            self.flash('Die Zuordnung wurde unter der Nummer %s gespeichert' % oid)
         self.redirect(self.application_url())
         return SUCCESS
 
@@ -297,7 +312,7 @@ class AskForVouchers(Form):
             p = int(session.query(max(Generation.oid)).one()[0] or 0) + 1
             generation = Generation(
                 oid=p,
-                date=now, ### BBB IBM .strftime('%Y-%m-%d'),
+                date=now.strftime('%Y-%m-%d'),
                 type=data['kategorie'],
                 data=json.dumps('Manuelle Erzeugung'),
                 user=self.request.principal.id,
@@ -306,7 +321,7 @@ class AskForVouchers(Form):
 
             for idx in range(number):
                 voucher = Voucher(
-                    creation_date=datetime.now(), ### BBB IBM.strftime('%Y-%m-%d'),
+                    creation_date=datetime.now().strftime('%Y-%m-%d'),
                     status=CREATED,
                     cat = data['kategorie'],
                     user_id=self.context.oid,
@@ -318,7 +333,7 @@ class AskForVouchers(Form):
 
             # journalize
             entry = JournalEntry(
-                date=datetime.now(), ### BBB IBM.strftime('%Y-%m-%d'),
+                date=datetime.now().strftime('%Y-%m-%d'),
                 userid=self.request.principal.id,
                 action=u"Berechtigungsscheine manuell erstellt",
                 #action=u"Add:%s" % self.context.model.__label__,

@@ -20,7 +20,7 @@ from sqlalchemy import types
 
 
 schema = ''
-# schema = 'UKHINTERN.'
+schema = 'UKHINTERN.'
 
 print "SCHEMA", schema
 
@@ -239,6 +239,13 @@ class Voucher(Base, Location):
     # relations
     user = relationship('Account')
 
+    def getInvoice(self):
+        from cromlech.sqlalchemy import get_session
+        session = get_session('ukhvoucher')
+        if self.invoice_id:
+            return session.query(Invoice).get(int(self.invoice_id))
+        return None
+
     @property
     def title(self):
         return "Berechtigungsschein %s" % self.oid
@@ -333,7 +340,8 @@ class Invoice(Base, Location):
     def title(self):
         return "Zuordnung %s" % self.oid
 
-    search_attr = "rech_oid"
+    #search_attr = "field.oid"
+    search_attr = "oid"
     searchable_attrs = ("oid", "reason")
 
     @staticmethod

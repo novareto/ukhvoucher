@@ -104,3 +104,7 @@ h4.panel-title a.collapsed span.sign::after {
    text-align: right;
  }
 
+
+table#journal_table td {
+white-space: normal;
+}

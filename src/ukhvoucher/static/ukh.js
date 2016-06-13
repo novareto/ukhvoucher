@@ -32,5 +32,7 @@ $(document).ready(function() {
        $(this).val('');
      }
    });
-
+// MASK
+$('input#form-field-mitarbeiter').mask('99999');
+$('input#form-field-lehrkraefte').mask('9999');
 })

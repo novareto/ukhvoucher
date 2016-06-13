@@ -14,6 +14,138 @@ from plone.memoize import ram
 from time import time
 
 
+HK1 = u"""
+<h2>K1: Verwaltung / Büro</h2>
+<h4><u>Beschäftigte:</u></h4>
+<p>Bitte tragen Sie <u>alle</u> bei der UKH versicherten Beschäftigten ein, die in Ihren Verwaltungsbereichen
+   arbeiten. Zählen Sie dazu die Personen, nicht die Vollzeitstellen. Beamte sind keine Beschäftigten
+   und werden daher nicht mitgezählt.</p>
+<h4><u>Standorte:</u></h4>
+<p>Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens zwei versicherte
+   Beschäftigte üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
+   jedoch nicht verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes.</p>
+"""
+
+HK2 = u"""
+<h2>K2: Sonstige Betriebe und Hochschulen</h2>
+<h4><u>Sonstige Betriebe:</u></h4>
+<p>Alle Betriebe, die nicht in der Hauptsache Verwaltungs- oder Bürobetriebe sind beispielsweise:</p>
+<p>-  Technische Betriebe</p>
+<p>-  Landwirtschaftliche und gärtnerische Betriebe</p>
+<p>-  Hauswirtschaftliche Betriebe</p>
+<p>-  Betriebe für öffentliche Sicherheit und Ordnung mit Streifendienst</p>
+<p>-  Zoos (ohne Beschäftigte in der Tierpflege)</p>
+<p>-  Theater- und Musikbetriebe</p>
+<p>-  Betreuungseinrichtungen (ohne Kindertagesstätten, -krippen, Schulbetreuung)</p>
+<p>-  Entsorgungsbetriebe und Bauhöfe ohne Einteilung in Kolonnen</p>
+<p>-  Schulpersonal der Schulträger</p>
+<p>-  Betriebe mit beruflich qualifizierten Ersthelfern wie Gesundheits- und Pflegediensten, Schwimmbädern (K11)</p>
+<br>
+<p>Bitte beachten Sie hier die Besonderheiten für verschiedene Betriebsarten wie beispielsweise:</p>
+<p>-  Kinderbetreuungseinrichtungen (K3) und Schulbetreuung (K9)</p>
+<p>-  Betriebe mit Beschäftigten in Kolonnen (K4)</p>
+<p>-  Betriebe mit besonderer Gefährdung (K5, K6)</p>
+<h4><u>Beschäftigte:</u></h4>
+<p>Bitte tragen Sie <u>alle</u> bei der UKH versicherten beschäftigten Personen (ohne Beamte) ein, die in
+   anderen Bereichen als Verwaltung / Büros arbeiten abzüglich</p>
+<p>a) Beschäftigte in Kindertageseinrichtungen</p>
+<p>b) Beschäftigte in Kolonnen (Bauhof, Entsorgung)</p>
+<p>c) Beschäftigte mit spezieller Gefährdung gemäß aufgeführtem Sonderkontingent</p>
+<h4><u>Standorte:</u></h4>
+<p>Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens zwei versicherte
+   Beschäftigte üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
+   jedoch nicht verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes.</p>
+"""
+
+HK3 = u"""
+<h2>K3: Kindertageseinrichtungen</h2>
+<h4><u>Kindergruppen:</u></h4>
+<p>Bitte tragen Sie ein, wie viele Kindergruppen in Ihren Einrichtungen  maximal gleichzeitig betrieben werden.
+   Beispiel: 4 Vormittagsgruppen und 2 Nachmittagsgruppen sind maximal 4 Gruppen gleichzeitig.</p>
+<p>Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens zwei versicherte Beschäftigte
+   üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
+   jedoch nicht verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes.</p>
+"""
+
+HK4 = u"""
+<h2>K4: In Kolonnen tätige Beschäftigte</h2>
+<h4><u>Kolonnen:</u></h4>
+<p>Bitte tragen Sie die maximale Zahl der Kolonnen ein, in denen Beschäftigte in der Entsorgung oder im Bauhof
+   außerhalb gleichzeitig tätig sind.</p>
+<p>Hinweis: Die übrigen Beschäftigten des Betriebs, die an festen Standorten tätig sind, sind mit der Personenzahl
+   unter der Kontingent Kategorie 2 „Sonstige Betriebe“ zu erfassen.</p>
+"""
+
+HK5 = u"""
+<h2>K5: Beschäftigte und Einrichtungen mit eröhter Gefährdung</h2>
+<h4><u>Beschäftigte:</u></h4>
+<p>Bitte tragen Sie die bei der UKH versicherten Beschäftigten ein, die eine dieser Tätigkeiten ausüben.
+   Beachten Sie bitte auch, dass diese Personen unter der Kontingent Kategorie 2 „Sonstige Betriebe“ abzuziehen sind.</p>
+<p>Geben Sie an, welches Merkmal für erhöhte Gefährdung zutrifft.</p>
+"""
+
+HK6 = u"""
+<h2>K6: Betriebe mit besonders hoher Gefährdung</h2>
+<h4><u>Beschäftigte:</u></h4>
+<p>Bitte tragen Sie die bei der UKH versicherten Beschäftigten ein, die eine dieser Tätigkeiten ausüben.
+   Beachten Sie bitte auch, dass diese Personen unter „Andere Betriebe“ abzuziehen sind.</p>
+<p>Geben Sie an, welches Merkmal für die besonders hohe Gefährdung zutrifft.</p>
+"""
+
+HK7 = u"""
+<h2>K7: Schulen (nur Lehrkräfte)</h2>
+<h4><u>Lehrkräfte:</u></h4>
+<p>Bitte tragen Sie die Zahl der Lehrkräfte ein, die an der Schule und ggf. an den Außenstellen der Schule tätig sind.
+   Wir übernehmen Lehrgangsgebühren für die Teilnahme an Erste Hilfe-Fortbildungen im Sinne des DGUV Grundsatzes 304-001
+   der für Erste Hilfe-Fortbildungen Schule für 15 % des gesamten Kollegiums in einem Zeitraum von 2 Jahren.</p>
+<p>Hinweis: Bitte zählen Sie Personal in anderen Bereichen, bspw. in der Schulbetreuung, Reinigung,
+   Sekretariat oder Hausmeister nicht mit. Für dieses Personal beantragt der Arbeitgeber die Kostenübernahme
+   der Lehrgangsgebühren bei der zuständigen Fach-Berufsgenossenschaft oder bei uns als Mitgliedsunternehmen.</p>
+"""
+
+HK8 = u"""
+<h2>K9: Schulstandorte </h2>
+<h4><u>Standorte:</u></h4>
+<p>Bitte tragen Sie ein, an wie vielen Schulstandorten Personal in den Bereichen Reinigung,
+   Sekretariat oder Hausmeister beschäftigt wird.</p>
+<p>Als Schulstandort gilt eine Schule, wobei Außenstellen von Schulen als eigener Standort gezählt werden.</p>
+"""
+
+HK9 = u"""
+<h2>K9: Schulbetreuung</h2>
+<h4><u>Gruppen:</u></h4>
+<p>Bitte tragen Sie ein, wie viele Schulbetreuungsgruppen höchstens gleichzeitig betrieben werden.
+   Beispiel: 3 Gruppen dienstags und 2 Gruppen donnerstags sind 3 Gruppen gleichzeitig.</p>
+"""
+
+HK10 = u"""
+<h2>K10: Freiwillige Feuerwehren</h2>
+<h4><u>Aktive Einsatzkräfte:</u></h4>
+<p>Bitte tragen Sie die Summe der aktiven Einsatzkräfte aus allen Orts- oder Stadtteilfeuerwehren ein.
+   Die UKH übernimmt die Kosten für Erste Hilfe Lehrgänge über 9 Unterrichtseinheiten für 10% der
+   aktiven Einsatzkräfte im Zeitraum von 2 Jahren.</p>
+<h4><u>Jugendbetreuer/innen:</u></h4>
+<p>Bitte tragen Sie auch hier alle Jugendbetreuer/innen der Orts oder Stadtteilfeuerwehren ein.
+   Die UKH übernimmt für alle einmal in 2 Jahren die Kosten der Erste Hilfe Lehrgänge.</p>
+"""
+
+HK11 = u"""
+<h2>K11: Gesundheitsdienste</h2>
+<p>Gesundheitsdienste brauchen neben dem medizinischen Personal nur dann betriebliche Ersthelfer,
+   wenn Bereiche so aus dem medizinischen Betrieb ausgelagert sind, dass die Ersthelfer nicht erreichbar sind.</p>
+<h4><u>Beschäftigte in der Verwaltung</u></h4>
+<p>Bitte tragen Sie hier nur die Zahl derjenigen Beschäftigten in der Verwaltung ein,
+   die an einem anderen Standort als das medizinische Personal tätig sind.</p>
+<h4><u>Beschäftigte im technischen Bereich</u></h4>
+<p>Bitte tragen Sie hier nur die Zahl derjenigen Beschäftigten ein, die an einem anderen Standort als das medizinische Personal tätig sind.
+   Zum technischen Bereich zählen Labore, Werkstätten, Wäschereien und Küchen.</p>
+<h4><u>Standorte</u></h4>
+<p>Bitte tragen Sie nur Standorte für die jeweiligen Bereiche ein, die vom Medizinbetrieb getrennt sind.
+   Als eigene Standorte gelten räumlich abgeschlossene Arbeitsorte, an denen mindestens zwei versicherte
+   Beschäftigte üblicherweise anwesend sind.
+   Verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes zählen nicht als abgeschlossene Arbeitsorte.</p>
+"""
+
 
 @grok.provider(IContextSourceBinder)
 def get_oid(context):
@@ -418,8 +550,8 @@ class IInvoice(Interface):
     oid = schema.TextLine(
         title=_(u"Titel oid Zuordnung"),
         description=_(u"oid Zuordnung"),
-        required=True,
-        defaultFactory=getInvoiceId,
+        required=False,
+        #defaultFactory=getInvoiceId,
     )
 
     vouchers = schema.Set(
@@ -472,7 +604,6 @@ class IVoucher(Interface):
         required=True,
     )
 
-
 class K1(Interface):
     u"""Verwaltung, Büro (K1)"""
 
@@ -484,8 +615,8 @@ class K1(Interface):
         title=_(u"Standorte"),
     )
 
-    taggedValue('info', 'Something')
-    taggedValue('descr', 'BLA')
+    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Verwaltungs-Buerobetrieben_K1.pdf')
+    taggedValue('descr', HK1)
 
 
 class K2(Interface):
@@ -499,6 +630,8 @@ class K2(Interface):
         title=_(u"Standorte"),
     )
 
+    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Betrieben-Hochschulen_K2.pdf')
+    taggedValue('descr', HK2)
 
 class K3(Interface):
     u"""Kindertageseinrichtungen (K3)"""
@@ -511,6 +644,8 @@ class K3(Interface):
         title=_(u"Anzahl Kita Standorte"),
     )
 
+    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_in_Kindertageseinrichtungen_K3.pdf')
+    taggedValue('descr', HK3)
 
 class K4(Interface):
     u"""Bauhof / Entsorgung (Kolonnen) (K4)"""
@@ -519,6 +654,8 @@ class K4(Interface):
         title=_(u"Anzahl der Kolonnen"),
     )
 
+    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Betrieben-Beschaeftigten-Kolonnen_K4-Bauhoefe-Entsorgung.pdf')
+    taggedValue('descr', HK4)
 
 class K5(Interface):
     u"""Beschäftigte und Einrichtungen mit erhöhter Gefährdung (K5)"""
@@ -534,6 +671,8 @@ class K5(Interface):
         title=_(u"Beschäftigte (ohne Beamte)"),
     )
 
+    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Beschaeftigte-Einrichtungen-besonderer-Gefaehrdung_K5-_K6.pdf')
+    taggedValue('descr', HK5)
 
 class K6(Interface):
     u"""Beschäftigte und Einrichtungen mit besonders hoher Gefährdung (K6)"""
@@ -548,6 +687,8 @@ class K6(Interface):
         title=_(u"Beschäftigte (ohne Beamte)"),
     )
 
+    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Beschaeftigte-Einrichtungen-besonderer-Gefaehrdung_K5-_K6.pdf')
+    taggedValue('descr', HK6)
 
 class K7(Interface):
     u"""Schulen (nur Lehrkräfte) (K7)"""
@@ -557,6 +698,8 @@ class K7(Interface):
         title=_(u"Anzahl Lehrkräfte (ohne Schulbetreuung, Sekretariat, Reinigungs- und Hausmeistertätigkeiten)"),
     )
 
+    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Lehrkraefte-Schulen_K7.pdf')
+    taggedValue('descr', HK7)
 
 class K8(Interface):
     u"""Schulpersonal der Schulträger (ohne Schulbetreuung) (K8)"""
@@ -565,6 +708,8 @@ class K8(Interface):
         title=_(u"Schulstandorte"),
     )
 
+    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Schulpersonal-Schultraeger_K8.pdf')
+    taggedValue('descr', HK8)
 
 class K9(Interface):
     u"""Schulbetreuung (K9)"""
@@ -574,6 +719,8 @@ class K9(Interface):
         title=_(u"Gruppen"),
     )
 
+    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Tagespflegepersonen.pdf')
+    taggedValue('descr', HK9)
 
 class K10(Interface):
     u"""Freiwillige Feuerwehren (K10)"""
@@ -586,6 +733,8 @@ class K10(Interface):
         title=_(u"Betreuer/innen der Jugendfeuerwehr"),
     )
 
+    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Freiwilligen-Feuerwehr_K10.pdf')
+    taggedValue('descr', HK10)
 
 class K11(Interface):
     u"""Gesundheitsdienste (K11)"""
@@ -606,6 +755,8 @@ class K11(Interface):
         title=_(u"Standorte des technischen Bereichs"),
     )
 
+    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Gesundheitsdiensten_K11.pdf')
+    taggedValue('descr', HK11)
 
 class IVoucherSearch(Interface):
 

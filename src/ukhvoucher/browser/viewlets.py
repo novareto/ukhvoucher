@@ -106,6 +106,9 @@ class Username(uvclight.MenuItem):
         except:
             return "HHH"
 
+    def render(self):
+        import pdb; pdb.set_trace()
+
 
 class BaseNavMenu(uvclight.MenuItem):
     uvclight.context(Interface)

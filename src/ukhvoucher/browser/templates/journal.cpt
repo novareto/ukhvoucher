@@ -1,6 +1,6 @@
 <div>
   <h1>Historie</h1>
-  <table class="tablesorter table table-bordered table-striped table-condensed" tal:define="content view.entries" tal:condition="content">
+  <table id="journal_table" class="tablesorter table table-bordered table-striped table-condensed" tal:define="content view.entries" tal:condition="content">
     <thead>
       <tr>
 	    <th>Mitglied / Zuordnung</th>
@@ -11,18 +11,12 @@
       </tr>
     </thead>
     <tbody>
-    <!--<tr tal:repeat="content view.entries">-->
       <tr tal:repeat="result content" tal:attributes="class repeat['result'].odd() and 'odd' or 'even'">
-	    <td><span tal:content="result.oid">
-        </td>
-	    <td><span tal:content="result.date.strftime('%d.%m.%Y')">
-        </td>
-	    <td><span tal:content="result.userid">
-        </td>
-	    <td><span tal:content="result.action">
-        </td>
-	    <td><span tal:content="result.note">
-        </td>
+	    <td tal:content="result.oid"> </td>
+	    <td tal:content="result.date.strftime('%d.%m.%Y')"> </td>
+	    <td tal:content="result.userid"> </td>
+	    <td tal:content="result.action"> </td>
+	    <td tal:content="result.note.strip()"> </td>
       </tr>
     </tbody>
   </table>
