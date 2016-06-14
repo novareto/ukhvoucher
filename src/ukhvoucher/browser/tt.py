@@ -36,10 +36,12 @@ from zope import interface
 from cromlech.sqlalchemy import get_session
 from ukhvoucher import models
 from ..interfaces import IAdminLayer
+from ukhvoucher import DISABLED, CREATED
 
 class GenerationView(uvclight.Page):
     uvclight.context(interface.Interface)
     uvclight.layer(IAdminLayer)
+    uvclight.name('disable.charge')
     require('manage.vouchers')
     template = uvclight.get_template('generation_view.cpt', __file__)
 
@@ -50,3 +52,21 @@ class GenerationView(uvclight.Page):
             models.Voucher.user_id == int(self.request.principal.oid)).all()
         return generations
 
+
+class DCharge(uvclight.View):
+    uvclight.context(interface.Interface)
+    uvclight.layer(IAdminLayer)
+    require('manage.vouchers')
+
+    def update(self):
+        gen_id = self.request.form.get('gen_id', None)
+        if gen_id:
+            session = get_session('ukhvoucher')
+            generation = session.query(models.Generation).get(gen_id)
+            for x in generation.voucher:
+                if x.status == CREATED:
+                    print "CS"
+                    x.status = DISABLED
+        self.flash(u'Es wurden alle Gutscheine der Charge %s gesperrt.' % gen_id)
+        self.redirect(self.application_url())
+            

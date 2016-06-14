@@ -169,6 +169,12 @@ class AdminRootIndex(uvclight.Page):
                     href="%s/account/%s/disable.vouchers" % (self.application_url(), oid),
                     c=u"Berechtigungsscheine sperren",)
                 )
+        rc.append(
+                HTML.tag(
+                    'a',
+                    href="%s/account/%s/disable.charge" % (self.application_url(), oid),
+                    c=u"Charge sperren",)
+                )
         return rc
 
 

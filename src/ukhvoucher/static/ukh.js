@@ -3,6 +3,7 @@ $(document).ready(function() {
    $('table.tablesorter').tablesorter();
 
    function play(id) {
+     console.log(id)
      var audio = document.getElementById(id);
      audio.play();
    }

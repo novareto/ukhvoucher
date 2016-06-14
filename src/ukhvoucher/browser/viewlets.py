@@ -2,7 +2,7 @@
 
 import uvclight
 import json
-from ..models import Voucher
+from ..models import Voucher, Vouchers
 from ..interfaces import IAccount, IAdminLayer
 from .forms import ModelIndex, CreateModel
 from dolmen.menu import menu
@@ -18,6 +18,7 @@ class Sound(uvclight.Viewlet):
     uvclight.viewletmanager(BelowContent)
 
     def render(self):
+        print "YES"
 	return """
 	  <audio id="success" preload='auto' src='/fanstatic/ukhvoucher/success.wav'>
 	    <b>Your browser does not support the audio tag.</b>
@@ -26,6 +27,22 @@ class Sound(uvclight.Viewlet):
             <b>Your browser does not support the audio tag.</b>
           </audio>
 	"""
+
+class EditSound(uvclight.Viewlet):
+    uvclight.context(Vouchers)
+    uvclight.viewletmanager(BelowContent)
+
+    def render(self):
+        print "YES"
+	return """
+	  <audio id="success" preload='auto' src='/fanstatic/ukhvoucher/success.wav'>
+	    <b>Your browser does not support the audio tag.</b>
+	  </audio>
+          <audio id="failure" preload='auto' src='/fanstatic/ukhvoucher/failure.wav'>
+            <b>Your browser does not support the audio tag.</b>
+          </audio>
+	"""
+
 
 class Categories(uvclight.Viewlet):
     uvclight.context(IAccount)
@@ -105,9 +122,6 @@ class Username(uvclight.MenuItem):
             return u"Sie sind angemeldet als: %s" % self.request.principal.title
         except:
             return "HHH"
-
-    def render(self):
-        import pdb; pdb.set_trace()
 
 
 class BaseNavMenu(uvclight.MenuItem):
@@ -217,3 +231,16 @@ from ul.browser.components import DisplayMenuItem
 
 class DisplayMenuItem(DisplayMenuItem):
     available = False
+
+from uvc.entities.browser import IContextualActionsMenu, IDocumentActions
+from ukhvoucher.interfaces import IInvoice
+
+
+class InvoiceEditEntry(uvclight.MenuItem):
+    uvclight.context(IInvoice)
+    uvclight.menu(IDocumentActions)
+    uvclight.title(u'Bearbeiten')
+    uvclight.name('edit')
+
+    action="edit"
+

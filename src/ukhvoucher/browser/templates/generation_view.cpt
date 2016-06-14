@@ -10,16 +10,13 @@
         <th> Aktion </th>
     </tr>
 
-
-
-
     <tr tal:repeat="gen view.getGenerations()">
       <td tal:content="gen.oid"> </td>
       <td tal:content="gen.user"> </td>
       <td tal:content="gen.type"> </td>
       <td tal:content="gen.date"> </td>
       <td tal:content="len(gen.voucher)"> </td>
-      <td> SPERREN</td>
+      <td> <a href="" tal:attributes="href view.url(context, 'dcharge', {'gen_id': gen.oid})"> SPERREN </a> </td>
     </tr>
 
 </table>
