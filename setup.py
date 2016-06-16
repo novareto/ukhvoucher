@@ -32,6 +32,7 @@ setup(name='ukhvoucher',
           "ordered_set",
           "natsort",
           "js.jquery_tablesorter",
+          "xlsxwriter",
 
       ],
       entry_points={
