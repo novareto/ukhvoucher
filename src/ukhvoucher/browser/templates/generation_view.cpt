@@ -1,8 +1,7 @@
-<h1> Generation </h1>
+<h1> Mehrere Gutscheine sperren (komplette Charge) </h1>
 
 <table class="table">
     <tr>
-        <th> Charge </th>
         <th> Benutzer </th>
         <th> Kategorie </th>
         <th> Datum </th>
@@ -11,7 +10,6 @@
     </tr>
 
     <tr tal:repeat="gen view.getGenerations()">
-      <td tal:content="gen.oid"> </td>
       <td tal:content="gen.user"> </td>
       <td tal:content="gen.type"> </td>
       <td tal:content="gen.date"> </td>

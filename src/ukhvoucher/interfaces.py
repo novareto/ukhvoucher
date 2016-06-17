@@ -782,16 +782,15 @@ class IVoucherSearch(Interface):
 class IInvoiceSearch(Interface):
 
     oid = schema.Choice(
-        title=_(u"Unique Invoice identifier"),
-        description=_(u"Internal identifier of the invoice"),
+        title=_(u"Zuordnungsnummer"),
         required=False,
         source=get_source('invoices'),
     )
 
-    reason = schema.Choice(
-        title=_(u'Begründung'),
-        description=_(u'Sind sie mit den Berechtigungsscheinen der Rechnung nicht einvers\
-tanden?'),
-        source=get_reason,
-        required=False,
-    )
+#    reason = schema.Choice(
+#        title=_(u'Begründung'),
+#        description=_(u'Sind sie mit den Berechtigungsscheinen der Rechnung nicht einvers\
+#tanden?'),
+#        source=get_reason,
+#        required=False,
+#    )

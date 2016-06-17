@@ -37,6 +37,7 @@ from cromlech.sqlalchemy import get_session
 from ukhvoucher import models
 from ..interfaces import IAdminLayer
 from ukhvoucher import DISABLED, CREATED
+from datetime import datetime
 
 class GenerationView(uvclight.Page):
     uvclight.context(interface.Interface)
@@ -64,9 +65,19 @@ class DCharge(uvclight.View):
             session = get_session('ukhvoucher')
             generation = session.query(models.Generation).get(gen_id)
             for x in generation.voucher:
-                if x.status == CREATED:
+                print x.oid
+                print x.status
+                if x.status.strip() == CREATED:
                     print "CS"
                     x.status = DISABLED
+
+            entry = models.JournalEntry(
+                date=datetime.now().strftime('%Y-%m-%d'),
+                userid=self.request.principal.id,
+                action=u"Charge Gelöscht",
+                oid=str(self.context.oid),
+                note="")
+            session.add(entry)
         self.flash(u'Es wurden alle Gutscheine der Charge %s gesperrt.' % gen_id)
         self.redirect(self.application_url())
-            
+

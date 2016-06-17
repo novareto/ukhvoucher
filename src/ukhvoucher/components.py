@@ -97,6 +97,7 @@ class ExternalPrincipal(Principal):
             return createCategory(category)
         else:
             mnr = self.getAddress().mnr
+            print "MNR MNR", mnr
             return self.getCategoryFromMNR(mnr)
         return []
 

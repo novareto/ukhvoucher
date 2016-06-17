@@ -54,12 +54,11 @@ class Categories(uvclight.Viewlet):
         categories = self.context.categories
         for category in categories:
             values += [(kid, getattr(category, kid))
-                       for kid in ('kat1', 'kat2', 'kat3', 'kat4', 'kat5')]
+                       for kid in ('kat1', 'kat2', 'kat3', 'kat4', 'kat5', 'kat6', 'kat7', 'kat8', 'kat9', 'kat10', 'kat11')]
         if not values:
             return u"Keine Kategorien"
-        return "Categories: %s" % ', '.join(
+        return "Zugeordnete Kategorien: %s" % ', '.join(
             (kat[0] for kat in values if kat[1]))
-
 
 class VoucherGeneration(uvclight.Viewlet):
     uvclight.context(Voucher)
@@ -233,11 +232,23 @@ class DisplayMenuItem(DisplayMenuItem):
     available = False
 
 from uvc.entities.browser import IContextualActionsMenu, IDocumentActions
-from ukhvoucher.interfaces import IInvoice
+from ukhvoucher.interfaces import IInvoice, IAccount
 
 
 class InvoiceEditEntry(uvclight.MenuItem):
     uvclight.context(IInvoice)
+    uvclight.menu(IDocumentActions)
+    uvclight.title(u'Bearbeiten')
+    uvclight.name('edit')
+
+    action="edit"
+
+
+from ukhvoucher.browser.forms import ModelIndex
+
+class AccountEditEntry(uvclight.MenuItem):
+    uvclight.context(IAccount)
+    uvclight.view(ModelIndex)
     uvclight.menu(IDocumentActions)
     uvclight.title(u'Bearbeiten')
     uvclight.name('edit')
