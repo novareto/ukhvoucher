@@ -40,6 +40,6 @@ def router(conf, session_key, zcml, dsn, name):
     # Router
     root = URLMap()
     root['/admin'] = localize(Admin(session_key, engine, name))
-    root['/external'] = localize(User(session_key, engine, name))
+    root['/'] = localize(User(session_key, engine, name))
 
     return root

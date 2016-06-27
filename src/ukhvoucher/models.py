@@ -20,7 +20,7 @@ from sqlalchemy import types
 
 
 schema = ''
-#schema = 'UKHINTERN.'
+schema = 'UKHINTERN.'
 
 print "SCHEMA", schema
 

@@ -211,7 +211,9 @@ class Logout(uvclight.View):
         response.url = url
         response.location = url
         response.status_int = 302
-        response.delete_cookie('auth_pubtkt', path='/', domain='kuvb.de')
+        response.delete_cookie('auth_pubtkt', path='/', domain='ukh.de')
+        response.delete_cookie('ukh.eh', path='/', domain='ukh.de')
+        response.delete_cookie('dolmen.authcookie', path='/', domain='ukh.de')
         return response
 
     def update(self):
@@ -223,6 +225,7 @@ class Logout(uvclight.View):
                 del session['masquarade']
 
     def render(self):
+        return u"LOGOUT"
         return self.redirect(self.application_url())
 
 

@@ -23,6 +23,7 @@ from zope.location import Location
 from zope.security.proxy import removeSecurityProxy
 from uvclight.directives import traversable
 from .resources import ukhcss
+from base64 import decodestring
 
 
 USERS = {
@@ -172,6 +173,14 @@ class User(SQLPublication, SecurePublication):
         if username:
             return ExternalPrincipal(id=username)
         return unauthenticated_principal
+
+    def get_credentials(self, environ):
+        auser = None
+        if 'HTTP_AUTHORIZATION' in environ.keys():
+            auser = decodestring(environ.get('HTTP_AUTHORIZATION')[6:]).split(':')[0]
+        session = getSession()
+        user = environ.get('REMOTE_USER') or session.get('username') or auser
+        return user
 
     def site_manager(self, request):
         return Site(UserRoot(request, self.name))
