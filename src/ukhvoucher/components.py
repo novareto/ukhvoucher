@@ -168,7 +168,9 @@ class ExternalPrincipal(Principal):
             cat = OrderedSet([K2, ])
         elif mnr in ('1.20'):
             cat = OrderedSet([K1, ])
-        elif self.sql_schulen('3','2'):
+        #elif self.sql_schulen('3','2'):
+        elif mnr in ('3.2.'):
+            self.sql_schulen('3','2')
             log('%s Schule' % origmnr)
             cat = OrderedSet([K7, ])
         return cat

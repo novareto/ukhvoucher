@@ -4,7 +4,7 @@
     <thead>
       <tr>
 	    <th>Mitglied / Zuordnung</th>
-	    <th>Datum</th>
+        <th width="80"> Datum </th>
     	<th>Autor</th>
 	    <th>Aktion</th>
 	    <th>Bemerkung</th>
@@ -13,7 +13,7 @@
     <tbody>
       <tr tal:repeat="result content" tal:attributes="class repeat['result'].odd() and 'odd' or 'even'">
 	    <td tal:content="result.oid"> </td>
-	    <td tal:content="result.date.strftime('%d.%m.%Y')"> </td>
+	    <td tal:content="result.date.strftime('%Y-%m-%d')"> </td>
 	    <td tal:content="result.userid"> </td>
 	    <td tal:content="result.action"> </td>
 	    <td tal:content="result.note.strip()"> </td>

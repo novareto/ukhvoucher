@@ -95,6 +95,12 @@ class VoucherGeneration(uvclight.Viewlet):
                         k = u'Einsatzkräfte'
                     if k == 'betreuer':
                         k = u'Betreuer'
+                    if k == 'bestaetigung':
+                        k = u'Bestätigung Richtigkeit'
+                    if v is True:
+                        v = u'Ja'
+                    if v is False:
+                        v = u'Nein'
                     if z is 0:
                         rc = rc + ("%s: %s" % (k, v))
                     if z > 0:

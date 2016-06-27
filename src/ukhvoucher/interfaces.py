@@ -77,19 +77,24 @@ HK4 = u"""
 """
 
 HK5 = u"""
-<h2>K5: Beschäftigte und Einrichtungen mit eröhter Gefährdung</h2>
+<h2>K5: Beschäftigte und Einrichtungen mit erhöhter Gefährdung</h2>
 <h4><u>Beschäftigte:</u></h4>
-<p>Bitte tragen Sie die bei der UKH versicherten Beschäftigten ein, die eine dieser Tätigkeiten ausüben.
-   Beachten Sie bitte auch, dass diese Personen unter der Kontingent Kategorie 2 „Sonstige Betriebe“ abzuziehen sind.</p>
-<p>Geben Sie an, welches Merkmal für erhöhte Gefährdung zutrifft.</p>
+<p>Bitte tragen Sie die bei der UKH versicherten Beschäftigten ein, die eine Tätigkeit mit erhöhter Gefährdung ausüben.</p>
+<p>Beachten Sie bitte auch, dass diese Personen in keiner anderen Kontingent Kategorie aufzuführen sind.</p>
+<p>Hinweise zu Tätigkeiten mit erhöhter Gefährdung entnehmen Sie bitte dem Informationsblatt.</p>
 """
 
 HK6 = u"""
 <h2>K6: Betriebe mit besonders hoher Gefährdung</h2>
 <h4><u>Beschäftigte:</u></h4>
-<p>Bitte tragen Sie die bei der UKH versicherten Beschäftigten ein, die eine dieser Tätigkeiten ausüben.
-   Beachten Sie bitte auch, dass diese Personen unter „Andere Betriebe“ abzuziehen sind.</p>
-<p>Geben Sie an, welches Merkmal für die besonders hohe Gefährdung zutrifft.</p>
+<p>Bitte tragen Sie die bei der UKH versicherten Beschäftigten ein, die eine Tätigkeit mit besonders hoher Gefährdung ausüben.</p>
+<p>Beachten Sie bitte auch, dass diese Personen in keiner anderen Kontingent Kategorie aufzuführen sind.</p>
+<p>Hinweise zu Tätigkeiten mit besonders hoher Gefährdung entnehmen Sie bitte dem Informationsblatt.</p>
+<br>
+<p>Für Kommunen gilt: </p>
+<p>Hier sind Beschäftigte in Abwasserbetrieben (Arbeiten im Kanalnetz) und auf Deponien anzugeben.</p>
+<p>Beschäftigte in der Wasserversorgung (Arbeiten in Schächten) sind hier nur anzugeben, wenn für diesen Personenkreis
+   die fachliche Zuständigkeit der Unfallkasse Hessen - nicht der BG ETEM - gegeben ist.</p>
 """
 
 HK7 = u"""
@@ -97,7 +102,7 @@ HK7 = u"""
 <h4><u>Lehrkräfte:</u></h4>
 <p>Bitte tragen Sie die Zahl der Lehrkräfte ein, die an der Schule und ggf. an den Außenstellen der Schule tätig sind.
    Wir übernehmen Lehrgangsgebühren für die Teilnahme an Erste Hilfe-Fortbildungen im Sinne des DGUV Grundsatzes 304-001
-   der für Erste Hilfe-Fortbildungen Schule für 15 % des gesamten Kollegiums in einem Zeitraum von 2 Jahren.</p>
+   für Erste Hilfe-Fortbildungen Schule für 15 % des gesamten Kollegiums in einem Zeitraum von 2 Jahren.</p>
 <p>Hinweis: Bitte zählen Sie Personal in anderen Bereichen, bspw. in der Schulbetreuung, Reinigung,
    Sekretariat oder Hausmeister nicht mit. Für dieses Personal beantragt der Arbeitgeber die Kostenübernahme
    der Lehrgangsgebühren bei der zuständigen Fach-Berufsgenossenschaft oder bei uns als Mitgliedsunternehmen.</p>
@@ -237,44 +242,44 @@ def get_reason(context):
     ]
     return SimpleVocabulary(rc)
 
-@grok.provider(IContextSourceBinder)
-def get_reason2(context):
-    rc = [
-        SimpleTerm(u'Freilichtmuseum Hessenpark',
-                   u'Beschaeftigte im Freilichtmuseum Hessenpark',
-                   u'Beschäftigte im Freilichtmuseum Hessenpark'),
-        SimpleTerm(u'in der Tierpflege',
-                   u'Beschaeftigte in der Tierpflege',
-                   u'Beschäftigte in der Tierpflege'),
-    ]
-    return SimpleVocabulary(rc)
+#@grok.provider(IContextSourceBinder)
+#def get_reason2(context):
+#    rc = [
+#        SimpleTerm(u'Freilichtmuseum Hessenpark',
+#                   u'Beschaeftigte im Freilichtmuseum Hessenpark',
+#                   u'Beschäftigte im Freilichtmuseum Hessenpark'),
+#        SimpleTerm(u'in der Tierpflege',
+#                   u'Beschaeftigte in der Tierpflege',
+#                   u'Beschäftigte in der Tierpflege'),
+#    ]
+#    return SimpleVocabulary(rc)
 
-@grok.provider(IContextSourceBinder)
-def get_reason3(context):
-    rc = [
-        SimpleTerm(u'von Hessen-Forst (Waldarbeiten)',
-                   u'Beschaeftigte von Hessen-Forst (Waldarbeiten)',
-                   u'Beschäftigte von Hessen-Forst (Waldarbeiten)'),
-        SimpleTerm(u'von Hessen mobil (Straßendienst)',
-                   u'Beschaeftigte von Hessen mobil (Strassendienst)',
-                   u'Beschäftigte von Hessen mobil (Straßendienst)'),
-        SimpleTerm(u'bei der Hessischen Verwaltung für Bodenmanagement (Außendienst)',
-                   u'Beschaeftigte bei der Hessischen Verwaltung fuer Bodenmanagement (Aussendienst)',
-                   u'Beschäftigte bei der Hessischen Verwaltung für Bodenmanagement (Außendienst)'),
-        SimpleTerm(u'in Abwasserbetrieben (Arbeiten im Kanalnetz)',
-                   u'Beschaeftigte in Abwasserbetrieben (Arbeiten im Kanalnetz)',
-                   u'Beschäftigte in Abwasserbetrieben (Arbeiten im Kanalnetz)'),
-        SimpleTerm(u'in Wasserversorgungsbetrieben (Arbeiten in Schächten)',
-                   u'Beschaeftigte in Wasserversorgungsbetrieben (Arbeiten in Schaechten)',
-                   u'Beschäftigte in Wasserversorgungsbetrieben (Arbeiten in Schächten)'),
-        SimpleTerm(u'auf Deponien',
-                   u'Beschaeftigte auf Deponien',
-                   u'Beschäftigte auf Deponien'),
-        SimpleTerm(u'von N*ICE (ohne Leiharbeitnehmer)',
-                   u'Beschaeftigte von N*ICE (ohne Leiharbeitnehmer)',
-                   u'Beschäftigte von N*ICE (ohne Leiharbeitnehmer)'),
-    ]
-    return SimpleVocabulary(rc)
+#@grok.provider(IContextSourceBinder)
+#def get_reason3(context):
+#    rc = [
+#        SimpleTerm(u'von Hessen-Forst (Waldarbeiten)',
+#                   u'Beschaeftigte von Hessen-Forst (Waldarbeiten)',
+#                   u'Beschäftigte von Hessen-Forst (Waldarbeiten)'),
+#        SimpleTerm(u'von Hessen mobil (Straßendienst)',
+#                   u'Beschaeftigte von Hessen mobil (Strassendienst)',
+#                   u'Beschäftigte von Hessen mobil (Straßendienst)'),
+#        SimpleTerm(u'bei der Hessischen Verwaltung für Bodenmanagement (Außendienst)',
+#                   u'Beschaeftigte bei der Hessischen Verwaltung fuer Bodenmanagement (Aussendienst)',
+#                   u'Beschäftigte bei der Hessischen Verwaltung für Bodenmanagement (Außendienst)'),
+#        SimpleTerm(u'in Abwasserbetrieben (Arbeiten im Kanalnetz)',
+#                   u'Beschaeftigte in Abwasserbetrieben (Arbeiten im Kanalnetz)',
+#                   u'Beschäftigte in Abwasserbetrieben (Arbeiten im Kanalnetz)'),
+#        SimpleTerm(u'in Wasserversorgungsbetrieben (Arbeiten in Schächten)',
+#                   u'Beschaeftigte in Wasserversorgungsbetrieben (Arbeiten in Schaechten)',
+#                   u'Beschäftigte in Wasserversorgungsbetrieben (Arbeiten in Schächten)'),
+#        SimpleTerm(u'auf Deponien',
+#                   u'Beschaeftigte auf Deponien',
+#                   u'Beschäftigte auf Deponien'),
+#        SimpleTerm(u'von N*ICE (ohne Leiharbeitnehmer)',
+#                   u'Beschaeftigte von N*ICE (ohne Leiharbeitnehmer)',
+#                   u'Beschäftigte von N*ICE (ohne Leiharbeitnehmer)'),
+#    ]
+#    return SimpleVocabulary(rc)
 
 
 def get_source(name):
@@ -475,13 +480,11 @@ class ICategory(Interface):
 
     kat8 = schema.Bool(
         title=_(u"Kat 8"),
-        #title=_(u"Kategorie 8 - Schulstandorte"),
         required=True,
     )
 
     kat9 = schema.Bool(
         title=_(u"Kat 9"),
-        #title=_(u"Kategorie 9 - Schulbetreuung"),
         required=True,
     )
 
@@ -615,6 +618,10 @@ class K1(Interface):
         title=_(u"Standorte"),
     )
 
+    bestaetigung = schema.Bool(
+        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angaben."),
+    )
+
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Verwaltungs-Buerobetrieben_K1.pdf')
     taggedValue('descr', HK1)
 
@@ -628,6 +635,10 @@ class K2(Interface):
 
     standorte = schema.Int(
         title=_(u"Standorte"),
+    )
+
+    bestaetigung = schema.Bool(
+        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angaben."),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Betrieben-Hochschulen_K2.pdf')
@@ -644,6 +655,10 @@ class K3(Interface):
         title=_(u"Anzahl Kita Standorte"),
     )
 
+    bestaetigung = schema.Bool(
+        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angaben."),
+    )
+
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_in_Kindertageseinrichtungen_K3.pdf')
     taggedValue('descr', HK3)
 
@@ -654,21 +669,28 @@ class K4(Interface):
         title=_(u"Anzahl der Kolonnen"),
     )
 
+    bestaetigung = schema.Bool(
+        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
+    )
+
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Betrieben-Beschaeftigten-Kolonnen_K4-Bauhoefe-Entsorgung.pdf')
     taggedValue('descr', HK4)
 
 class K5(Interface):
     u"""Beschäftigte und Einrichtungen mit erhöhter Gefährdung (K5)"""
 
-    merkmal = schema.Set(
-        title=u"Welches Merkmal trifft für die erhöhte Gefährdung zu:",
-        value_type=schema.Choice(
-            title=u'',
-            source=get_reason2,))
-
+    #merkmal = schema.Set(
+    #    title=u"Welches Merkmal trifft für die erhöhte Gefährdung zu:",
+    #    value_type=schema.Choice(
+    #        title=u'',
+    #        source=get_reason2,))
 
     mitarbeiter = schema.Int(
         title=_(u"Beschäftigte (ohne Beamte)"),
+    )
+
+    bestaetigung = schema.Bool(
+        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Beschaeftigte-Einrichtungen-besonderer-Gefaehrdung_K5-_K6.pdf')
@@ -677,14 +699,18 @@ class K5(Interface):
 class K6(Interface):
     u"""Beschäftigte und Einrichtungen mit besonders hoher Gefährdung (K6)"""
 
-    merkmal = schema.Set(
-        title=u"Welches Merkmal trifft für die besondere Gefährdung zu:",
-        value_type=schema.Choice(
-            title=u'',
-            source=get_reason3,))
+    #merkmal = schema.Set(
+    #    title=u"Welches Merkmal trifft für die besondere Gefährdung zu:",
+    #    value_type=schema.Choice(
+    #        title=u'',
+    #        source=get_reason3,))
 
     mitarbeiter = schema.Int(
         title=_(u"Beschäftigte (ohne Beamte)"),
+    )
+
+    bestaetigung = schema.Bool(
+        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Beschaeftigte-Einrichtungen-besonderer-Gefaehrdung_K5-_K6.pdf')
@@ -693,9 +719,12 @@ class K6(Interface):
 class K7(Interface):
     u"""Schulen (nur Lehrkräfte) (K7)"""
 
-    #mitarbeiter = schema.Int(
     lehrkraefte = schema.Int(
         title=_(u"Anzahl Lehrkräfte (ohne Schulbetreuung, Sekretariat, Reinigungs- und Hausmeistertätigkeiten)"),
+    )
+
+    bestaetigung = schema.Bool(
+        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Lehrkraefte-Schulen_K7.pdf')
@@ -708,18 +737,25 @@ class K8(Interface):
         title=_(u"Schulstandorte"),
     )
 
+    bestaetigung = schema.Bool(
+        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
+    )
+
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Schulpersonal-Schultraeger_K8.pdf')
     taggedValue('descr', HK8)
 
 class K9(Interface):
     u"""Schulbetreuung (K9)"""
 
-    #mitarbeiter = schema.Int(
     gruppen = schema.Int(
         title=_(u"Gruppen"),
     )
 
-    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Tagespflegepersonen.pdf')
+    bestaetigung = schema.Bool(
+        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
+    )
+
+    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Schulbetreuung_K9.pdf')
     taggedValue('descr', HK9)
 
 class K10(Interface):
@@ -731,6 +767,10 @@ class K10(Interface):
 
     betreuer = schema.Int(
         title=_(u"Betreuer/innen der Jugendfeuerwehr"),
+    )
+
+    bestaetigung = schema.Bool(
+        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angaben."),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Freiwilligen-Feuerwehr_K10.pdf')
@@ -753,6 +793,10 @@ class K11(Interface):
 
     st_technik = schema.Int(
         title=_(u"Standorte des technischen Bereichs"),
+    )
+
+    bestaetigung = schema.Bool(
+        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angaben."),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Gesundheitsdiensten_K11.pdf')

@@ -46,7 +46,6 @@ class StrippedString(types.TypeDecorator):
 
 @implementer(IModel, IIdentified, IAddress)
 class Address(Base, Location):
-
     __tablename__ = 'z1ehradr_t'
     __schema__ = IAddress
     __label__ = _(u"Address")
@@ -286,6 +285,12 @@ class Voucher(Base, Location):
                     k = u'Mitarbeiter-Technik'
                 if k == 'st_technik':
                     k = u'Standorte-Technik'
+                if k == 'bestaetigung':
+                    k = u'Bestätigung Richtigkeit'
+                if v is True:
+                    v = u'Ja'
+                if v is False:
+                    v = u'Nein'
                 rc.append("%s: %s" % (k, v))
             return '; '.join(rc)
         return data
