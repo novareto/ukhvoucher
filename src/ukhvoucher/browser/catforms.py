@@ -31,6 +31,16 @@ FEHLER01 = u"""
 <h3> (069 29972-440, montags bis freitags von 7:30 bis 18:00 Uhr E-Mail: ukh@ukh.de).</h3>
 """
 
+FEHLER02 = u"""
+<h2> Es ist ein Fehler aufgetreten. </h2>
+<h3> Bitte bestätigen Sie die Richtigkeit ihrer Angabe! </h3>
+"""
+
+FEHLER03 = u"""
+<h2> Es ist ein Fehler aufgetreten. </h2>
+<h3> Bitte bestätigen Sie die Richtigkeit ihrer Angaben! </h3>
+"""
+
 
 class KontingentValidator(object):
 
@@ -40,29 +50,36 @@ class KontingentValidator(object):
         self.errors = []
 
     def validate(self, data):
-        # K1 und K2
-        if data.get('mitarbeiter'):
-            mitarbeiter = data.get('mitarbeiter')
-            standorte = data.get('standorte')
-            if str(mitarbeiter).isdigit() and str(standorte).isdigit():
-                mitarbeiter = mitarbeiter / 2
-                if mitarbeiter < standorte:
-                    self.errors.append(Error(FEHLER01, identifier="form",),)
-        # K11
-        z = 0
-        for i in range(2):
-            if z == 0:
-                mitarbeiter = data.get('ma_verwaltung')
-                standorte = data.get('st_verwaltung')
-            if z == 1:
-                mitarbeiter = data.get('ma_technik')
-                standorte = data.get('st_technik')
-            if str(mitarbeiter).isdigit() and str(standorte).isdigit():
-                mitarbeiter = mitarbeiter / 2
-                if mitarbeiter < standorte:
-                    if len(self.errors) < 1:
+        if data.get('bestaetigung') is False:
+            if len(data) == 2:
+                self.errors.append(Error(FEHLER02, identifier="form",),)
+            else:
+                self.errors.append(Error(FEHLER03, identifier="form",),)
+        if data.get('bestaetigung') is True:
+            # K1 und K2
+            if data.get('mitarbeiter'):
+                mitarbeiter = data.get('mitarbeiter')
+                standorte = data.get('standorte')
+                if str(mitarbeiter).isdigit() and str(standorte).isdigit():
+                    mitarbeiter = mitarbeiter / 2
+                    if mitarbeiter < standorte:
                         self.errors.append(Error(FEHLER01, identifier="form",),)
-            z = z + 1
+            # K11
+            if data.get('ma_verwaltung'):
+                z = 0
+                for i in range(2):
+                    if z == 0:
+                        mitarbeiter = data.get('ma_verwaltung')
+                        standorte = data.get('st_verwaltung')
+                    if z == 1:
+                        mitarbeiter = data.get('ma_technik')
+                        standorte = data.get('st_technik')
+                    if str(mitarbeiter).isdigit() and str(standorte).isdigit():
+                        mitarbeiter = mitarbeiter / 2
+                        if mitarbeiter < standorte:
+                            if len(self.errors) < 1:
+                                self.errors.append(Error(FEHLER01, identifier="form",),)
+                    z = z + 1
         return self.errors
 
 
@@ -190,7 +207,7 @@ class K1Form(KGBaseForm):
         #    #fields['mitarbeiter'].htmlAttributes['maxlength'] = 3
         return fields
 
-    def calculate(self, mitarbeiter, standorte):
+    def calculate(self, mitarbeiter, standorte, bestaetigung):
         originalstandorte = standorte
         standorte = standorte - 1
         # Immer Aufrunden !
@@ -227,7 +244,7 @@ class K2Form(KGBaseForm):
     label = u""
     dataValidators = [KontingentValidator]
 
-    def calculate(self, mitarbeiter, standorte):
+    def calculate(self, mitarbeiter, standorte, bestaetigung):
         originalstandorte = standorte
         standorte = standorte - 1
         mitarbeiter = float(mitarbeiter)
@@ -259,8 +276,9 @@ class K3Form(KGBaseForm):
     # ##############################################################################
     _iface = K3
     label = u""
+    dataValidators = [KontingentValidator]
 
-    def calculate(self, gruppen, kitas):
+    def calculate(self, gruppen, kitas, bestaetigung):
         ergebniseingabe = gruppen + kitas
         mindestmenge_2_je_standort = kitas * 2
         kontingent = ergebniseingabe
@@ -277,8 +295,9 @@ class K4Form(KGBaseForm):
     # ##############################################################################
     _iface = K4
     label = u""
+    dataValidators = [KontingentValidator]
 
-    def calculate(self, kolonne):
+    def calculate(self, kolonne, bestaetigung):
         return kolonne
 
 
@@ -290,8 +309,10 @@ class K5Form(KGBaseForm):
     # ##############################################################################
     _iface = K5
     label = u""
+    dataValidators = [KontingentValidator]
 
-    def calculate(self, merkmal, mitarbeiter):
+    #def calculate(self, merkmal, mitarbeiter, bestaetigung):
+    def calculate(self, mitarbeiter, bestaetigung):
         # Immer Aufrunden !
         mitarbeiter = float(mitarbeiter)
         ma = mitarbeiter * 50 / 100
@@ -315,8 +336,10 @@ class K6Form(KGBaseForm):
     # ##############################################################################
     _iface = K6
     label = u""
+    dataValidators = [KontingentValidator]
 
-    def calculate(self, merkmal, mitarbeiter):
+    #def calculate(self, merkmal, mitarbeiter, bestaetigung):
+    def calculate(self, mitarbeiter, bestaetigung):
         return mitarbeiter
 
 
@@ -328,8 +351,9 @@ class K7Form(KGBaseForm):
     # ##############################################################################
     _iface = K7
     label = u""
+    dataValidators = [KontingentValidator]
 
-    def calculate(self, lehrkraefte):
+    def calculate(self, lehrkraefte, bestaetigung):
         mitarbeiter = lehrkraefte
         # Immer Aufrunden !!!!!!!!!!
         mitarbeiter = float(mitarbeiter)
@@ -354,8 +378,9 @@ class K8Form(KGBaseForm):
     # ##############################################################################
     _iface = K8
     label = u""
+    dataValidators = [KontingentValidator]
 
-    def calculate(self, mitarbeiter):
+    def calculate(self, mitarbeiter, bestaetigung):
         return mitarbeiter
 
 
@@ -367,8 +392,9 @@ class K9Form(KGBaseForm):
     # ##############################################################################
     _iface = K9
     label = u""
+    dataValidators = [KontingentValidator]
 
-    def calculate(self, gruppen):
+    def calculate(self, gruppen, bestaetigung):
         return gruppen
 
 
@@ -381,8 +407,9 @@ class K10Form(KGBaseForm):
     # ##############################################################################
     _iface = K10
     label = u""
+    dataValidators = [KontingentValidator]
 
-    def calculate(self, einsatzkraefte, betreuer):
+    def calculate(self, einsatzkraefte, betreuer, bestaetigung):
         mitarbeiter = einsatzkraefte
         # Immer Aufrunden !
         mitarbeiter = float(mitarbeiter)
@@ -416,7 +443,7 @@ class K11Form(KGBaseForm):
     label = u""
     dataValidators = [KontingentValidator]
 
-    def calculate(self, ma_verwaltung, st_verwaltung, ma_technik, st_technik):
+    def calculate(self, ma_verwaltung, st_verwaltung, ma_technik, st_technik, bestaetigung):
         ##############################################
         ### Verwaltung                             ###
         ##############################################
@@ -473,5 +500,4 @@ class K11Form(KGBaseForm):
         if mindestmenge_2_je_standort > kontingent:
             kontingent = mindestmenge_2_je_standort
         kontingent2 = kontingent
-        self.flash(u'TEST TEST TEST')
         return kontingent1 + kontingent2

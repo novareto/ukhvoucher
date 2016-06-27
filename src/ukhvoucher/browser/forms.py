@@ -18,7 +18,7 @@ from zope.interface import Interface
 from ..interfaces import IVouchersCreation, IDisablingVouchers
 from ..interfaces import IModel, IModelContainer, IAdminLayer, IUserLayer
 from ..interfaces import IAccount, IJournalize
-from ..models import Voucher, JournalEntry, Vouchers, Addresses, Invoices
+from ..models import Voucher, JournalEntry, Vouchers, Addresses, Invoices, Invoice
 from .. import _, resources, DISABLED, CREATED
 from ..apps import UserRoot
 from uvc.entities.browser import IContextualActionsMenu, IDocumentActions
@@ -51,12 +51,20 @@ class CreateModel(Form):
 
     @property
     def label(self):
-        return u"Neue %s hinzufügen" % self.context.model.__label__
-
+        labeltext = u''
+        label = self.context.model.__label__
+        if label == 'Address':
+            labeltext = u'Neue Adresse hinzufügen'
+        if label == 'Account':
+            labeltext = u'Neuen User / Account hinzufügen'
+        if label == 'Kategorie':
+            labeltext = u'Zuordnung der Kategorien neu erstellen'
+        if label == 'Neue Zuordnung erstellt':
+            labeltext = u'Neue Zuordnung von Berechtigungsscheinen erstellen'
+        return labeltext
 
     def getErrorField(self, error):
         return ""
-
 
     @property
     def fields(self):
@@ -93,7 +101,6 @@ class CreateModel(Form):
         if isinstance(self.context, Addresses):
             if data.get('oid') == '':
                 data.pop('oid')
-        print data
         if isinstance(self.context, Invoices):
             if data.get('oid') == '':
                 data.pop('oid')
@@ -146,6 +153,20 @@ class EditModel(Form):
     ignoreRequest = True
 
     @property
+    def label(self):
+        labeltext = u''
+        label = self.context.__label__
+        if label == 'Address':
+            labeltext = u'Adresse bearbeiten'
+        if label == 'Account':
+            labeltext = u'User / Account bearbeiten'
+        if label == 'Kategorie':
+            labeltext = u'Zuordnung der Kategorien bearbeiten'
+        if label == 'Neue Zuordnung erstellt':
+            labeltext = u'Zuordnung von Berechtigungsscheinen bearbeiten'
+        return labeltext
+
+    @property
     def fields(self):
         fields = Fields(self.context.__schema__)
         for field in fields:
@@ -178,6 +199,8 @@ class EditModel(Form):
             self.flash(_(u'Es ist ein Fehler aufgetreten!'))
             return FAILURE
 
+        if isinstance(self.context, Invoice):
+            data.pop('oid')
         apply_data_event(self.fields, self.getContentData(), data)
 
         # journalize

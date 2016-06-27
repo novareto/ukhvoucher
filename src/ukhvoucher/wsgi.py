@@ -20,7 +20,6 @@ def localize(application):
 
 
 def router(conf, session_key, zcml, dsn, name):
-
     allowed = ('de',)
     register_allowed_languages(allowed)
     config.ALLOWED_LANGUAGES = None
@@ -31,7 +30,6 @@ def router(conf, session_key, zcml, dsn, name):
 
     # We register our SQLengine under a given name
     engine = create_and_register_engine(dsn, name)
-
     # We use a declarative base, if it exists we bind it and create
     engine.bind(Base)
     metadata = Base.metadata

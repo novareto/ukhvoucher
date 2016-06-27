@@ -1,12 +1,14 @@
 <fieldset tal:condition="viewlet.data">
   <legend>Berechtigungsschein Information</legend>
+  <!--
   <p>
     Dieser Berechtigungsschein ist einer von ${viewlet.context.generation.oid}
     erstellten Berechtigungsscheinen.
   </p>
+  -->
   <dl>
     <dt>Erstellt am:</dt>
-    <dd tal:content="viewlet.context.generation.date" />
+    <dd tal:content="viewlet.context.generation.date.strftime('%d.%m.%Y')"> </dd>
     <dt>Erstellt durch den Benutzer:</dt>
     <dd tal:content="viewlet.context.generation.user" />
     <dt>Informationen zur Erstellung:</dt>

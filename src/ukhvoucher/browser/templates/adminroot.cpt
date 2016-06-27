@@ -139,9 +139,9 @@
 
 <fieldset tal:define="entries request.principal.getJournalEntries()">
     <legend> Bemerkungen </legend>
-    <table class="table">
+    <table class="EHtable">
         <tr>
-            <th> Datum </th>
+            <th width="80"> Datum </th>
             <th> Aktion </th>
             <th> Bemerkung </th>
             <th> Autor </th>

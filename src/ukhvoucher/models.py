@@ -18,7 +18,6 @@ from zope.interface import implementer
 
 from sqlalchemy import types
 
-
 schema = ''
 schema = 'UKHINTERN.'
 
@@ -47,7 +46,6 @@ class StrippedString(types.TypeDecorator):
 
 @implementer(IModel, IIdentified, IAddress)
 class Address(Base, Location):
-
     __tablename__ = 'z1ehradr_t'
     __schema__ = IAddress
     __label__ = _(u"Address")
@@ -74,7 +72,7 @@ class Address(Base, Location):
     search_attr = "name1"
     searchable_attrs = ("oid", "name1", "street", 'zip_code', 'city')
 
-    mnr = ""
+    #mnr = ""
 
     @staticmethod
     def widget_arrangements(fields):
@@ -194,7 +192,7 @@ class Account(Base, Location):
 
     @property
     def title(self):
-        return "%s (%s)" % (self.email, self.oid)
+        return "Benutzerkennung: %s, (OID der Einrichtung: %s)" % (self.login, self.oid)
 
     @property
     def categories(self):
@@ -287,6 +285,12 @@ class Voucher(Base, Location):
                     k = u'Mitarbeiter-Technik'
                 if k == 'st_technik':
                     k = u'Standorte-Technik'
+                if k == 'bestaetigung':
+                    k = u'Bestätigung Richtigkeit'
+                if v is True:
+                    v = u'Ja'
+                if v is False:
+                    v = u'Nein'
                 rc.append("%s: %s" % (k, v))
             return '; '.join(rc)
         return data
@@ -325,12 +329,12 @@ class Invoice(Base, Location):
     __tablename__ = 'z1ehrrch_t'
     __schema__ = IInvoice
     __label__ = _(u"Neue Zuordnung erstellt")
+
     if schema:
         __table_args__ = {"schema": schema[:-1]}
-
     oid = Column('rech_oid', Integer, primary_key=True)
     reason = Column('grund', StrippedString)
-    description = Column('text', String)
+    description = Column('text', StrippedString)
 
     vouchers = relationship(
         Voucher, collection_class=set,
@@ -340,8 +344,7 @@ class Invoice(Base, Location):
     def title(self):
         return "Zuordnung %s" % self.oid
 
-    #search_attr = "field.oid"
-    search_attr = "oid"
+    search_attr = "field.oid"
     searchable_attrs = ("oid", "reason")
 
     @staticmethod

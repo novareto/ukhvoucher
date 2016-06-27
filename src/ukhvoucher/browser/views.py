@@ -223,6 +223,7 @@ class ContainerIndex(uvclight.Page):
             self.batch = u''
 
     def update(self):
+        ukhvouchers.need()
         ukhcss.need()
         self.columns = [field.title for field in self.context.listing_attrs]
         self.set_batch()

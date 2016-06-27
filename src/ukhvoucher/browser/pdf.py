@@ -29,7 +29,7 @@ class PDF(uvclight.Page):
         response = self.responseFactory(app_iter=result)
         response.headers['Content-Type'] = 'application/pdf'
         response.headers['Content-Disposition'] = "%s" % (
-            'attachment; filename="gutschein.pdf"'
+            'attachment; filename="berechtigungsschein.pdf"'
         )
         return response
 
@@ -182,6 +182,122 @@ class PDF(uvclight.Page):
                 z1 = z1 + 1
                 # Seitenumbruch
                 c.showPage()
+        # ENDE und Save
+        c.save()
+        tmp.seek(0)
+        return tmp.read()
+
+
+
+
+
+
+class PDFOnlyBarcode(uvclight.Page):
+    uvclight.layer(IUserLayer)
+    uvclight.context(UserRoot)
+    uvclight.auth.require('users.access')
+
+    def make_response(self, result):
+        response = self.responseFactory(app_iter=result)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = "%s" % (
+            'attachment; filename="barcode.pdf"'
+        )
+        return response
+
+    def render(self):
+        tmp = tempfile.TemporaryFile()
+        c = canvas.Canvas(tmp, pagesize=A4)
+        c.setAuthor("UKH")
+        c.setTitle(u'Erste Hilfe')
+        schriftart = "Helvetica"
+        schriftartfett = "Helvetica-Bold"
+        #datum = strftime("%d.%m.%Y", gmtime())
+        principal = self.request.principal
+        adr = principal.getAddress()
+        LK1 = []
+        LK2 = []
+        LK3 = []
+        LK4 = []
+        LK5 = []
+        LK6 = []
+        LK7 = []
+        LK8 = []
+        LK9 = []
+        LK10 = []
+        LK11 = []
+        for voucher in principal.getVouchers(cat=self.request.form.get('cat')):
+            if voucher.status.strip() == CREATED:
+                if str(voucher.cat.strip()) == "K1":
+                    LK1.append(str(voucher.oid))
+                elif str(voucher.cat.strip()) == "K2":
+                    LK2.append(str(voucher.oid))
+                elif str(voucher.cat.strip()) == "K3":
+                    LK3.append(str(voucher.oid))
+                elif str(voucher.cat.strip()) == "K4":
+                    LK4.append(str(voucher.oid))
+                elif str(voucher.cat.strip()) == "K5":
+                    LK5.append(str(voucher.oid))
+                elif str(voucher.cat.strip()) == "K6":
+                    LK6.append(str(voucher.oid))
+                elif str(voucher.cat.strip()) == "K7":
+                    LK7.append(str(voucher.oid))
+                elif str(voucher.cat.strip()) == "K8":
+                    LK8.append(str(voucher.oid))
+                elif str(voucher.cat.strip()) == "K9":
+                    LK9.append(str(voucher.oid))
+                elif str(voucher.cat.strip()) == "K10":
+                    LK10.append(str(voucher.oid))
+                elif str(voucher.cat.strip()) == "K11":
+                    LK11.append(str(voucher.oid))
+
+        for bcode in [['K1', LK1], ['K2', LK2], ['K3', LK3], ['K4', LK4], ['K5', LK5], ['K6', LK6], ['K7', LK7], ['K8', LK8], ['K9', LK9], ['K10', LK10], ['K11', LK11]]:
+            x = 2
+            x1 = 2.6
+            y = 24
+            y1 = y - 0.5
+            if len(bcode[1]) > 0:
+                ty = 28
+                c.setFont(schriftartfett, 34)
+                c.drawString(15.5 * cm, 27 * cm, bcode[0])
+                c.setFont(schriftartfett, 11)
+                # Namensfelder werden nur ausgegeben wenn diese gefuellt sind
+                mnr = adr.mnr.strip()
+                if mnr != '':
+                    if bcode[0] == 'K7':
+                        c.drawString(x1 * cm, ty * cm, u'Einrichtungsnummer: ' + mnr)
+                    elif bcode[0] == 'K9':
+                        c.drawString(x1 * cm, ty * cm, u'Mitglieds- oder Betriebsnummer: ' + mnr)
+                    else:
+                        c.drawString(x1 * cm, ty * cm, u'Mitgliedsnummer: ' + mnr)
+                ty = ty - 0.7
+                # Namensfelder werden nur ausgegeben wenn diese gefuellt sind
+                c.drawString(x1 * cm, ty * cm, adr.name1.strip() + ' ' + adr.name2.strip())
+                ty = ty - 0.5
+                c.drawString(x1 * cm, ty * cm, adr.name3.strip())
+                ty = ty - 0.5
+                c.drawString(x1 * cm, ty * cm, adr.street.strip() + ' ' + adr.number.strip())
+                ty = ty - 0.5
+                c.drawString(x1 * cm, ty * cm, str(adr.zip_code) + ' ' + adr.city.strip())
+                #####################################################
+                c.setFont(schriftart, 10)
+                for code in bcode[1]:
+                    barcode = code128.Code128(code, barWidth = 0.4 * mm, barHeight = 9 * mm)
+                    barcode.drawOn(c, x * cm, y * cm)
+                    c.drawString(x1 * cm, y1 * cm, bcode[0] + '   ' + str(code))
+                    x = x + 4
+                    x1 += 4
+                    if x == 18:
+                        y = y - 3
+                        y1 = y - 0.5
+                        x = 2
+                        x1 = x + 0.6
+                    if y <= 2:
+                        c.showPage()
+                        y = 24
+                        y1 = y - 0.5
+                c.showPage()
+        c.showPage()
         # ENDE und Save
         c.save()
         tmp.seek(0)
