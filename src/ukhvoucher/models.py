@@ -7,7 +7,9 @@ from .interfaces import IVoucherSearch, IInvoiceSearch
 from . import _
 from zope.location import Location
 
+import os
 import uvclight
+import ConfigParser
 from urllib import quote, unquote
 from cromlech.sqlalchemy import get_session
 from dolmen.sqlcontainer import SQLContainer
@@ -21,7 +23,19 @@ from sqlalchemy import types
 schema = ''
 schema = 'UKHINTERN.'
 
-print "SCHEMA", schema
+
+def get_ukh_config():
+    path = os.environ.get('UKH_CONFIGURATION')
+    if path is None or not os.path.isfile(path):
+        raise RuntimeError('Configuration path is not found.')
+
+    config = ConfigParser.ConfigParser()
+    config.read([path])
+    tablenames = dict(config.items('TABLENAMES'))
+    return tablenames
+
+
+TABLENAMES = get_ukh_config()
 
 
 class StrippedString(types.TypeDecorator):
@@ -46,7 +60,7 @@ class StrippedString(types.TypeDecorator):
 
 @implementer(IModel, IIdentified, IAddress)
 class Address(Base, Location):
-    __tablename__ = 'z1ehradr_t'
+    __tablename__ = TABLENAMES['address']
     __schema__ = IAddress
     __label__ = _(u"Address")
 
