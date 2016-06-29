@@ -63,6 +63,7 @@ class Address(Base, Location):
     __tablename__ = TABLENAMES['address']
     __schema__ = IAddress
     __label__ = _(u"Address")
+    z1ext9aa = TABLENAMES['user']
 
     if schema:
         __table_args__ = {"schema": schema[:-1]}
@@ -76,7 +77,8 @@ class Address(Base, Location):
     mnr = Column('trgmnr', String(15))
     zip_code = Column('ikhplz', String(5))
     city = Column('ikhort', String(24))
-    user_id = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
+    user_id = Column('user_id', Integer, ForeignKey(schema + z1ext9aa + '.oid'))
+    #user_id = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
 
     @property
     def title(self):
@@ -102,7 +104,8 @@ class Address(Base, Location):
 
 
 class JournalEntry(Base):
-    __tablename__ = 'Z1EHRJRN_T'
+    #__tablename__ = 'Z1EHRJRN_T'
+    __tablename__ = TABLENAMES['journal']
     if schema:
         __table_args__ = {"schema": schema[:-1]}
 
@@ -115,7 +118,8 @@ class JournalEntry(Base):
 
 
 class AddressEinrichtung(Base):
-    __tablename__ = 'z1ext9ac'
+    #__tablename__ = 'z1ext9ac'
+    __tablename__ = TABLENAMES['adreinr']
     if schema:
         __table_args__ = {"schema": schema[:-1]}
 
@@ -131,7 +135,8 @@ class AddressEinrichtung(Base):
 
 
 class AddressTraeger(Base):
-    __tablename__ = 'z1ext9ab'
+    #__tablename__ = 'z1ext9ab'
+    __tablename__ = TABLENAMES['adrtrae']
     if schema:
         __table_args__ = {"schema": schema[:-1]}
 
@@ -149,7 +154,8 @@ class AddressTraeger(Base):
 @implementer(IModel, IIdentified, ICategory)
 class Category(Base, Location):
 
-    __tablename__ = 'z1ehrkat_t'
+    #__tablename__ = 'z1ehrkat_t'
+    __tablename__ = TABLENAMES['category']
     __schema__ = ICategory
     __label__ = _(u"Kategorie")
 
@@ -185,7 +191,8 @@ class Category(Base, Location):
 @implementer(IModel, IIdentified, IAccount)
 class Account(Base, Location):
 
-    __tablename__ = 'Z1EXT9AA'
+    # __tablename__ = 'Z1EXT9AA'
+    __tablename__ = TABLENAMES['user']
     __schema__ = IAccount
     __label__ = _(u"Account")
     if schema:
@@ -232,9 +239,14 @@ class Account(Base, Location):
 @implementer(IModel, IIdentified, IVoucher)
 class Voucher(Base, Location):
 
-    __tablename__ = 'z1ehrvch_t'
+    #__tablename__ = 'z1ehrvch_t'
+    __tablename__ = TABLENAMES['voucher']
     __schema__ = IVoucher
     __label__ = _(u"Vouchers")
+    z1ext9aa = TABLENAMES['user']
+    z1ehrrch = TABLENAMES['invoice']
+    z1ehrbgl = TABLENAMES['generation']
+
     if schema:
         __table_args__ = {"schema": schema[:-1]}
 
@@ -242,11 +254,16 @@ class Voucher(Base, Location):
     creation_date = Column('erst_dat', DateTime)
     status = Column('status', String)
     cat = Column('kat', String)
-    user_id = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
+    user_id = Column('user_id', Integer, ForeignKey(schema + z1ext9aa + '.oid'))
+    #user_id = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
+    #invoice_id = Column(
+    #    'rech_oid', Integer, ForeignKey(schema + 'z1ehrrch_t.rech_oid'))
+    #generation_id = Column(
+    #    'gen_oid', Integer, ForeignKey(schema + 'z1ehrbgl_t.bgl_oid'))
     invoice_id = Column(
-        'rech_oid', Integer, ForeignKey(schema + 'z1ehrrch_t.rech_oid'))
+        'rech_oid', Integer, ForeignKey(schema + z1ehrrch + '.rech_oid'))
     generation_id = Column(
-        'gen_oid', Integer, ForeignKey(schema + 'z1ehrbgl_t.bgl_oid'))
+        'gen_oid', Integer, ForeignKey(schema + z1ehrbgl + '.bgl_oid'))
 
     # relations
     user = relationship('Account')
@@ -340,7 +357,8 @@ class Voucher(Base, Location):
 @implementer(IModel, IIdentified, IInvoice)
 class Invoice(Base, Location):
 
-    __tablename__ = 'z1ehrrch_t'
+    #__tablename__ = 'z1ehrrch_t'
+    __tablename__ = TABLENAMES['invoice']
     __schema__ = IInvoice
     __label__ = _(u"Neue Zuordnung erstellt")
 
@@ -367,7 +385,10 @@ class Invoice(Base, Location):
 
 
 class Generation(Base):
-    __tablename__ = 'z1ehrbgl_t'
+    #__tablename__ = 'z1ehrbgl_t'
+    __tablename__ = TABLENAMES['generation']
+    z1ext9aa = TABLENAMES['user']
+
     if schema:
         __table_args__ = {"schema": schema[:-1]}
 
@@ -375,7 +396,8 @@ class Generation(Base):
     date = Column('vcb_dat', DateTime)
     type = Column('kat', String(20))
     data = Column('text', String(500))
-    user = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
+    user = Column('user_id', Integer, ForeignKey(schema + z1ext9aa + '.oid'))
+    #user = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
     uoid = Column('oid', Integer)
 
     voucher = relationship("Voucher", backref=backref('generation'))
