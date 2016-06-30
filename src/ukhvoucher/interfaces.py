@@ -529,12 +529,12 @@ class IAddress(Interface):
 
     street = schema.TextLine(
         title=_(u"Address Street"),
-        required=True,
+        required=False,
     )
 
     number = schema.TextLine(
         title=_(u"Address Number"),
-        required=True,
+        required=False,
     )
 
     zip_code = schema.TextLine(

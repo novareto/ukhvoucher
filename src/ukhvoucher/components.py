@@ -125,7 +125,7 @@ class ExternalPrincipal(Principal):
         #if mnr in ('1.01'):
         #    cat = OrderedSet([K1, K2, K3, K4, K5, K6, K8, K9, K10])
         if mnr in ('1.02', '1.03', '1.04'):
-            cat = OrderedSet([K1, K2, K3, K4, K5, K6, K9, K10])
+            cat = OrderedSet([K1, K2, K3, K4, K6, K9, K10])
         elif mnr == '1.05':
             cat = OrderedSet([K1, K2, K6, K8])
         elif mnr in ('1.10', '1.30', '3.10'):
