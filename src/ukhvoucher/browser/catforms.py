@@ -172,7 +172,11 @@ class KGBaseForm(uvclight.Form):
 
     @property
     def fields(self):
-        return uvclight.Fields(self._iface)
+        fields = uvclight.Fields(self._iface)
+        print fields.keys()
+        if 'bestaetigung' in fields.keys():
+            fields['bestaetigung'].mode = "checkbox"
+        return fields
 
     @property
     def formErrors(self):

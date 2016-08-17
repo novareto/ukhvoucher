@@ -125,6 +125,7 @@ class Username(uvclight.MenuItem):
             if self.request.principal.title == "Unauthenticated principal":
                 return u"Bitte anmelden"
             return u"Sie sind angemeldet als: %s" % self.request.principal.title
+            #return u"Herzlich willkommen im Mitgliederportal der Unfallkasse Hessen. Sie sind angemeldet als: %s" % self.request.principal.title
         except:
             return "HHH"
 
@@ -161,6 +162,12 @@ class MenuInvoice(BaseNavMenu):
     uvclight.order(2)
     attribute = "invoices"
     title = u"Übersicht Zuordnungen"
+
+
+class MenuVoucher(BaseNavMenu):
+    uvclight.order(3)
+    attribute = "vouchers"
+    title = u"Übersicht Berechtigungsscheine"
 
 
 #class MenuAccounts(BaseNavMenu):

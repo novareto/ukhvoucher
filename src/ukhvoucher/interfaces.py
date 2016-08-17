@@ -24,6 +24,7 @@ HK1 = u"""
 <p>Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens zwei versicherte
    Beschäftigte üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
    jedoch nicht verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK2 = u"""
@@ -55,6 +56,7 @@ HK2 = u"""
 <p>Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens zwei versicherte
    Beschäftigte üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
    jedoch nicht verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK3 = u"""
@@ -65,6 +67,7 @@ HK3 = u"""
 <p>Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens zwei versicherte Beschäftigte
    üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
    jedoch nicht verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK4 = u"""
@@ -74,6 +77,7 @@ HK4 = u"""
    außerhalb gleichzeitig tätig sind.</p>
 <p>Hinweis: Die übrigen Beschäftigten des Betriebs, die an festen Standorten tätig sind, sind mit der Personenzahl
    unter der Kontingent Kategorie 2 „Sonstige Betriebe“ zu erfassen.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK5 = u"""
@@ -82,6 +86,7 @@ HK5 = u"""
 <p>Bitte tragen Sie die bei der UKH versicherten Beschäftigten ein, die eine Tätigkeit mit erhöhter Gefährdung ausüben.</p>
 <p>Beachten Sie bitte auch, dass diese Personen in keiner anderen Kontingent Kategorie aufzuführen sind.</p>
 <p>Hinweise zu Tätigkeiten mit erhöhter Gefährdung entnehmen Sie bitte dem Informationsblatt.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK6 = u"""
@@ -95,6 +100,7 @@ HK6 = u"""
 <p>Hier sind Beschäftigte in Abwasserbetrieben (Arbeiten im Kanalnetz) und auf Deponien anzugeben.</p>
 <p>Beschäftigte in der Wasserversorgung (Arbeiten in Schächten) sind hier nur anzugeben, wenn für diesen Personenkreis
    die fachliche Zuständigkeit der Unfallkasse Hessen - nicht der BG ETEM - gegeben ist.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK7 = u"""
@@ -106,6 +112,7 @@ HK7 = u"""
 <p>Hinweis: Bitte zählen Sie Personal in anderen Bereichen, bspw. in der Schulbetreuung, Reinigung,
    Sekretariat oder Hausmeister nicht mit. Für dieses Personal beantragt der Arbeitgeber die Kostenübernahme
    der Lehrgangsgebühren bei der zuständigen Fach-Berufsgenossenschaft oder bei uns als Mitgliedsunternehmen.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK8 = u"""
@@ -114,6 +121,7 @@ HK8 = u"""
 <p>Bitte tragen Sie ein, an wie vielen Schulstandorten Personal in den Bereichen Reinigung,
    Sekretariat oder Hausmeister beschäftigt wird.</p>
 <p>Als Schulstandort gilt eine Schule, wobei Außenstellen von Schulen als eigener Standort gezählt werden.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK9 = u"""
@@ -121,6 +129,7 @@ HK9 = u"""
 <h4><u>Gruppen:</u></h4>
 <p>Bitte tragen Sie ein, wie viele Schulbetreuungsgruppen höchstens gleichzeitig betrieben werden.
    Beispiel: 3 Gruppen dienstags und 2 Gruppen donnerstags sind 3 Gruppen gleichzeitig.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK10 = u"""
@@ -132,6 +141,7 @@ HK10 = u"""
 <h4><u>Jugendbetreuer/innen:</u></h4>
 <p>Bitte tragen Sie auch hier alle Jugendbetreuer/innen der Orts oder Stadtteilfeuerwehren ein.
    Die UKH übernimmt für alle einmal in 2 Jahren die Kosten der Erste Hilfe Lehrgänge.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK11 = u"""
@@ -149,6 +159,7 @@ HK11 = u"""
    Als eigene Standorte gelten räumlich abgeschlossene Arbeitsorte, an denen mindestens zwei versicherte
    Beschäftigte üblicherweise anwesend sind.
    Verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes zählen nicht als abgeschlossene Arbeitsorte.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 
@@ -404,6 +415,13 @@ class IAccount(Interface):
         default=u"eh",
     )
 
+    #anr = schema.Choice(
+    #    title=_(u"Anrede"),
+    #    description=_(u"Bitte wählen Sie eine Anrede."),
+    #    values = (u'Herr', u'Frau'),
+    #    required = True,
+    #)
+
     vname = schema.TextLine(
         title=_(u"Vorname"),
         description=_(u"Bitte geben Sie hier Ihren Vornamen ein."),
@@ -611,15 +629,15 @@ class K1(Interface):
     u"""Verwaltung, Büro (K1)"""
 
     mitarbeiter = schema.Int(
-        title=_(u"Beschäftigte (ohne Beamte)"),
+        title=_(u"Anzahl Beschäftigte (ohne Beamte)"),
     )
 
     standorte = schema.Int(
-        title=_(u"Standorte"),
+        title=_(u"Anzahl Standorte"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angaben."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Verwaltungs-Buerobetrieben_K1.pdf')
@@ -630,15 +648,15 @@ class K2(Interface):
     u"""Sonstige Betriebe und Hochschulen (K2)"""
 
     mitarbeiter = schema.Int(
-        title=_(u"Beschäftigte (ohne Beamte)"),
+        title=_(u"Anzahl Beschäftigte (ohne Beamte)"),
     )
 
     standorte = schema.Int(
-        title=_(u"Standorte"),
+        title=_(u"Anzahl Standorte"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angaben."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Betrieben-Hochschulen_K2.pdf')
@@ -656,7 +674,7 @@ class K3(Interface):
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angaben."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_in_Kindertageseinrichtungen_K3.pdf')
@@ -670,7 +688,7 @@ class K4(Interface):
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Betrieben-Beschaeftigten-Kolonnen_K4-Bauhoefe-Entsorgung.pdf')
@@ -686,11 +704,11 @@ class K5(Interface):
     #        source=get_reason2,))
 
     mitarbeiter = schema.Int(
-        title=_(u"Beschäftigte (ohne Beamte)"),
+        title=_(u"Anzahl Beschäftigte (ohne Beamte)"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Beschaeftigte-Einrichtungen-besonderer-Gefaehrdung_K5-_K6.pdf')
@@ -706,11 +724,11 @@ class K6(Interface):
     #        source=get_reason3,))
 
     mitarbeiter = schema.Int(
-        title=_(u"Beschäftigte (ohne Beamte)"),
+        title=_(u"Anzahl Beschäftigte (ohne Beamte)"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Beschaeftigte-Einrichtungen-besonderer-Gefaehrdung_K5-_K6.pdf')
@@ -724,7 +742,7 @@ class K7(Interface):
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Lehrkraefte-Schulen_K7.pdf')
@@ -734,11 +752,11 @@ class K8(Interface):
     u"""Schulpersonal der Schulträger (ohne Schulbetreuung) (K8)"""
 
     mitarbeiter = schema.Int(
-        title=_(u"Schulstandorte"),
+        title=_(u"Anzahl Schulstandorte"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Schulpersonal-Schultraeger_K8.pdf')
@@ -748,11 +766,11 @@ class K9(Interface):
     u"""Schulbetreuung (K9)"""
 
     gruppen = schema.Int(
-        title=_(u"Gruppen"),
+        title=_(u"Anzahl Gruppen"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Schulbetreuung_K9.pdf')
@@ -766,11 +784,11 @@ class K10(Interface):
     )
 
     betreuer = schema.Int(
-        title=_(u"Betreuer/innen der Jugendfeuerwehr"),
+        title=_(u"Anzahl Betreuer/innen der Jugendfeuerwehr"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angaben."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Freiwilligen-Feuerwehr_K10.pdf')
@@ -780,23 +798,23 @@ class K11(Interface):
     u"""Gesundheitsdienste (K11)"""
 
     ma_verwaltung = schema.Int(
-        title=_(u"Beschäftigte (ohne Beamte) in der Verwaltung"),
+        title=_(u"Anzahl Beschäftigte (ohne Beamte) in der Verwaltung"),
     )
 
     st_verwaltung = schema.Int(
-        title=_(u"Standorte der Verwaltung"),
+        title=_(u"Anzahl Standorte der Verwaltung"),
     )
 
     ma_technik = schema.Int(
-        title=_(u"Beschäftigte (ohne Beamte) im technischen Bereich"),
+        title=_(u"Anzahl Beschäftigte (ohne Beamte) im technischen Bereich"),
     )
 
     st_technik = schema.Int(
-        title=_(u"Standorte des technischen Bereichs"),
+        title=_(u"Anzahl Standorte des technischen Bereichs"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angaben."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Gesundheitsdiensten_K11.pdf')

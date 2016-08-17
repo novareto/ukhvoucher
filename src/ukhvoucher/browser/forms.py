@@ -31,12 +31,12 @@ MULTI_DISABLED = set((
 ))
 
 
-class DisableVoucherMenuItem(uvclight.MenuItem):
-    menu(IContextualActionsMenu)
-    context(Vouchers)
-    title(u'Berechtigungsscheine sperren')
-    name('disable_vouchers')
-    order(50)
+#class DisableVoucherMenuItem(uvclight.MenuItem):
+#    menu(IContextualActionsMenu)
+#    context(Vouchers)
+#    title(u'Berechtigungsscheine sperren')
+#    name('disable_vouchers')
+#    order(50)
 
 
 #@menuentry(AddMenu, order=10)
@@ -273,7 +273,7 @@ class EditAccount(uvclight.EditForm):
     fields['vname'].htmlAttributes = {'maxlength': 30}
     fields['nname'].htmlAttributes = {'maxlength': 30}
     fields['phone'].htmlAttributes = {'maxlength': 15}
-    fields['email'].htmlAttributes = {'maxlength': 50}
+    fields['email'].htmlAttributes = {'maxlength': 79}
 
 
     def __init__(self, context, request, content=_marker):
@@ -286,6 +286,9 @@ class EditAccount(uvclight.EditForm):
     def actions(self):
         actions = super(EditAccount, self).actions
         return actions.omit('cancel')
+
+    def getErrorField(self, error):
+        return ""
 
 
 #@menuentry(IDocumentActions, order=10)

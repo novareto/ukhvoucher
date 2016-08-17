@@ -10,6 +10,7 @@
   <include package="dolmen.menu" />
   <include package="dolmen.clockwork" />
   <include package="dolmen.forms.crud" />
+  <include package="dolmen.forms.base" />
 
   <include package="zope.i18n" />
   <include package="zope.i18n" file="meta.zcml" />
