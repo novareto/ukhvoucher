@@ -6,17 +6,25 @@
 import uvclight
 import urllib
 
+from ukhvoucher.models import Account
 from base64 import decodestring
 from ul.auth import require
 from zope.component import getUtility
 from ul.auth.browser import ICredentials
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
+from Crypto import Random
+from Crypto.Cipher import PKCS1_v1_5
 
 
-fp = open('/etc/ukh_private.pem', 'r')
-private_key = RSA.importKey(fp.read(), passphrase='ukhukh')
-private_key_ = PKCS1_OAEP.new(private_key)
+with open('/etc/ukhprie.pem', 'r') as fp:
+    pk = RSA.importKey(fp.read(), passphrase='Test123')
+
+
+def v1_5(txt, pk):
+    sentinel = Random.new().read(256)
+    cipher = PKCS1_v1_5.new(pk)
+    return cipher.decrypt(txt, sentinel)
 
 
 class CheckAuth(uvclight.JSON):
@@ -40,8 +48,25 @@ class GetSchool(uvclight.JSON):
     uvclight.context(uvclight.IRootObject)
     require('zope.Public')
 
+    def getIKNummer(self, mnr):
+        from cromlech.sqlalchemy import get_session
+        session = get_session('ukhvoucher')
+        sql = """SELECT ENRRCD
+                 FROM EDUCUSADAT.MIENR1AA
+                 WHERE ENREA1 = '3'
+                 AND ENRLFD = %s""" % mnr
+        res = session.execute(sql).fetchone()
+        print res
+        if res:
+            accounts = session.query(Account).filter(Account.oid == int(res[0])).all()
+            print accounts
+        if accounts:
+            return accounts[0].login
+        return "NOTHING FOuND"
+
     def render(self):
         snummer = self.request.params.get('snummer', 0)
         if snummer:
-            return private_key_.decrypt(urllib.unquote_plus(snummer))
+            sn = v1_5(urllib.unquote_plus(snummer.encode('utf-8')), pk)
+            snummer = self.getIKNummer(sn)
         return {'snummer': snummer}
