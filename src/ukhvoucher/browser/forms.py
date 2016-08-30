@@ -18,6 +18,7 @@ from zope.interface import Interface
 from ..interfaces import IVouchersCreation, IDisablingVouchers
 from ..interfaces import IModel, IModelContainer, IAdminLayer, IUserLayer
 from ..interfaces import IAccount, IJournalize
+from ..interfaces import IKontakt
 from ..models import Voucher, JournalEntry, Vouchers, Addresses, Invoices, Invoice
 from .. import _, resources, DISABLED, CREATED
 from ..apps import UserRoot
@@ -291,6 +292,16 @@ class EditAccount(uvclight.EditForm):
         return ""
 
 
+class ChangePW(EditAccount):
+    uvclight.name('change_pw')
+    uvclight.title(u'Passwort ändern')
+    label = u"Passwort ändern"
+    description = u"Hier können Sie ihr Passwort ändern"
+    ignoreContent = False
+
+    fields = Fields(IAccount).select('password')
+
+
 #@menuentry(IDocumentActions, order=10)
 class AskForVouchers(Form):
     context(IAccount)
@@ -433,6 +444,65 @@ class DisableVouchers(Form):
         return SUCCESS
 
     @action(_(u'Abbrechen'))
+    def handle_cancel(self):
+        self.redirect(self.application_url())
+        return SUCCESS
+
+
+MT = u"""Der Erste Hilfe Benutzer
+
+%s
+%s
+%s
+
+bittet um Kontaktaufnahme zum Thema: %s
+
+Der Benutzer hat folgende Nachricht hinterlassen:
+
+%s
+
+
+Folgende Kontaktdaten stehen zur Verfügung:
+
+%s
+%s
+%s
+"""
+
+class Kontakt(uvclight.Form):
+    uvclight.layer(IUserLayer)
+    uvclight.context(UserRoot)
+    uvclight.auth.require('zope.Public')
+
+    fields = uvclight.Fields(IKontakt)
+    title = u"Anfrage"
+    label = u"Bitte nutzen Sie vor der Kontaktaufnahme auch unsere FAQ-Seite."
+
+    @action(u'Senden')
+    def handle_send(self):
+        data, errors = self.extractData()
+        if errors:
+            return
+        #TEXT = """ Der Benuzter %s hat folgende Nachricht an uns gesendet
+#
+#        %s
+#
+#        %s
+#        """
+        from ukhvoucher.utils import send_mail
+        adr = self.request.principal.getAddress()
+        acu = self.request.principal.getAccount()
+        adrname = adr.name1.strip() + ' ' + adr.name2.strip()
+        adrstrasse = adr.street + ' ' + str(adr.number)
+        adrplzort = str(adr.zip_code) + ' ' + adr.city
+        acuname = acu.vname + ' ' + acu.nname
+        #text = TEXT % (adr.name1, data['betreff'], data['text'])
+        text = MT % (adrname, adrstrasse, adrplzort, data[u'betreff'], data[u'text'], acuname, acu.phone, acu.email)
+        send_mail('extranet@ukh.de', ('m.seibert@ukh.de',), u"Kontaktformular Erste Hilfe", text=text)
+        self.flash(u'Ihre Nachricht wurde an die Unfallkasse Hessen gesendet')
+        self.redirect(self.application_url())
+
+    @action(u'Abbrechen')
     def handle_cancel(self):
         self.redirect(self.application_url())
         return SUCCESS

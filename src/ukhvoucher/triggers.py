@@ -2,7 +2,7 @@
 
 from sqlalchemy import event
 from .models import Voucher, Invoice
-from ukhvoucher import BOOKED, NOT_BOOKED
+from ukhvoucher import BOOKED, NOT_BOOKED, CREATED
 
 
 def rel_modified(target, value, initiator):
@@ -11,7 +11,8 @@ def rel_modified(target, value, initiator):
 
 
 def rel_deleted(target, value, initiator):
-    value.stauts = NOT_BOOKED
+    #value.status = CREATED
+    value.status = NOT_BOOKED
     return value
 
 

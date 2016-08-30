@@ -29,7 +29,7 @@ class UserMasquarade(uvclight.ViewletForm):
     uvclight.context(Interface)
     uvclight.view(AdminRootIndex)
     uvclight.layer(IAdminLayer)
-    uvclight.auth.require('manage.vouchers')
+    uvclight.auth.require('display.vouchers')
     uvclight.order(20)
     template = uvclight.get_template('selectunternehmen.cpt', __file__)
 
@@ -56,7 +56,6 @@ class UserMasquarade(uvclight.ViewletForm):
 
     #@ram.cache(lambda *args: time() // (60 * 60))
     def render(self):
-        print "I AM CALLED"
         chosenajax.need()
         form = uvclight.ViewletForm.render(self)
         return form

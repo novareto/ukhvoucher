@@ -183,7 +183,6 @@ def get_oid(context):
     for term in getValue():
         if term.value not in rcc:
             rc.append(term)
-    print len(rc)
     return SimpleVocabulary(rc)
 
 
@@ -253,46 +252,6 @@ def get_reason(context):
     ]
     return SimpleVocabulary(rc)
 
-#@grok.provider(IContextSourceBinder)
-#def get_reason2(context):
-#    rc = [
-#        SimpleTerm(u'Freilichtmuseum Hessenpark',
-#                   u'Beschaeftigte im Freilichtmuseum Hessenpark',
-#                   u'Beschäftigte im Freilichtmuseum Hessenpark'),
-#        SimpleTerm(u'in der Tierpflege',
-#                   u'Beschaeftigte in der Tierpflege',
-#                   u'Beschäftigte in der Tierpflege'),
-#    ]
-#    return SimpleVocabulary(rc)
-
-#@grok.provider(IContextSourceBinder)
-#def get_reason3(context):
-#    rc = [
-#        SimpleTerm(u'von Hessen-Forst (Waldarbeiten)',
-#                   u'Beschaeftigte von Hessen-Forst (Waldarbeiten)',
-#                   u'Beschäftigte von Hessen-Forst (Waldarbeiten)'),
-#        SimpleTerm(u'von Hessen mobil (Straßendienst)',
-#                   u'Beschaeftigte von Hessen mobil (Strassendienst)',
-#                   u'Beschäftigte von Hessen mobil (Straßendienst)'),
-#        SimpleTerm(u'bei der Hessischen Verwaltung für Bodenmanagement (Außendienst)',
-#                   u'Beschaeftigte bei der Hessischen Verwaltung fuer Bodenmanagement (Aussendienst)',
-#                   u'Beschäftigte bei der Hessischen Verwaltung für Bodenmanagement (Außendienst)'),
-#        SimpleTerm(u'in Abwasserbetrieben (Arbeiten im Kanalnetz)',
-#                   u'Beschaeftigte in Abwasserbetrieben (Arbeiten im Kanalnetz)',
-#                   u'Beschäftigte in Abwasserbetrieben (Arbeiten im Kanalnetz)'),
-#        SimpleTerm(u'in Wasserversorgungsbetrieben (Arbeiten in Schächten)',
-#                   u'Beschaeftigte in Wasserversorgungsbetrieben (Arbeiten in Schaechten)',
-#                   u'Beschäftigte in Wasserversorgungsbetrieben (Arbeiten in Schächten)'),
-#        SimpleTerm(u'auf Deponien',
-#                   u'Beschaeftigte auf Deponien',
-#                   u'Beschäftigte auf Deponien'),
-#        SimpleTerm(u'von N*ICE (ohne Leiharbeitnehmer)',
-#                   u'Beschaeftigte von N*ICE (ohne Leiharbeitnehmer)',
-#                   u'Beschäftigte von N*ICE (ohne Leiharbeitnehmer)'),
-#    ]
-#    return SimpleVocabulary(rc)
-
-
 def get_source(name):
     @grok.provider(IContextSourceBinder)
     def source(context):
@@ -358,6 +317,7 @@ class IModelContainer(Interface):
 
 
 class IDisablingVouchers(Interface):
+
     vouchers = schema.Set(
         value_type=schema.Choice(source=get_source('vouchers')),
         title=_(u"Berechtigungsscheine"),
@@ -381,19 +341,6 @@ def gN(context=None):
 
 
 class IAccount(Interface):
-
-#    oid = schema.TextLine(
-#        title=_(u"Unique identifier"),
-#        description=_(u"Internal identifier"),
-#        required=True,
-#    )
-
-#    oid = schema.Choice(
-#        title=_(u"Unique identifier"),
-#        description=_(u"Eindeutiger Schlüssel OID"),
-#        required=True,
-#        source=get_oid,
-#    )
 
     oid = schema.TextLine(
         title=_(u"Unique identifier"),
@@ -572,7 +519,6 @@ class IInvoice(Interface):
         title=_(u"Titel oid Zuordnung"),
         description=_(u"oid Zuordnung"),
         required=False,
-        #defaultFactory=getInvoiceId,
     )
 
     vouchers = schema.Set(
@@ -615,15 +561,14 @@ class IVoucher(Interface):
 
     user_id = schema.TextLine(
         title=_(u"User id"),
-        #source=get_source('accounts'),
         required=True,
     )
 
     invoice_id = schema.TextLine(
         title=_(u"Invoice id"),
-        #source=get_source('invoices'),
         required=True,
     )
+
 
 class K1(Interface):
     u"""Verwaltung, Büro (K1)"""
@@ -662,6 +607,7 @@ class K2(Interface):
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Betrieben-Hochschulen_K2.pdf')
     taggedValue('descr', HK2)
 
+
 class K3(Interface):
     u"""Kindertageseinrichtungen (K3)"""
 
@@ -680,6 +626,7 @@ class K3(Interface):
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_in_Kindertageseinrichtungen_K3.pdf')
     taggedValue('descr', HK3)
 
+
 class K4(Interface):
     u"""Bauhof / Entsorgung (Kolonnen) (K4)"""
 
@@ -694,14 +641,9 @@ class K4(Interface):
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Betrieben-Beschaeftigten-Kolonnen_K4-Bauhoefe-Entsorgung.pdf')
     taggedValue('descr', HK4)
 
+
 class K5(Interface):
     u"""Beschäftigte und Einrichtungen mit erhöhter Gefährdung (K5)"""
-
-    #merkmal = schema.Set(
-    #    title=u"Welches Merkmal trifft für die erhöhte Gefährdung zu:",
-    #    value_type=schema.Choice(
-    #        title=u'',
-    #        source=get_reason2,))
 
     mitarbeiter = schema.Int(
         title=_(u"Anzahl Beschäftigte (ohne Beamte)"),
@@ -714,14 +656,9 @@ class K5(Interface):
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Beschaeftigte-Einrichtungen-besonderer-Gefaehrdung_K5-_K6.pdf')
     taggedValue('descr', HK5)
 
+
 class K6(Interface):
     u"""Beschäftigte und Einrichtungen mit besonders hoher Gefährdung (K6)"""
-
-    #merkmal = schema.Set(
-    #    title=u"Welches Merkmal trifft für die besondere Gefährdung zu:",
-    #    value_type=schema.Choice(
-    #        title=u'',
-    #        source=get_reason3,))
 
     mitarbeiter = schema.Int(
         title=_(u"Anzahl Beschäftigte (ohne Beamte)"),
@@ -733,6 +670,7 @@ class K6(Interface):
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Beschaeftigte-Einrichtungen-besonderer-Gefaehrdung_K5-_K6.pdf')
     taggedValue('descr', HK6)
+
 
 class K7(Interface):
     u"""Schulen (nur Lehrkräfte) (K7)"""
@@ -748,6 +686,7 @@ class K7(Interface):
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Lehrkraefte-Schulen_K7.pdf')
     taggedValue('descr', HK7)
 
+
 class K8(Interface):
     u"""Schulpersonal der Schulträger (ohne Schulbetreuung) (K8)"""
 
@@ -762,6 +701,7 @@ class K8(Interface):
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Schulpersonal-Schultraeger_K8.pdf')
     taggedValue('descr', HK8)
 
+
 class K9(Interface):
     u"""Schulbetreuung (K9)"""
 
@@ -775,6 +715,7 @@ class K9(Interface):
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Schulbetreuung_K9.pdf')
     taggedValue('descr', HK9)
+
 
 class K10(Interface):
     u"""Freiwillige Feuerwehren (K10)"""
@@ -793,6 +734,7 @@ class K10(Interface):
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Freiwilligen-Feuerwehr_K10.pdf')
     taggedValue('descr', HK10)
+
 
 class K11(Interface):
     u"""Gesundheitsdienste (K11)"""
@@ -819,6 +761,7 @@ class K11(Interface):
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Gesundheitsdiensten_K11.pdf')
     taggedValue('descr', HK11)
+
 
 class IVoucherSearch(Interface):
 
@@ -849,10 +792,45 @@ class IInvoiceSearch(Interface):
         source=get_source('invoices'),
     )
 
-#    reason = schema.Choice(
-#        title=_(u'Begründung'),
-#        description=_(u'Sind sie mit den Berechtigungsscheinen der Rechnung nicht einvers\
-#tanden?'),
-#        source=get_reason,
-#        required=False,
-#    )
+
+@grok.provider(IContextSourceBinder)
+def voc_subject(context):
+    rc = [
+        SimpleTerm(u'',
+                   u'',
+                   u''),
+        SimpleTerm(u'Aenderung der Kontaktdaten',
+                   u'Aenderung der Kontaktdaten',
+                   u'Änderung der Kontaktdaten (Anschrift, Name, Tel., Email'),
+        SimpleTerm(u'Kontingentkategorien',
+                   u'Kontingentkategorien',
+                   u'Kontingentkategorien'),
+        SimpleTerm(u'Berechtigungsscheine anfordern',
+                   u'Berechtigungsscheine anfordern',
+                   u'Berechtigungsscheine anfordern'),
+        SimpleTerm(u'Berechtigungsscheine downloaden',
+                   u'Berechtigungsscheine downloaden',
+                   u'Berechtigungsscheine downloaden'),
+        SimpleTerm(u'Lehrgangsteilnahme',
+                   u'Lehrgangsteilnahme',
+                   u'Lehrgangsteilnahme'),
+        SimpleTerm(u'Rechnung',
+                   u'Rechnung',
+                   u'Rechnung'),
+        SimpleTerm(u'Sonstiges',
+                   u'Sonstiges',
+                   u'Sonstiges'),
+    ]
+    return SimpleVocabulary(rc)
+
+
+class IKontakt(Interface):
+
+    betreff = schema.Choice(
+        title=_(u'Betreff'),
+        source = voc_subject,
+        )
+
+    text = schema.Text(
+        title=_(u'Nachricht')
+        )

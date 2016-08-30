@@ -27,15 +27,16 @@ from base64 import decodestring
 
 
 USERS = {
-    'admin': dict(login="admin", passwort="!admin!"),
-    'mseibert': dict(login="mseibert", passwort="susanne09"),
-    'mleber': dict(login="mleber", passwort="ehr17!"),
-    'hgabt': dict(login="hgabt", passwort="AB471!"),
-    'ckraft': dict(login="ckraft", passwort="QX392!"),
-    'aburkhard': dict(login="aburkhard", passwort="NY259!"),
-    'rknittel': dict(login="rknittel", passwort="XA056!"),
-    'evstraub': dict(login="evstraub", passwort="AH221!"),
-    'bsvejda': dict(login="bsvejda", passwort="ZT780!"),
+    'admin': dict(login="admin", passwort="!admin!", permissions=('manage.vouchers', 'display.vouchers')),
+    'mseibert': dict(login="mseibert", passwort="susanne09", permissions=('manage.vouchers', 'display.vouchers')),
+    'mleber': dict(login="mleber", passwort="ehr17!", permissions=('manage.vouchers', 'display.vouchers')),
+    'hgabt': dict(login="hgabt", passwort="AB471!", permissions=('manage.vouchers', 'display.vouchers')),
+    'ckraft': dict(login="ckraft", passwort="QX392!", permissions=('manage.vouchers', 'display.vouchers')),
+    'aburkhard': dict(login="aburkhard", passwort="NY259!", permissions=('manage.vouchers', 'display.vouchers')),
+    'rknittel': dict(login="rknittel", passwort="XA056!", permissions=('manage.vouchers', 'display.vouchers')),
+    'evstraub': dict(login="evstraub", passwort="AH221!", permissions=('manage.vouchers', 'display.vouchers')),
+    'bsvejda': dict(login="bsvejda", passwort="ZT780!", permissions=('manage.vouchers', 'display.vouchers')),
+    'viewer': dict(login="viewer", passwort="viewer", permissions=("display.vouchers",)),
     }
 
 
@@ -117,7 +118,10 @@ class Admin(SQLPublication, SecurePublication):
         if username:
             session = getSession()
             masquarade = session.get('masquarade', None)
-            return AdminPrincipal(username, masquarade)
+            user = USERS.get(username)
+            permissions = frozenset(user['permissions'])
+            print "PERMISSION FOR", user, permissions
+            return AdminPrincipal(username, masquarade, permissions)
         return unauthenticated_principal
 
     def site_manager(self, request):

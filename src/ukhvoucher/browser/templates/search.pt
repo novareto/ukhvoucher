@@ -11,7 +11,7 @@
       <div class="col-md-8">
 	<input type="text" class="form-control"
 	       placeholder=""
-	       tal:attributes="name component.attribute;
+	       tal:attributes="name 'field.' + component.attribute;
 	                       placeholder component.placeholder" />
 	<input type="hidden" name="action.search" value="Search" />
       </div>

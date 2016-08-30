@@ -450,11 +450,10 @@ class Vouchers(SQLContainer):
     listing_attrs = uvclight.Fields(Voucher.__schema__).select(
         'oid', 'cat', 'status', 'user_id', 'displayData', 'displayKat')
 
-    search_fields = uvclight.Fields(IVoucherSearch).omit('user_id')
+    search_fields = uvclight.Fields(IVoucherSearch).omit('user_id', 'status')
 
     def key_reverse(self, obj):
         return str(obj.oid)
-        return '%s' % obj.oid
 
     def key_converter(self, id):
         return int(id)

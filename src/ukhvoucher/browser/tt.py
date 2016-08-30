@@ -71,10 +71,7 @@ class DCharge(uvclight.View):
             session = get_session('ukhvoucher')
             generation = session.query(models.Generation).get(gen_id)
             for x in generation.voucher:
-                print x.oid
-                print x.status
                 if x.status.strip() == CREATED:
-                    print "CS"
                     x.status = DISABLED
 
             entry = models.JournalEntry(

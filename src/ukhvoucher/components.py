@@ -15,8 +15,13 @@ def _render_details_cachekey(method, oid):
     return (oid, method.__name__)
 
 
+def _render_account_cachekey(method, self, *args, **kwargs):
+    return (self.id, method.__name__)
+
+
+
 def log(m):
-    print m
+    pass
 
 
 class ExternalPrincipal(Principal):
@@ -44,6 +49,7 @@ class ExternalPrincipal(Principal):
             return "M"
         return str(account.merkmal).strip()
 
+    @ram.cache(_render_account_cachekey)
     def getAccount(self):
         session = get_session('ukhvoucher')
         account = session.query(models.Account).filter(and_(models.Account.login==self.id, models.Account.az=="eh"))
@@ -97,7 +103,6 @@ class ExternalPrincipal(Principal):
             return createCategory(category)
         else:
             mnr = self.getAddress().mnr
-            print "MNR MNR", mnr
             return self.getCategoryFromMNR(mnr)
         return []
 
@@ -191,12 +196,17 @@ class ExternalPrincipal(Principal):
 
 class AdminPrincipal(ExternalPrincipal):
 
-    permissions = frozenset(('manage.vouchers',))
+    #permissions = frozenset(('manage.vouchers',))
     roles = frozenset()
 
-    def __init__(self, id, masquarade):
+    def __init__(self, id, masquarade, permissions):
         self.id = id
         self.masquarade = masquarade
+        self.permissions = permissions
+
+    @property
+    def canEdit(self):
+        return 'manage.vouchers' in self.permissions
 
     @property
     def oid(self):
