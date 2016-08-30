@@ -362,12 +362,18 @@ class IAccount(Interface):
         default=u"eh",
     )
 
-    #anr = schema.Choice(
-    #    title=_(u"Anrede"),
-    #    description=_(u"Bitte wählen Sie eine Anrede."),
-    #    values = (u'Herr', u'Frau'),
-    #    required = True,
-    #)
+    anr = schema.Choice(
+        title=_(u"Anrede"),
+        description=_(u"Bitte wählen Sie eine Anrede."),
+        values = (u'Herr', u'Frau'),
+        required = True,
+    )
+
+    titel = schema.TextLine(
+        title=_(u"Titel"),
+        description=_(u"Bitte geben Sie hier einen Titel ein."),
+        required = False,
+    )
 
     vname = schema.TextLine(
         title=_(u"Vorname"),
@@ -381,6 +387,12 @@ class IAccount(Interface):
         required=True,
     )
 
+    vwhl = schema.TextLine(
+        title=_(u"Vorwahl"),
+        description=u"Bitte geben Sie hier Ihre Vorwahl-Telefonnummer für Rückfragen an.",
+        required=True,
+    )
+
     phone = schema.TextLine(
         title=_(u"Phone"),
         description=u"Bitte geben Sie hier Ihre Telefonnummer für Rückfragen an.",
@@ -390,6 +402,12 @@ class IAccount(Interface):
     email = schema.TextLine(
         title=_(u"E-Mail"),
         description=u"Ihre E-Mailadresse benötigen Sie später beim Login.",
+        required=True,
+    )
+
+    funktion = schema.TextLine(
+        title=_(u"Funktion"),
+        description=u"Weleche Funktion bekleiden Sie im Unternehmen..",
         required=True,
     )
 
