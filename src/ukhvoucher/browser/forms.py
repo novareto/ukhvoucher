@@ -270,7 +270,7 @@ class EditAccount(uvclight.EditForm):
     label = u"Stammdaten"
     description = u"Bitte geben Sie uns Ihre Stammdaten für Rückfragen"
 
-    fields = Fields(IAccount).select('vname', 'nname', 'phone', 'email')
+    fields = Fields(IAccount).select('anr', 'titel', 'vname', 'nname', 'vwhl', 'phone', 'email', 'funktion')
     fields['vname'].htmlAttributes = {'maxlength': 30}
     fields['nname'].htmlAttributes = {'maxlength': 30}
     fields['phone'].htmlAttributes = {'maxlength': 15}
