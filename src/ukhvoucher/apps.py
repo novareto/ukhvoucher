@@ -127,6 +127,12 @@ class Admin(SQLPublication, SecurePublication):
     def site_manager(self, request):
         return Site(AdminRoot(request, self.name))
 
+    def __runner__(self, func):
+        return SQLPublication.__runner__(self, func)
+    
+    def __interact__(self, *args, **kwargs):
+        return SQLPublication.__interact__(self, *args, **kwargs)
+    
     def publish_traverse(self, request):
         user = self.get_credentials(request.environment)
         request.principal = self.principal_factory(user)
@@ -200,7 +206,7 @@ class User(SQLPublication, SecurePublication):
                     return response
         except webob.exc.HTTPException as e:
             return e
-
+        
     def __call__(self, environ, start_response):
 
         @sessionned(self.session_key)

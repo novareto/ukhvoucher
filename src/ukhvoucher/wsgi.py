@@ -37,7 +37,10 @@ def router(conf, session_key, zcml, dsn, name):
 
     # Router
     root = URLMap()
-    root['/admin'] = localize(Admin(session_key, engine, name))
+    admin_app = Admin(session_key, engine, name)
+    root['/admin'] = localize(admin_app)
     root['/'] = localize(User(session_key, engine, name))
+
+    root.__runner__ = admin_app.__runner__
 
     return root
