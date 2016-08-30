@@ -157,15 +157,19 @@ class PDF(uvclight.Page):
                 c.drawString(2.5 * cm, y * cm, u'Ausstellungsdatum: ' + erstelldatum)
                 y = y - 0.6
                 c.drawString(2.5 * cm, y * cm, u'Gültigkeit für einen Lehrgang zwischen 01.01.2017 und 31.12.2018')
+                y = y - 0.6
+                c.drawString(2.5 * cm, y * cm, u'Der Berechtigungsschein ist spätestens bei Lehrgangsteilnahme der Ermächtigten Stelle')
+                y = y - 0.6
+                c.drawString(2.5 * cm, y * cm, u'zu übermitteln. Die ermächtigte Stelle hat diesen der Rechnung beizufügen.')
                 y = y - 2.7
                 # Barcode Value....
                 barcode_value = str(voucher.oid)
                 barcode = code128.Code128(barcode_value, barWidth = 0.4 * mm, barHeight = 9 * mm)
                 #barcode = code128.Code128(barcode_value, barWidth = 0.2 * mm, barHeight = 10 * mm)
-                barcode.drawOn(c, 19 * mm, 100 * mm)
+                barcode.drawOn(c, 19 * mm, 90 * mm)
 
 
-                y = 9.5
+                y = 8.5
                 c.drawString(2.5 * cm, y * cm, 'Nummer des Berechtigungsscheins:')
                 y = y - 0.6
                 c.drawString(2.5 * cm, y * cm, barcode_value)

@@ -142,6 +142,10 @@ class InvoicesSearch(ModelSearch):
     uvclight.context(Invoices)
 
 
+class VouchersSearch(ModelSearch):
+    uvclight.context(Vouchers)
+
+
 class SearchResults(uvclight.Viewlet):
     uvclight.order(1)
     uvclight.view(Search)

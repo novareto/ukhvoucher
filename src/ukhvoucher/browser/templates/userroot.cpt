@@ -2,8 +2,10 @@
   address request.principal.getAddress();
   vouchers request.principal.getVouchers();
   categories request.principal.getCategory()">
+  <h1> Willkommen im Mitgliederportal der Unfallkasse Hessen</h1>
   <h1 class="lead"> Antrag auf Kostenübernahme für Erste Hilfe-Lehrgänge </h1>
   <p> Sie können für folgende Kontingentkategorien (K) Berechtigungsscheine anfordern </p>
+  <p> Weitergehende Informationen zu den jeweiligen Kontingenten und den erforderlichen Angaben finden Sie unter dem Button "Info". </p>
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default" tal:repeat="cat view.categories">
       <div class="panel-heading" role="tab" id="headingOne" tal:attributes="id string:heading${cat['name']}">
@@ -69,6 +71,8 @@
     </div>
   </div>
   <div class="well" tal:condition="vouchers">
+    <p> Sie haben die Möglichkeit, ihre Berechtigungsscheine nun herunterzuladen. </p>
     <a href="" tal:attributes="href string:${view.application_url()}/pdf"> Alle Berechtigungsscheine Downloaden </a>
   </div>
+  <p> Weitergehende Informationen zum Erste-Hilfe-Verfahren und der Kostenübernahme durch die Unfallkasse Hessen erhalten Sie unter Link...(Link fehlt noch...) </p>
 </div>

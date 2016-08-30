@@ -129,7 +129,6 @@ class CalculateInsert(Action):
                 p = int(session.query(max(Generation.oid)).one()[0]) + 1
             except:
                 p=1
-            print "GENERATION OID", p
             generation = Generation(
                 oid=p,
                 date=now.strftime('%Y-%m-%d'),
@@ -172,7 +171,10 @@ class KGBaseForm(uvclight.Form):
 
     @property
     def fields(self):
-        return uvclight.Fields(self._iface)
+        fields = uvclight.Fields(self._iface)
+        if 'bestaetigung' in fields.keys():
+            fields['bestaetigung'].mode = "checkbox"
+        return fields
 
     @property
     def formErrors(self):
@@ -200,7 +202,6 @@ class K1Form(KGBaseForm):
 
     @property
     def fields(self):
-        #    print "HALLO 1", self._iface
         fields = uvclight.Fields(self._iface)
         fields['mitarbeiter'].htmlAttributes = {'max': 999}
         #    fields['mitarbeiter'].htmlAttributes['max'] = 999

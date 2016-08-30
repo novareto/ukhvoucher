@@ -2,8 +2,8 @@
 
 import uvclight
 import json
-from ..models import Voucher, Vouchers
-from ..interfaces import IAccount, IAdminLayer
+from ..models import Voucher, Vouchers, Invoice
+from ..interfaces import IAccount, IAdminLayer, IUserLayer
 from .forms import ModelIndex, CreateModel
 from dolmen.menu import menu
 from ukhtheme.uvclight.viewlets import BelowContent
@@ -18,7 +18,6 @@ class Sound(uvclight.Viewlet):
     uvclight.viewletmanager(BelowContent)
 
     def render(self):
-        print "YES"
 	return """
 	  <audio id="success" preload='auto' src='/fanstatic/ukhvoucher/success.wav'>
 	    <b>Your browser does not support the audio tag.</b>
@@ -33,7 +32,20 @@ class EditSound(uvclight.Viewlet):
     uvclight.viewletmanager(BelowContent)
 
     def render(self):
-        print "YES"
+	return """
+	  <audio id="success" preload='auto' src='/fanstatic/ukhvoucher/success.wav'>
+	    <b>Your browser does not support the audio tag.</b>
+	  </audio>
+          <audio id="failure" preload='auto' src='/fanstatic/ukhvoucher/failure.wav'>
+            <b>Your browser does not support the audio tag.</b>
+          </audio>
+	"""
+
+class EditSoundV(uvclight.Viewlet):
+    uvclight.context(Invoice)
+    uvclight.viewletmanager(BelowContent)
+
+    def render(self):
 	return """
 	  <audio id="success" preload='auto' src='/fanstatic/ukhvoucher/success.wav'>
 	    <b>Your browser does not support the audio tag.</b>
@@ -76,7 +88,6 @@ class VoucherGeneration(uvclight.Viewlet):
             if isinstance(data, dict):
                 z = 0
                 for k, v in json.loads(self.context.generation.data).items():
-                    #print "###",k,"###"
                     if k == 'mitarbeiter':
                         k = u'Beschäftigte'
                     if k == 'standorte':
@@ -125,6 +136,7 @@ class Username(uvclight.MenuItem):
             if self.request.principal.title == "Unauthenticated principal":
                 return u"Bitte anmelden"
             return u"Sie sind angemeldet als: %s" % self.request.principal.title
+            #return u"Herzlich willkommen im Mitgliederportal der Unfallkasse Hessen. Sie sind angemeldet als: %s" % self.request.principal.title
         except:
             return "HHH"
 
@@ -133,6 +145,7 @@ class BaseNavMenu(uvclight.MenuItem):
     uvclight.context(Interface)
     uvclight.menu(INavigationMenu)
     uvclight.layer(IAdminLayer)
+    uvclight.auth.require('manage.vouchers')
     uvclight.baseclass()
 
     attribute = ""
@@ -161,6 +174,12 @@ class MenuInvoice(BaseNavMenu):
     uvclight.order(2)
     attribute = "invoices"
     title = u"Übersicht Zuordnungen"
+
+
+class MenuVoucher(BaseNavMenu):
+    uvclight.order(3)
+    attribute = "vouchers"
+    title = u"Übersicht Berechtigungsscheine"
 
 
 #class MenuAccounts(BaseNavMenu):
@@ -203,6 +222,46 @@ class LogoutMenu(uvclight.MenuItem):
     @property
     def action(self):
         return self.view.application_url() + '/logout1'
+
+
+class Stammdaten(uvclight.MenuItem):
+    uvclight.context(Interface)
+    menu(IPersonalMenu)
+    uvclight.title(u'Stammdaten')
+    uvclight.layer(IUserLayer)
+    id = "smi"
+    submenu = None
+
+    @property
+    def action(self):
+        return self.view.application_url() + '/edit_account'
+
+
+class PW(uvclight.MenuItem):
+    uvclight.context(Interface)
+    menu(IPersonalMenu)
+    uvclight.layer(IUserLayer)
+    uvclight.title(u'Passwort ändern')
+    id = "smi"
+    submenu = None
+
+    @property
+    def action(self):
+        return self.view.application_url() + '/change_pw'
+
+
+class Kontakt(uvclight.MenuItem):
+    uvclight.context(Interface)
+    menu(IPersonalMenu)
+    uvclight.layer(IUserLayer)
+    uvclight.title(u'Kontakt')
+    uvclight.order(30)
+    id = "kmi"
+    submenu = None
+
+    @property
+    def action(self):
+        return self.view.application_url() + '/kontakt'
 
 
 class Logout(uvclight.View):
@@ -263,4 +322,3 @@ class AccountEditEntry(uvclight.MenuItem):
     uvclight.name('edit')
 
     action="edit"
-

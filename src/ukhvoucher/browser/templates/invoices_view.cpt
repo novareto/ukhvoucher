@@ -1,0 +1,25 @@
+<h1> Zuordnungen  </h1>
+<table class="table table-striped">
+  <thead>
+      <tr>
+          <th>Rechnungsnummer</th>
+          <th>Berechtigungsschein</th>
+          <th>Beschreibung</th>
+      </tr>
+  </thead>
+  <tbody>
+  <tr tal:repeat="invoice view.getInvoices()">
+      <td> 
+          <a href="" tal:attributes="href view.url(invoice)" tal:content="invoice.oid"> </a> 
+      </td>
+    <td>
+        <ul>
+            <li tal:repeat="voucher view.reverseVouchers(invoice.vouchers)">
+            <a href="" tal:attributes="href string: ${view.application_url()}/vouchers/${voucher.oid}" tal:content="voucher.oid"> </a>
+            </li>
+        </ul>
+    </td>
+    <td tal:content="invoice.description"/>
+  </tr>
+  </tbody>
+</table>

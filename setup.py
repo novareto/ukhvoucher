@@ -33,7 +33,9 @@ setup(name='ukhvoucher',
           "natsort",
           "js.jquery_tablesorter",
           "xlsxwriter",
-
+          "PyCrypto",
+          "python-gettext",
+          "zope.sendmail",
       ],
       entry_points={
          'fanstatic.libraries': [

@@ -47,11 +47,17 @@ class GenerationView(uvclight.Page):
     template = uvclight.get_template('generation_view.cpt', __file__)
 
     def getGenerations(self):
+        rc = []
         session = get_session('ukhvoucher')
         generations = session.query(models.Generation).filter(
             models.Voucher.generation_id == models.Generation.oid,
             models.Voucher.user_id == int(self.request.principal.oid)).all()
-        return generations
+        for generation in generations:
+            for voucher in generation.voucher:
+                if voucher.status.strip() == CREATED:
+                    if generation not in rc:
+                        rc.append(generation)
+        return rc
 
 
 class DCharge(uvclight.View):
@@ -65,10 +71,7 @@ class DCharge(uvclight.View):
             session = get_session('ukhvoucher')
             generation = session.query(models.Generation).get(gen_id)
             for x in generation.voucher:
-                print x.oid
-                print x.status
                 if x.status.strip() == CREATED:
-                    print "CS"
                     x.status = DISABLED
 
             entry = models.JournalEntry(

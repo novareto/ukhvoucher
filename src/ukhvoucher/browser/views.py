@@ -61,7 +61,6 @@ class UserRootIndex(uvclight.Page):
                 account.nname.strip() == "" or
                 account.email.strip() == "" or
                 account.vname.strip() == ""):
-                print "redirect"
                 self.redirect(self.url(self.context, 'edit_account'))
 
     @property
@@ -89,7 +88,7 @@ class AdminRootIndex(uvclight.Page):
     uvclight.name('index')
     uvclight.layer(IAdminLayer)
     uvclight.context(AdminRoot)
-    require('manage.vouchers')
+    require('display.vouchers')
 
     template = uvclight.get_template('adminroot.cpt', __file__)
 
@@ -248,14 +247,20 @@ class JournalIndex(uvclight.Page):
         session = get_session('ukhvoucher')
         self.entries = session.query(JournalEntry)
 
-from profilehooks import profile
-class TT(uvclight.View):
-    uvclight.layer(IAdminLayer)
-    uvclight.context(Interface)
-    require('manage.vouchers')
 
-    def render(self):
-        session = get_session('ukhvoucher')
-        tt = session.query(models.AddressEinrichtung.name1).all()
-        return ""
+class InvoicesView(uvclight.Page):
+    uvclight.name('index')
+    uvclight.context(models.Invoices)
+    uvclight.layer(IAdminLayer)
+    require('manage.vouchers')
+    template = uvclight.get_template('invoices_view.cpt', __file__)
+
+    def getInvoices(self):
+        invoices = [x for x in self.context]
+        invoices.reverse()
+        return invoices
+
+    def reverseVouchers(self, vouchers):
+        vl = [x for x in vouchers]
+        return sorted(vl, key=lambda k: k.oid)
 

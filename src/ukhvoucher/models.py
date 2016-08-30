@@ -232,7 +232,7 @@ class Account(Base, Location):
         fields['vname'].htmlAttributes = {'maxlength': 30}
         fields['nname'].htmlAttributes = {'maxlength': 30}
         fields['phone'].htmlAttributes = {'maxlength': 15}
-        fields['email'].htmlAttributes = {'maxlength': 50}
+        fields['email'].htmlAttributes = {'maxlength': 79}
         fields['password'].htmlAttributes = {'maxlength': 8}
 
 
@@ -450,10 +450,10 @@ class Vouchers(SQLContainer):
     listing_attrs = uvclight.Fields(Voucher.__schema__).select(
         'oid', 'cat', 'status', 'user_id', 'displayData', 'displayKat')
 
-    search_fields = uvclight.Fields(IVoucherSearch).omit('user_id')
+    search_fields = uvclight.Fields(IVoucherSearch).omit('user_id', 'status')
 
     def key_reverse(self, obj):
-        return '%s' % obj.oid
+        return str(obj.oid)
 
     def key_converter(self, id):
         return int(id)

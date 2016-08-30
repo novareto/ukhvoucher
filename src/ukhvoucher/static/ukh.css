@@ -45,11 +45,11 @@ h4.panel-title a span.sign {
 }
 
 h4.panel-title a span.sign::after {
-    content: " -";
+    content: " Übersicht schließen";
 }
 
 h4.panel-title a.collapsed span.sign::after {
-    content: " +";
+    content: " Übersicht öffnen";
 }
 
 
@@ -108,3 +108,11 @@ h4.panel-title a.collapsed span.sign::after {
 table#journal_table td {
 white-space: normal;
 }
+
+input[type="checkbox"] {
+  margin: 4px 0 6px;
+  margin-top: 1px \9;
+  line-height: normal;
+}
+
+

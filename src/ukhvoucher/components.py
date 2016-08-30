@@ -15,8 +15,13 @@ def _render_details_cachekey(method, oid):
     return (oid, method.__name__)
 
 
+def _render_account_cachekey(method, self, *args, **kwargs):
+    return (self.id, method.__name__)
+
+
+
 def log(m):
-    print m
+    pass
 
 
 class ExternalPrincipal(Principal):
@@ -44,6 +49,7 @@ class ExternalPrincipal(Principal):
             return "M"
         return str(account.merkmal).strip()
 
+    @ram.cache(_render_account_cachekey)
     def getAccount(self):
         session = get_session('ukhvoucher')
         account = session.query(models.Account).filter(and_(models.Account.login==self.id, models.Account.az=="eh"))
@@ -97,7 +103,6 @@ class ExternalPrincipal(Principal):
             return createCategory(category)
         else:
             mnr = self.getAddress().mnr
-            print "MNR MNR", mnr
             return self.getCategoryFromMNR(mnr)
         return []
 
@@ -122,12 +127,15 @@ class ExternalPrincipal(Principal):
         origmnr = mnr.strip()
         mnr = mnr[:4]
         cat = OrderedSet()
-        #if mnr in ('1.01'):
-        #    cat = OrderedSet([K1, K2, K3, K4, K5, K6, K8, K9, K10])
         if mnr in ('1.02', '1.03', '1.04'):
             cat = OrderedSet([K1, K2, K3, K4, K6, K9, K10])
         elif mnr == '1.05':
-            cat = OrderedSet([K1, K2, K6, K8])
+            cat = OrderedSet([K1, K2, K6, K8, K9])
+        elif mnr == '1.11':
+            if origmnr == '1.11.60/00007':
+                cat = OrderedSet([K6,])
+            else:
+                cat = OrderedSet([K2,])
         elif mnr in ('1.10', '1.30', '3.10'):
             if origmnr in self.sql_base('2', '1,2,3,4'):
                 log('%s entsorgungsbetrieb' % origmnr)
@@ -140,7 +148,7 @@ class ExternalPrincipal(Principal):
                 cat = OrderedSet([K2,])
             elif origmnr in self.sql_base('2', '7'):
                 log('%s Gas und Wasserversorgung' % origmnr)
-                cat = OrderedSet([K2,])
+                cat = OrderedSet([K2, K6])
             elif origmnr in self.sql_base('3', '6'):
                 log('%s Beschaeftigungsgesellschaften' % origmnr)
                 cat = OrderedSet([K2,])
@@ -150,7 +158,7 @@ class ExternalPrincipal(Principal):
             elif origmnr in self.sql_base('5', '2,3,4'):
                 log('%s Landwirtschaft' % origmnr)
                 cat = OrderedSet([K2,])
-            elif origmnr in self.sql_base('6', '1,2,3,4,5'):
+            elif origmnr in self.sql_base('6', '1,2,4,5,9'):
                 log('%s Kulturelle Einrichtungen' % origmnr)
                 cat = OrderedSet([K2,])
             elif origmnr in self.sql_base('8', '1,2,3,4,5,6'):
@@ -166,6 +174,8 @@ class ExternalPrincipal(Principal):
                 cat = OrderedSet([K1,])
         elif mnr in ('2.10.64/00005', '2.10.34/00005', '2.10.65/00010'):
             cat = OrderedSet([K2, ])
+        elif mnr in ('2.10.61/00002'):
+            cat = OrderedSet([K5, ])
         elif mnr in ('1.20'):
             cat = OrderedSet([K1, ])
         #elif self.sql_schulen('3','2'):
@@ -186,12 +196,17 @@ class ExternalPrincipal(Principal):
 
 class AdminPrincipal(ExternalPrincipal):
 
-    permissions = frozenset(('manage.vouchers',))
+    #permissions = frozenset(('manage.vouchers',))
     roles = frozenset()
 
-    def __init__(self, id, masquarade):
+    def __init__(self, id, masquarade, permissions):
         self.id = id
         self.masquarade = masquarade
+        self.permissions = permissions
+
+    @property
+    def canEdit(self):
+        return 'manage.vouchers' in self.permissions
 
     @property
     def oid(self):

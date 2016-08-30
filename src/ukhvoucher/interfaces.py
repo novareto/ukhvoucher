@@ -24,6 +24,7 @@ HK1 = u"""
 <p>Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens zwei versicherte
    Beschäftigte üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
    jedoch nicht verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK2 = u"""
@@ -55,6 +56,7 @@ HK2 = u"""
 <p>Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens zwei versicherte
    Beschäftigte üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
    jedoch nicht verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK3 = u"""
@@ -65,6 +67,7 @@ HK3 = u"""
 <p>Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens zwei versicherte Beschäftigte
    üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
    jedoch nicht verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK4 = u"""
@@ -74,6 +77,7 @@ HK4 = u"""
    außerhalb gleichzeitig tätig sind.</p>
 <p>Hinweis: Die übrigen Beschäftigten des Betriebs, die an festen Standorten tätig sind, sind mit der Personenzahl
    unter der Kontingent Kategorie 2 „Sonstige Betriebe“ zu erfassen.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK5 = u"""
@@ -82,6 +86,7 @@ HK5 = u"""
 <p>Bitte tragen Sie die bei der UKH versicherten Beschäftigten ein, die eine Tätigkeit mit erhöhter Gefährdung ausüben.</p>
 <p>Beachten Sie bitte auch, dass diese Personen in keiner anderen Kontingent Kategorie aufzuführen sind.</p>
 <p>Hinweise zu Tätigkeiten mit erhöhter Gefährdung entnehmen Sie bitte dem Informationsblatt.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK6 = u"""
@@ -95,6 +100,7 @@ HK6 = u"""
 <p>Hier sind Beschäftigte in Abwasserbetrieben (Arbeiten im Kanalnetz) und auf Deponien anzugeben.</p>
 <p>Beschäftigte in der Wasserversorgung (Arbeiten in Schächten) sind hier nur anzugeben, wenn für diesen Personenkreis
    die fachliche Zuständigkeit der Unfallkasse Hessen - nicht der BG ETEM - gegeben ist.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK7 = u"""
@@ -106,6 +112,7 @@ HK7 = u"""
 <p>Hinweis: Bitte zählen Sie Personal in anderen Bereichen, bspw. in der Schulbetreuung, Reinigung,
    Sekretariat oder Hausmeister nicht mit. Für dieses Personal beantragt der Arbeitgeber die Kostenübernahme
    der Lehrgangsgebühren bei der zuständigen Fach-Berufsgenossenschaft oder bei uns als Mitgliedsunternehmen.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK8 = u"""
@@ -114,6 +121,7 @@ HK8 = u"""
 <p>Bitte tragen Sie ein, an wie vielen Schulstandorten Personal in den Bereichen Reinigung,
    Sekretariat oder Hausmeister beschäftigt wird.</p>
 <p>Als Schulstandort gilt eine Schule, wobei Außenstellen von Schulen als eigener Standort gezählt werden.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK9 = u"""
@@ -121,6 +129,7 @@ HK9 = u"""
 <h4><u>Gruppen:</u></h4>
 <p>Bitte tragen Sie ein, wie viele Schulbetreuungsgruppen höchstens gleichzeitig betrieben werden.
    Beispiel: 3 Gruppen dienstags und 2 Gruppen donnerstags sind 3 Gruppen gleichzeitig.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK10 = u"""
@@ -132,6 +141,7 @@ HK10 = u"""
 <h4><u>Jugendbetreuer/innen:</u></h4>
 <p>Bitte tragen Sie auch hier alle Jugendbetreuer/innen der Orts oder Stadtteilfeuerwehren ein.
    Die UKH übernimmt für alle einmal in 2 Jahren die Kosten der Erste Hilfe Lehrgänge.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 HK11 = u"""
@@ -149,6 +159,7 @@ HK11 = u"""
    Als eigene Standorte gelten räumlich abgeschlossene Arbeitsorte, an denen mindestens zwei versicherte
    Beschäftigte üblicherweise anwesend sind.
    Verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes zählen nicht als abgeschlossene Arbeitsorte.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
 
@@ -172,7 +183,6 @@ def get_oid(context):
     for term in getValue():
         if term.value not in rcc:
             rc.append(term)
-    print len(rc)
     return SimpleVocabulary(rc)
 
 
@@ -242,46 +252,6 @@ def get_reason(context):
     ]
     return SimpleVocabulary(rc)
 
-#@grok.provider(IContextSourceBinder)
-#def get_reason2(context):
-#    rc = [
-#        SimpleTerm(u'Freilichtmuseum Hessenpark',
-#                   u'Beschaeftigte im Freilichtmuseum Hessenpark',
-#                   u'Beschäftigte im Freilichtmuseum Hessenpark'),
-#        SimpleTerm(u'in der Tierpflege',
-#                   u'Beschaeftigte in der Tierpflege',
-#                   u'Beschäftigte in der Tierpflege'),
-#    ]
-#    return SimpleVocabulary(rc)
-
-#@grok.provider(IContextSourceBinder)
-#def get_reason3(context):
-#    rc = [
-#        SimpleTerm(u'von Hessen-Forst (Waldarbeiten)',
-#                   u'Beschaeftigte von Hessen-Forst (Waldarbeiten)',
-#                   u'Beschäftigte von Hessen-Forst (Waldarbeiten)'),
-#        SimpleTerm(u'von Hessen mobil (Straßendienst)',
-#                   u'Beschaeftigte von Hessen mobil (Strassendienst)',
-#                   u'Beschäftigte von Hessen mobil (Straßendienst)'),
-#        SimpleTerm(u'bei der Hessischen Verwaltung für Bodenmanagement (Außendienst)',
-#                   u'Beschaeftigte bei der Hessischen Verwaltung fuer Bodenmanagement (Aussendienst)',
-#                   u'Beschäftigte bei der Hessischen Verwaltung für Bodenmanagement (Außendienst)'),
-#        SimpleTerm(u'in Abwasserbetrieben (Arbeiten im Kanalnetz)',
-#                   u'Beschaeftigte in Abwasserbetrieben (Arbeiten im Kanalnetz)',
-#                   u'Beschäftigte in Abwasserbetrieben (Arbeiten im Kanalnetz)'),
-#        SimpleTerm(u'in Wasserversorgungsbetrieben (Arbeiten in Schächten)',
-#                   u'Beschaeftigte in Wasserversorgungsbetrieben (Arbeiten in Schaechten)',
-#                   u'Beschäftigte in Wasserversorgungsbetrieben (Arbeiten in Schächten)'),
-#        SimpleTerm(u'auf Deponien',
-#                   u'Beschaeftigte auf Deponien',
-#                   u'Beschäftigte auf Deponien'),
-#        SimpleTerm(u'von N*ICE (ohne Leiharbeitnehmer)',
-#                   u'Beschaeftigte von N*ICE (ohne Leiharbeitnehmer)',
-#                   u'Beschäftigte von N*ICE (ohne Leiharbeitnehmer)'),
-#    ]
-#    return SimpleVocabulary(rc)
-
-
 def get_source(name):
     @grok.provider(IContextSourceBinder)
     def source(context):
@@ -347,6 +317,7 @@ class IModelContainer(Interface):
 
 
 class IDisablingVouchers(Interface):
+
     vouchers = schema.Set(
         value_type=schema.Choice(source=get_source('vouchers')),
         title=_(u"Berechtigungsscheine"),
@@ -371,19 +342,6 @@ def gN(context=None):
 
 class IAccount(Interface):
 
-#    oid = schema.TextLine(
-#        title=_(u"Unique identifier"),
-#        description=_(u"Internal identifier"),
-#        required=True,
-#    )
-
-#    oid = schema.Choice(
-#        title=_(u"Unique identifier"),
-#        description=_(u"Eindeutiger Schlüssel OID"),
-#        required=True,
-#        source=get_oid,
-#    )
-
     oid = schema.TextLine(
         title=_(u"Unique identifier"),
         description=_(u"Eindeutiger Schlüssel OID"),
@@ -403,6 +361,13 @@ class IAccount(Interface):
         required=True,
         default=u"eh",
     )
+
+    #anr = schema.Choice(
+    #    title=_(u"Anrede"),
+    #    description=_(u"Bitte wählen Sie eine Anrede."),
+    #    values = (u'Herr', u'Frau'),
+    #    required = True,
+    #)
 
     vname = schema.TextLine(
         title=_(u"Vorname"),
@@ -554,7 +519,6 @@ class IInvoice(Interface):
         title=_(u"Titel oid Zuordnung"),
         description=_(u"oid Zuordnung"),
         required=False,
-        #defaultFactory=getInvoiceId,
     )
 
     vouchers = schema.Set(
@@ -597,29 +561,28 @@ class IVoucher(Interface):
 
     user_id = schema.TextLine(
         title=_(u"User id"),
-        #source=get_source('accounts'),
         required=True,
     )
 
     invoice_id = schema.TextLine(
         title=_(u"Invoice id"),
-        #source=get_source('invoices'),
         required=True,
     )
+
 
 class K1(Interface):
     u"""Verwaltung, Büro (K1)"""
 
     mitarbeiter = schema.Int(
-        title=_(u"Beschäftigte (ohne Beamte)"),
+        title=_(u"Anzahl Beschäftigte (ohne Beamte)"),
     )
 
     standorte = schema.Int(
-        title=_(u"Standorte"),
+        title=_(u"Anzahl Standorte"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angaben."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Verwaltungs-Buerobetrieben_K1.pdf')
@@ -630,19 +593,20 @@ class K2(Interface):
     u"""Sonstige Betriebe und Hochschulen (K2)"""
 
     mitarbeiter = schema.Int(
-        title=_(u"Beschäftigte (ohne Beamte)"),
+        title=_(u"Anzahl Beschäftigte (ohne Beamte)"),
     )
 
     standorte = schema.Int(
-        title=_(u"Standorte"),
+        title=_(u"Anzahl Standorte"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angaben."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Betrieben-Hochschulen_K2.pdf')
     taggedValue('descr', HK2)
+
 
 class K3(Interface):
     u"""Kindertageseinrichtungen (K3)"""
@@ -656,11 +620,12 @@ class K3(Interface):
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angaben."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_in_Kindertageseinrichtungen_K3.pdf')
     taggedValue('descr', HK3)
+
 
 class K4(Interface):
     u"""Bauhof / Entsorgung (Kolonnen) (K4)"""
@@ -670,51 +635,42 @@ class K4(Interface):
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Betrieben-Beschaeftigten-Kolonnen_K4-Bauhoefe-Entsorgung.pdf')
     taggedValue('descr', HK4)
 
+
 class K5(Interface):
     u"""Beschäftigte und Einrichtungen mit erhöhter Gefährdung (K5)"""
 
-    #merkmal = schema.Set(
-    #    title=u"Welches Merkmal trifft für die erhöhte Gefährdung zu:",
-    #    value_type=schema.Choice(
-    #        title=u'',
-    #        source=get_reason2,))
-
     mitarbeiter = schema.Int(
-        title=_(u"Beschäftigte (ohne Beamte)"),
+        title=_(u"Anzahl Beschäftigte (ohne Beamte)"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Beschaeftigte-Einrichtungen-besonderer-Gefaehrdung_K5-_K6.pdf')
     taggedValue('descr', HK5)
 
+
 class K6(Interface):
     u"""Beschäftigte und Einrichtungen mit besonders hoher Gefährdung (K6)"""
 
-    #merkmal = schema.Set(
-    #    title=u"Welches Merkmal trifft für die besondere Gefährdung zu:",
-    #    value_type=schema.Choice(
-    #        title=u'',
-    #        source=get_reason3,))
-
     mitarbeiter = schema.Int(
-        title=_(u"Beschäftigte (ohne Beamte)"),
+        title=_(u"Anzahl Beschäftigte (ohne Beamte)"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Beschaeftigte-Einrichtungen-besonderer-Gefaehrdung_K5-_K6.pdf')
     taggedValue('descr', HK6)
+
 
 class K7(Interface):
     u"""Schulen (nur Lehrkräfte) (K7)"""
@@ -724,39 +680,42 @@ class K7(Interface):
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Lehrkraefte-Schulen_K7.pdf')
     taggedValue('descr', HK7)
 
+
 class K8(Interface):
     u"""Schulpersonal der Schulträger (ohne Schulbetreuung) (K8)"""
 
     mitarbeiter = schema.Int(
-        title=_(u"Schulstandorte"),
+        title=_(u"Anzahl Schulstandorte"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Schulpersonal-Schultraeger_K8.pdf')
     taggedValue('descr', HK8)
 
+
 class K9(Interface):
     u"""Schulbetreuung (K9)"""
 
     gruppen = schema.Int(
-        title=_(u"Gruppen"),
+        title=_(u"Anzahl Gruppen"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angabe."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Schulbetreuung_K9.pdf')
     taggedValue('descr', HK9)
+
 
 class K10(Interface):
     u"""Freiwillige Feuerwehren (K10)"""
@@ -766,41 +725,43 @@ class K10(Interface):
     )
 
     betreuer = schema.Int(
-        title=_(u"Betreuer/innen der Jugendfeuerwehr"),
+        title=_(u"Anzahl Betreuer/innen der Jugendfeuerwehr"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angaben."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Freiwilligen-Feuerwehr_K10.pdf')
     taggedValue('descr', HK10)
 
+
 class K11(Interface):
     u"""Gesundheitsdienste (K11)"""
 
     ma_verwaltung = schema.Int(
-        title=_(u"Beschäftigte (ohne Beamte) in der Verwaltung"),
+        title=_(u"Anzahl Beschäftigte (ohne Beamte) in der Verwaltung"),
     )
 
     st_verwaltung = schema.Int(
-        title=_(u"Standorte der Verwaltung"),
+        title=_(u"Anzahl Standorte der Verwaltung"),
     )
 
     ma_technik = schema.Int(
-        title=_(u"Beschäftigte (ohne Beamte) im technischen Bereich"),
+        title=_(u"Anzahl Beschäftigte (ohne Beamte) im technischen Bereich"),
     )
 
     st_technik = schema.Int(
-        title=_(u"Standorte des technischen Bereichs"),
+        title=_(u"Anzahl Standorte des technischen Bereichs"),
     )
 
     bestaetigung = schema.Bool(
-        title=_(u"Hiermit bestätige ich die Richtigkeit meiner Angaben."),
+        title = _(u"Bestätigung:"),
     )
 
     taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Gesundheitsdiensten_K11.pdf')
     taggedValue('descr', HK11)
+
 
 class IVoucherSearch(Interface):
 
@@ -831,10 +792,45 @@ class IInvoiceSearch(Interface):
         source=get_source('invoices'),
     )
 
-#    reason = schema.Choice(
-#        title=_(u'Begründung'),
-#        description=_(u'Sind sie mit den Berechtigungsscheinen der Rechnung nicht einvers\
-#tanden?'),
-#        source=get_reason,
-#        required=False,
-#    )
+
+@grok.provider(IContextSourceBinder)
+def voc_subject(context):
+    rc = [
+        SimpleTerm(u'',
+                   u'',
+                   u''),
+        SimpleTerm(u'Aenderung der Kontaktdaten',
+                   u'Aenderung der Kontaktdaten',
+                   u'Änderung der Kontaktdaten (Anschrift, Name, Tel., Email'),
+        SimpleTerm(u'Kontingentkategorien',
+                   u'Kontingentkategorien',
+                   u'Kontingentkategorien'),
+        SimpleTerm(u'Berechtigungsscheine anfordern',
+                   u'Berechtigungsscheine anfordern',
+                   u'Berechtigungsscheine anfordern'),
+        SimpleTerm(u'Berechtigungsscheine downloaden',
+                   u'Berechtigungsscheine downloaden',
+                   u'Berechtigungsscheine downloaden'),
+        SimpleTerm(u'Lehrgangsteilnahme',
+                   u'Lehrgangsteilnahme',
+                   u'Lehrgangsteilnahme'),
+        SimpleTerm(u'Rechnung',
+                   u'Rechnung',
+                   u'Rechnung'),
+        SimpleTerm(u'Sonstiges',
+                   u'Sonstiges',
+                   u'Sonstiges'),
+    ]
+    return SimpleVocabulary(rc)
+
+
+class IKontakt(Interface):
+
+    betreff = schema.Choice(
+        title=_(u'Betreff'),
+        source = voc_subject,
+        )
+
+    text = schema.Text(
+        title=_(u'Nachricht')
+        )
