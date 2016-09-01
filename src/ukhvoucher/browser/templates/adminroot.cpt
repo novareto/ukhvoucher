@@ -74,6 +74,7 @@
             <th>Email </th>
             <th>Vorname </th>
             <th>Name </th>
+            <th>Vorwahl </th>
             <th>Telefon </th>
         </tr>
         <tr tal:repeat="account accounts">
@@ -86,6 +87,7 @@
             <td tal:content="account.email"></td>
             <td tal:content="account.vname"></td>
             <td tal:content="account.nname"></td>
+            <td tal:content="account.vorwahl"></td>
             <td tal:content="account.phone"></td>
         </tr>
     </table>

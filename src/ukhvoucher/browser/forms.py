@@ -194,6 +194,7 @@ class EditModel(Form):
     @action(_(u'Änderung übernehmen'))
     def handle_save(self):
         data, errors = self.extractData()
+        print data
         journal_note = data.pop('note')
 
         if errors:
@@ -202,6 +203,8 @@ class EditModel(Form):
 
         if isinstance(self.context, Invoice):
             data.pop('oid')
+        print self.getContentData()
+        print data
         apply_data_event(self.fields, self.getContentData(), data)
 
         # journalize
@@ -270,17 +273,20 @@ class EditAccount(uvclight.EditForm):
     label = u"Stammdaten"
     description = u"Bitte geben Sie uns Ihre Stammdaten für Rückfragen"
 
-    fields = Fields(IAccount).select('anr', 'titel', 'vname', 'nname', 'vwhl', 'phone', 'email', 'funktion')
+    fields = Fields(IAccount).select('anr', 'titel', 'vname', 'nname', 'vorwahl', 'phone', 'email', 'funktion')
     fields['vname'].htmlAttributes = {'maxlength': 30}
     fields['nname'].htmlAttributes = {'maxlength': 30}
+    fields['vorwahl'].htmlAttributes = {'maxlength': 6}
     fields['phone'].htmlAttributes = {'maxlength': 15}
     fields['email'].htmlAttributes = {'maxlength': 79}
+    fields['funktion'].htmlAttributes = {'maxlength': 50}
+    fields['titel'].htmlAttributes = {'maxlength': 15}
 
 
     def __init__(self, context, request, content=_marker):
         super(EditAccount, self).__init__(context, request)
-        content = self.request.principal.getAccount()
         resources.ehcss.need()
+        content = self.request.principal.getAccount()
         self.setContentData(content)
 
     @property
@@ -483,12 +489,6 @@ class Kontakt(uvclight.Form):
         data, errors = self.extractData()
         if errors:
             return
-        #TEXT = """ Der Benuzter %s hat folgende Nachricht an uns gesendet
-#
-#        %s
-#
-#        %s
-#        """
         from ukhvoucher.utils import send_mail
         adr = self.request.principal.getAddress()
         acu = self.request.principal.getAccount()
@@ -496,7 +496,6 @@ class Kontakt(uvclight.Form):
         adrstrasse = adr.street + ' ' + str(adr.number)
         adrplzort = str(adr.zip_code) + ' ' + adr.city
         acuname = acu.vname + ' ' + acu.nname
-        #text = TEXT % (adr.name1, data['betreff'], data['text'])
         text = MT % (adrname, adrstrasse, adrplzort, data[u'betreff'], data[u'text'], acuname, acu.phone, acu.email)
         send_mail('extranet@ukh.de', ('m.seibert@ukh.de',), u"Kontaktformular Erste Hilfe", text=text)
         self.flash(u'Ihre Nachricht wurde an die Unfallkasse Hessen gesendet')

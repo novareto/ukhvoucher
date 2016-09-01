@@ -28,7 +28,7 @@ class Sound(uvclight.Viewlet):
 	"""
 
 class EditSound(uvclight.Viewlet):
-    uvclight.context(Vouchers)
+    uvclight.context(Interface)
     uvclight.viewletmanager(BelowContent)
 
     def render(self):
@@ -92,6 +92,8 @@ class VoucherGeneration(uvclight.Viewlet):
                         k = u'Beschäftigte'
                     if k == 'standorte':
                         k = u'Standorte'
+                    if k == 'schulstandorte':
+                        k = u'Sschulstandorte'
                     if k == 'kitas':
                         k = u'Kitas'
                     if k == 'merkmal':

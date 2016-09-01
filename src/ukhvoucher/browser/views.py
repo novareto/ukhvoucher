@@ -58,6 +58,7 @@ class UserRootIndex(uvclight.Page):
         account = self.request.principal.getAccount()
         if account:
             if (account.phone.strip() == "" or
+                account.vorwahl.strip() == "" or
                 account.nname.strip() == "" or
                 account.email.strip() == "" or
                 account.vname.strip() == ""):
