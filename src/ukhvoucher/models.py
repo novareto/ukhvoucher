@@ -237,6 +237,9 @@ class Account(Base, Location):
         fields['nname'].htmlAttributes = {'maxlength': 30}
         fields['phone'].htmlAttributes = {'maxlength': 15}
         fields['email'].htmlAttributes = {'maxlength': 79}
+        fields['vorwahl'].htmlAttributes = {'maxlength': 6}
+        fields['titel'].htmlAttributes = {'maxlength': 15}
+        fields['funktion'].htmlAttributes = {'maxlength': 50}
         fields['password'].htmlAttributes = {'maxlength': 8}
 
 
@@ -298,6 +301,8 @@ class Voucher(Base, Location):
                     k = u'Beschäftigte'
                 if k == 'standorte':
                     k = u'Standorte'
+                if k == 'schulstandorte':
+                    k = u'Schulstandorte'
                 if k == 'kitas':
                     k = u'Kitas'
                 if k == 'merkmal':

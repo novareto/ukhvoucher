@@ -362,7 +362,7 @@ class IAccount(Interface):
         default=u"eh",
     )
 
-    anr = schema.Choice(
+    anrede = schema.Choice(
         title=_(u"Anrede"),
         description=_(u"Bitte wählen Sie eine Anrede."),
         values = (u'Herr', u'Frau'),
@@ -387,7 +387,7 @@ class IAccount(Interface):
         required=True,
     )
 
-    vwhl = schema.TextLine(
+    vorwahl = schema.TextLine(
         title=_(u"Vorwahl"),
         description=u"Bitte geben Sie hier Ihre Vorwahl-Telefonnummer für Rückfragen an.",
         required=True,
@@ -603,7 +603,8 @@ class K1(Interface):
         title = _(u"Bestätigung:"),
     )
 
-    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Verwaltungs-Buerobetrieben_K1.pdf')
+    taggedValue('infolink',
+                'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016_NEU/UKH_K1_Erste-Hilfe_in_Verwaltungs-und_Buerobetrieben.pdf')
     taggedValue('descr', HK1)
 
 
@@ -622,7 +623,8 @@ class K2(Interface):
         title = _(u"Bestätigung:"),
     )
 
-    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Betrieben-Hochschulen_K2.pdf')
+    taggedValue('infolink',
+                'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016_NEU/UKH_K2_Erste-Hilfe_in_anderen_Betrieben_und_Hochschulen.pdf')
     taggedValue('descr', HK2)
 
 
@@ -641,7 +643,8 @@ class K3(Interface):
         title = _(u"Bestätigung:"),
     )
 
-    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_in_Kindertageseinrichtungen_K3.pdf')
+    taggedValue('infolink',
+                'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016_NEU/UKH_K3_Erste-Hilfe_in_Kindertageseinrichtungen.pdf')
     taggedValue('descr', HK3)
 
 
@@ -656,7 +659,8 @@ class K4(Interface):
         title = _(u"Bestätigung:"),
     )
 
-    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Betrieben-Beschaeftigten-Kolonnen_K4-Bauhoefe-Entsorgung.pdf')
+    taggedValue('infolink',
+                'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016_NEU/UKH_K4_Erste-Hilfe-fuer_Beschaeftigte_in_Kolonnen.pdf')
     taggedValue('descr', HK4)
 
 
@@ -671,7 +675,8 @@ class K5(Interface):
         title = _(u"Bestätigung:"),
     )
 
-    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Beschaeftigte-Einrichtungen-besonderer-Gefaehrdung_K5-_K6.pdf')
+    taggedValue('infolink',
+                'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016_NEU/UKH_K5_Erste-Hilfe_fuer_Beschaeftigte_und_Einrichtungen_mit_erhoehter_Gefaehrdung.pdf')
     taggedValue('descr', HK5)
 
 
@@ -686,7 +691,8 @@ class K6(Interface):
         title = _(u"Bestätigung:"),
     )
 
-    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Beschaeftigte-Einrichtungen-besonderer-Gefaehrdung_K5-_K6.pdf')
+    taggedValue('infolink',
+                'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016_NEU/UKH_K6_Erste-Hilfe_fuer_Beschaeftigte_in_Einrichtungen_mit_besonders_hoher_Gefaehrdung.pdf')
     taggedValue('descr', HK6)
 
 
@@ -701,14 +707,15 @@ class K7(Interface):
         title = _(u"Bestätigung:"),
     )
 
-    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Lehrkraefte-Schulen_K7.pdf')
+    taggedValue('infolink',
+                'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016_NEU/UKH_K7_Erste-Hilfe_fuer_Lehrkraefte_an_Schulen.pdf')
     taggedValue('descr', HK7)
 
 
 class K8(Interface):
     u"""Schulpersonal der Schulträger (ohne Schulbetreuung) (K8)"""
 
-    mitarbeiter = schema.Int(
+    schulstandorte = schema.Int(
         title=_(u"Anzahl Schulstandorte"),
     )
 
@@ -716,7 +723,8 @@ class K8(Interface):
         title = _(u"Bestätigung:"),
     )
 
-    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Kostenuebernahme_Schulpersonal-Schultraeger_K8.pdf')
+    taggedValue('infolink',
+                'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016_NEU/UKH_K8_Erste-Hilfe_fuer_Schulpersonal_der_Schultraeger.pdf')
     taggedValue('descr', HK8)
 
 
@@ -731,7 +739,8 @@ class K9(Interface):
         title = _(u"Bestätigung:"),
     )
 
-    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Schulbetreuung_K9.pdf')
+    taggedValue('infolink',
+                'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016_NEU/UKH_K9_Erste-Hilfe_fuer_die_Schulbetreuung.pdf')
     taggedValue('descr', HK9)
 
 
@@ -750,7 +759,8 @@ class K10(Interface):
         title = _(u"Bestätigung:"),
     )
 
-    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste_Hilfe_Freiwilligen-Feuerwehr_K10.pdf')
+    taggedValue('infolink',
+                'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016_NEU/UKH_K10_Erste-Hilfe_in_der_Freiwilligen_Feuerwehr.pdf')
     taggedValue('descr', HK10)
 
 
@@ -777,7 +787,8 @@ class K11(Interface):
         title = _(u"Bestätigung:"),
     )
 
-    taggedValue('infolink', 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016/UKH_Erste-Hilfe_Gesundheitsdiensten_K11.pdf')
+    taggedValue('infolink',
+                'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016_NEU/UKH_K11_Erste-Hilfe_in_Gesundheitsdiensten.pdf')
     taggedValue('descr', HK11)
 
 

@@ -200,13 +200,13 @@ class K1Form(KGBaseForm):
     label = u""
     dataValidators = [KontingentValidator]
 
-    @property
-    def fields(self):
-        fields = uvclight.Fields(self._iface)
-        fields['mitarbeiter'].htmlAttributes = {'max': 999}
-        #    fields['mitarbeiter'].htmlAttributes['max'] = 999
-        #    #fields['mitarbeiter'].htmlAttributes['maxlength'] = 3
-        return fields
+    #@property
+    #def fields(self):
+    #    fields = uvclight.Fields(self._iface)
+    #    fields['mitarbeiter'].htmlAttributes = {'max': 999}
+    #    #    fields['mitarbeiter'].htmlAttributes['max'] = 999
+    #    #    #fields['mitarbeiter'].htmlAttributes['maxlength'] = 3
+    #    return fields
 
     def calculate(self, mitarbeiter, standorte, bestaetigung):
         originalstandorte = standorte
@@ -381,8 +381,8 @@ class K8Form(KGBaseForm):
     label = u""
     dataValidators = [KontingentValidator]
 
-    def calculate(self, mitarbeiter, bestaetigung):
-        return mitarbeiter
+    def calculate(self, schulstandorte, bestaetigung):
+        return schulstandorte
 
 
 class K9Form(KGBaseForm):

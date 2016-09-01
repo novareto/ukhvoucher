@@ -49,7 +49,7 @@ class ExternalPrincipal(Principal):
             return "M"
         return str(account.merkmal).strip()
 
-    @ram.cache(_render_account_cachekey)
+    #@ram.cache(_render_account_cachekey)
     def getAccount(self):
         session = get_session('ukhvoucher')
         account = session.query(models.Account).filter(and_(models.Account.login==self.id, models.Account.az=="eh"))
