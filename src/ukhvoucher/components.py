@@ -2,6 +2,7 @@
 # Copyright (c) 2007-2013 NovaReto GmbH
 # cklinger@novareto.de
 
+from GenericCache.GenericCache import GenericCache, default_marshaller
 from ul.auth import Principal
 from ukhvoucher import models, log
 from ukhvoucher.interfaces import K1, K2, K3, K4, K5, K6, K7, K8, K9, K10, K11
@@ -9,6 +10,12 @@ from cromlech.sqlalchemy import get_session
 from sqlalchemy import and_
 from plone.memoize import ram
 from ordered_set import OrderedSet
+from .interfaces import IAccount, IVoucher
+from collections import namedtuple
+from profilehooks import profile
+
+
+principal_cache = GenericCache(maxsize=5000)
 
 
 def _render_details_cachekey(method, oid):
@@ -19,15 +26,41 @@ def _render_account_cachekey(method, self, *args, **kwargs):
     return (self.id, method.__name__)
 
 
-
 def log(m):
     pass
+
+
+class NoMarshallError(Exception):
+    """Exception: we don't know how to marshall.
+    """
+
+
+def cached(cache, marshaller=default_marshaller):
+    def decorator(func):
+        def inner(*args, **kwargs):
+            try:
+                key = marshaller(func, *args, **kwargs)
+                return cache.fetch_with_generator(key, func, *args, **kwargs)
+            except NoMarshallError:
+                return func(*args, **kwargs)
+        return inner
+    return decorator
+
+
+def principal_marshaller(func, principal):
+    return repr((func.__name__, principal.id))
+
+
+def vouchers_marshaller(func, principal, cat=None):
+    return repr((func.__name__, principal.id, cat))
 
 
 class ExternalPrincipal(Principal):
 
     permissions = frozenset(('users.access',))
     roles = frozenset()
+    info_factory = namedtuple('AccountInfo', list(IAccount))
+    voucher_factory = namedtuple('VoucherInfo', list(IVoucher))
 
     def __init__(self, id, title=u''):
         self.id = id
@@ -39,15 +72,21 @@ class ExternalPrincipal(Principal):
 
     @property
     def oid(self):
-        account = self.getAccount()
+        account = self.getAccountInfo()
         return int(account.oid)
 
     @property
     def merkmal(self):
-        account = self.getAccount()
+        account = self.getAccountInfo()
         if not account and not account.merkmal:
             return "M"
         return str(account.merkmal).strip()
+
+    @cached(principal_cache, marshaller=principal_marshaller)
+    def getAccountInfo(self):
+        account = self.getAccount()
+        fields = [getattr(account, field) for field in list(IAccount)]
+        return self.info_factory(*fields)
 
     #@ram.cache(_render_account_cachekey)
     def getAccount(self):
@@ -62,7 +101,6 @@ class ExternalPrincipal(Principal):
             return address
         @ram.cache(_render_details_cachekey)
         def getSlowAdr(oid):
-            print "ADR FROM CAHCE"
             address = session.query(models.AddressTraeger).get(oid)
             if address:
                 return address
@@ -71,6 +109,7 @@ class ExternalPrincipal(Principal):
                 return address
         return getSlowAdr(self.oid)
 
+    @profile
     def getCategory(self):
         session = get_session('ukhvoucher')
         category = session.query(models.Category).get(self.oid)
@@ -184,6 +223,15 @@ class ExternalPrincipal(Principal):
             log('%s Schule' % origmnr)
             cat = OrderedSet([K7, ])
         return cat
+
+    @cached(principal_cache, marshaller=vouchers_marshaller)
+    def getVouchersList(self, cat=None):
+        vouchers = self.getVouchers(cat=cat)
+        vouchers_list = []
+        for voucher in vouchers:
+            fields = [getattr(voucher, field) for field in list(IVoucher)]
+            vouchers_list.append(self.voucher_factory(*fields))
+        return vouchers_list
 
     def getVouchers(self, cat=None):
         session = get_session('ukhvoucher')

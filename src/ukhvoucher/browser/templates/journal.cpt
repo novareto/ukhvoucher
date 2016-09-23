@@ -7,7 +7,7 @@
         <th width="80"> Datum </th>
     	<th>Autor</th>
 	    <th>Aktion</th>
-	    <th>Bemerkung</th>
+	    <th>Notiz</th>
       </tr>
     </thead>
     <tbody>

@@ -57,10 +57,10 @@ class CreateModel(Form):
         if label == 'Address':
             labeltext = u'Neue Adresse hinzufügen'
         if label == 'Account':
-            labeltext = u'Neuen User / Account hinzufügen'
-        if label == 'Kategorie':
-            labeltext = u'Zuordnung der Kategorien neu erstellen'
-        if label == 'Neue Zuordnung erstellt':
+            labeltext = u'Neuen Benutzer hinzufügen'
+        if label == 'Kontingent':
+            labeltext = u'Zuordnung des Kontingents neu erstellen'
+        if label == 'Zuordnung':
             labeltext = u'Neue Zuordnung von Berechtigungsscheinen erstellen'
         return labeltext
 
@@ -114,12 +114,14 @@ class CreateModel(Form):
             session.flush()
             oid = item.oid
         # journalize
-        if str(self.context.model.__label__) == "Kategorie":
-            aktion = u"Kategorien manuell angelegt"
+        if str(self.context.model.__label__) == "Kontingent":
+            aktion = u"Kontingente manuell angelegt"
         elif str(self.context.model.__label__) == "Address":
             aktion = u"Adresse angelegt"
         elif str(self.context.model.__label__) == "Account":
             aktion = u"Neuen Benutzer angelegt"
+        elif str(self.context.model.__label__) == "Zuordnung":
+            aktion = u"Neue Zuordnung angelegt"
         else:
             aktion = str(self.context.model.__label__)
         entry = JournalEntry(
@@ -160,10 +162,10 @@ class EditModel(Form):
         if label == 'Address':
             labeltext = u'Adresse bearbeiten'
         if label == 'Account':
-            labeltext = u'User / Account bearbeiten'
-        if label == 'Kategorie':
-            labeltext = u'Zuordnung der Kategorien bearbeiten'
-        if label == 'Neue Zuordnung erstellt':
+            labeltext = u'Benutzer bearbeiten'
+        if label == 'Kontingent':
+            labeltext = u'Zuordnung der Kontingente bearbeiten'
+        if label == 'Zuordnung':
             labeltext = u'Zuordnung von Berechtigungsscheinen bearbeiten'
         return labeltext
 
@@ -209,8 +211,8 @@ class EditModel(Form):
 
         # journalize
         session = get_session('ukhvoucher')
-        if str(self.context.__label__) == "Kategorie":
-            aktion = u"Kategorien bearbeitet"
+        if str(self.context.__label__) == "Kontingent":
+            aktion = u"Kontingente bearbeitet"
         elif str(self.context.__label__) == "Address":
             aktion = u"Adresse bearbeitet"
         elif str(self.context.__label__) == "Account":
@@ -271,9 +273,9 @@ class EditAccount(uvclight.EditForm):
     require('users.access')
     uvclight.title('Stammdaten')
     label = u"Stammdaten"
-    description = u"Bitte geben Sie uns Ihre Stammdaten für Rückfragen"
+    description = u"Bitte geben Sie Ihre Stammdaten an:"
 
-    fields = Fields(IAccount).select('anr', 'titel', 'vname', 'nname', 'vorwahl', 'phone', 'email', 'funktion')
+    fields = Fields(IAccount).select('anrede', 'titel', 'vname', 'nname', 'vorwahl', 'phone', 'email', 'funktion')
     fields['vname'].htmlAttributes = {'maxlength': 30}
     fields['nname'].htmlAttributes = {'maxlength': 30}
     fields['vorwahl'].htmlAttributes = {'maxlength': 6}
@@ -455,7 +457,7 @@ class DisableVouchers(Form):
         return SUCCESS
 
 
-MT = u"""Der Erste Hilfe Benutzer
+MT = u"""Der Erste-Hilfe-Benutzer
 
 %s
 %s
@@ -482,7 +484,7 @@ class Kontakt(uvclight.Form):
 
     fields = uvclight.Fields(IKontakt)
     title = u"Anfrage"
-    label = u"Bitte nutzen Sie vor der Kontaktaufnahme auch unsere FAQ-Seite."
+    label = u"Bitte senden Sie uns Ihre Nachricht."
 
     @action(u'Senden')
     def handle_send(self):
@@ -493,12 +495,13 @@ class Kontakt(uvclight.Form):
         adr = self.request.principal.getAddress()
         acu = self.request.principal.getAccount()
         adrname = adr.name1.strip() + ' ' + adr.name2.strip()
-        adrstrasse = adr.street + ' ' + str(adr.number)
+        adrstrasse = adr.street.strip() + ' ' + str(adr.number.strip())
         adrplzort = str(adr.zip_code) + ' ' + adr.city
         acuname = acu.vname + ' ' + acu.nname
-        text = MT % (adrname, adrstrasse, adrplzort, data[u'betreff'], data[u'text'], acuname, acu.phone, acu.email)
+        acutel = acu.vorwahl.strip() + ' ' + acu.phone.strip()
+        text = MT % (adrname, adrstrasse, adrplzort, data[u'betreff'], data[u'text'], acuname, acutel, acu.email)
         send_mail('extranet@ukh.de', ('m.seibert@ukh.de',), u"Kontaktformular Erste Hilfe", text=text)
-        self.flash(u'Ihre Nachricht wurde an die Unfallkasse Hessen gesendet')
+        self.flash(u'Ihre Nachricht wurde an die Unfallkasse Hessen gesendet.')
         self.redirect(self.application_url())
 
     @action(u'Abbrechen')

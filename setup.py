@@ -36,6 +36,8 @@ setup(name='ukhvoucher',
           "PyCrypto",
           "python-gettext",
           "zope.sendmail",
+          "GenericCache",
+          "profilehooks",
       ],
       entry_points={
          'fanstatic.libraries': [

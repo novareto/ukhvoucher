@@ -133,9 +133,15 @@ class ModelSearch(uvclight.Viewlet):
         return not isinstance(self.view, Search)
 
     def update(self):
+        platzhalter = ''
         self.target = self.view.url(self.context) + '/search'
         self.attribute = self.context.model.search_attr
-        self.placeholder = "%s (%s)" % (self.context.__label__, self.attribute)
+        if self.context.__label__ == 'Vouchers':
+            platzhalter = u'Berechtigungsschein Nummer'
+        if self.context.__label__ == 'Zuordnungen':
+            platzhalter = u'Zuordnung'
+        #self.placeholder = "%s (%s)" % (self.context.__label__, self.attribute)
+        self.placeholder = platzhalter
 
 
 class InvoicesSearch(ModelSearch):

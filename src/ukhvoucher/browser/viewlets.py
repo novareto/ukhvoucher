@@ -2,7 +2,8 @@
 
 import uvclight
 import json
-from ..models import Voucher, Vouchers, Invoice
+from ..models import Voucher, Vouchers, Invoice, Address
+from .. import models
 from ..interfaces import IAccount, IAdminLayer, IUserLayer
 from .forms import ModelIndex, CreateModel
 from dolmen.menu import menu
@@ -10,6 +11,7 @@ from ukhtheme.uvclight.viewlets import BelowContent
 from uvc.entities.browser.menus import IPersonalMenu, INavigationMenu
 from zope.interface import Interface
 from cromlech.browser import getSession
+from cromlech.sqlalchemy import get_session
 
 
 class Sound(uvclight.Viewlet):
@@ -68,9 +70,12 @@ class Categories(uvclight.Viewlet):
             values += [(kid, getattr(category, kid))
                        for kid in ('kat1', 'kat2', 'kat3', 'kat4', 'kat5', 'kat6', 'kat7', 'kat8', 'kat9', 'kat10', 'kat11')]
         if not values:
-            return u"Keine Kategorien"
-        return "Zugeordnete Kategorien: %s" % ', '.join(
+            return u"Keine Kontingente"
+        return "Zugeordnete Kontingente: %s" % ', '.join(
             (kat[0] for kat in values if kat[1]))
+
+from ukhvoucher.components import _render_details_cachekey
+from plone.memoize import ram
 
 class VoucherGeneration(uvclight.Viewlet):
     uvclight.context(Voucher)
@@ -78,6 +83,23 @@ class VoucherGeneration(uvclight.Viewlet):
     uvclight.viewletmanager(BelowContent)
 
     template = uvclight.get_template('generation.cpt', __file__)
+
+    def getAddress(self):
+        session = get_session('ukhvoucher')
+        oid = str(self.context.user.oid)
+        address = session.query(models.Address).get(oid)
+        if address:
+            return address
+        @ram.cache(_render_details_cachekey)
+        def getSlowAdr(oid):
+            print "ADR FROM CAHCE"
+            address = session.query(models.AddressTraeger).get(oid)
+            if address:
+                return address
+            address = session.query(models.AddressEinrichtung).get(oid)
+            if address:
+                return address
+        return getSlowAdr(oid)
 
     def update(self):
         if self.context.generation is not None:
@@ -93,7 +115,7 @@ class VoucherGeneration(uvclight.Viewlet):
                     if k == 'standorte':
                         k = u'Standorte'
                     if k == 'schulstandorte':
-                        k = u'Sschulstandorte'
+                        k = u'Schulstandorte'
                     if k == 'kitas':
                         k = u'Kitas'
                     if k == 'merkmal':
@@ -195,11 +217,6 @@ class MenuVoucher(BaseNavMenu):
 #    attribute = "addresses"
 #    title = "Adressen"
 
-
-#class MenuKategorien(BaseNavMenu):
-#    uvclight.order(4)
-#    attribute = "categories"
-#    title = "Kategorien"
 
 
 class MenuStat(BaseNavMenu):
