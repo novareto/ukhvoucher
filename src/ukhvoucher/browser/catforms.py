@@ -155,6 +155,9 @@ class CalculateInsert(Action):
         insert(form, amount)
         form.flash(u'Wir haben %s Berechtigungsscheine erzeugt.', type="info")
         url = form.application_url()
+        ### INVALIDATION
+        principal = uvclight.utils.current_principal()
+        principal.getVouchers(invalidate=True)
         return SuccessMarker('Success', True, url=url)
 
 
@@ -162,6 +165,7 @@ class KGBaseForm(uvclight.Form):
     uvclight.context(UserRoot)
     uvclight.layer(IUserLayer)
     uvclight.auth.require('users.access')
+    #template = uvclight.get_template('catform.cpt', __file__)
     uvclight.baseclass()
 
     actions = Actions(

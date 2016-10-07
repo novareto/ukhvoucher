@@ -282,6 +282,19 @@ class Kontakt(uvclight.MenuItem):
     def action(self):
         return self.view.application_url() + '/kontakt'
 
+class Home(uvclight.MenuItem):
+    uvclight.context(Interface)
+    menu(IPersonalMenu)
+    uvclight.layer(IUserLayer)
+    uvclight.title(u'Startseite')
+    uvclight.order(40)
+    id = "home"
+    submenu = None
+
+    @property
+    def action(self):
+        return self.view.application_url()
+
 
 class Logout(uvclight.View):
     uvclight.context(uvclight.IRootObject)

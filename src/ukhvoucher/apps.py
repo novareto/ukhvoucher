@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
 
 import webob.exc
+import transaction
+
 
 from . import Site
 from .components import ExternalPrincipal, AdminPrincipal
 from .interfaces import IAdminLayer, IUserLayer
 from .models import Accounts, Addresses, Account, Vouchers, Invoices, Categories
+from .caching_query import query_callable
+from .environment import regions
 
 from cromlech.browser import IPublicationRoot, getSession
 from cromlech.security import Interaction, unauthenticated_principal
-from cromlech.sqlalchemy import get_session
+from cromlech.sqlalchemy import get_session, SQLAlchemySession
 from ul.auth import SecurePublication, ICredentials
 from ul.browser.context import ContextualRequest
 from ul.browser.decorators import sessionned
-from ul.sql.decorators import transaction_sql
 from uvclight import GlobalUtility, name
 from uvclight.backends.sql import SQLPublication
 from zope.component import getGlobalSiteManager
@@ -24,6 +27,18 @@ from zope.security.proxy import removeSecurityProxy
 from uvclight.directives import traversable
 from .resources import ukhcss
 from base64 import decodestring
+
+
+def transaction_sql(engine):
+    def sql_wrapped(wrapped):
+        def caller(*args):
+            with transaction.manager as tm:
+                query_cls = query_callable(regions)
+                with SQLAlchemySession(
+                        engine, transaction_manager=tm, query_cls=query_cls):
+                    return wrapped(*args)
+        return caller
+    return sql_wrapped
 
 
 USERS = {
@@ -171,6 +186,7 @@ class UserRoot(Location):
 
     def getSiteManager(self):
         return getGlobalSiteManager()
+
 
 
 class User(SQLPublication, SecurePublication):

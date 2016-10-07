@@ -89,7 +89,7 @@ class UserRootIndex(uvclight.Page):
                 'desc': form._iface.getTaggedValue('descr'),
                 'infolink': form._iface.getTaggedValue('infolink'),
                 'url': '%s/%sform' % (self.application_url(), name.lower()),
-                'vouchers': self.request.principal.getVouchersList(),
+                'vouchers': self.request.principal.getVouchers(),
                 'form': form,
                 }
 

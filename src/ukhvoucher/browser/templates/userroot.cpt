@@ -15,7 +15,7 @@
 	    <span class="pull-right sign">&nbsp;</span>
           </a> 
         </h4>
-        <div tal:define="cat_vouchers request.principal.getVouchersList(cat['name'])">
+        <div tal:define="cat_vouchers request.principal.getVouchers(cat['name'])">
           <p tal:condition="cat_vouchers"> Sie haben in diesem Kontingent <span tal:content="len(cat_vouchers)" /> Berechtigungsscheine. </p>
           <button tal:condition="not: cat_vouchers" type="button" class="btn btn-primary btn-lg" data-toggle="modal" tal:attributes="data-target '#' + cat['name']">
             Berechtigungsscheine anfordern
@@ -27,7 +27,7 @@
             </button>
           </a>
 
-          <a href="" tal:attributes="href cat['infolink']" target="_blank" class="btn"> Info </a>
+          <a href="" tal:attributes="href cat['infolink']" target="_blank" class="btn btn-primary"> Info </a>
         <div class="modal fade" tal:attributes="id cat['name']">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -72,9 +72,9 @@
   </div>
   <div class="well" tal:condition="vouchers">
     <p> Sie haben die Möglichkeit Ihre Berechtigungsscheine nun herunterzuladen. </p>
-    <a href="" tal:attributes="href string:${view.application_url()}/pdf"><h3> Alle Berechtigungsscheine Downloaden </h3></a>
+    <a href="" tal:attributes="href string:${view.application_url()}/pdf"><h3><u> Alle Berechtigungsscheine Downloaden </u></h3></a>
   </div>
   <a href="http://www.ukh.de/praevention/erste-hilfe-verfahren" target="_blank">
-      <h3> Weitere Informationen zur Ersten Hilfe erhalten Sie hier.</h3>
+      <h3><u> Weitere Informationen zur Ersten Hilfe erhalten Sie hier.</u></h3>
   </a>
 </div>

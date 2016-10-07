@@ -288,13 +288,16 @@ class EditAccount(uvclight.EditForm):
     def __init__(self, context, request, content=_marker):
         super(EditAccount, self).__init__(context, request)
         resources.ehcss.need()
-        content = self.request.principal.getAccount()
+        content = self.request.principal.getAccount(invalidate=True)
         self.setContentData(content)
 
     @property
     def actions(self):
         actions = super(EditAccount, self).actions
-        return actions.omit('cancel')
+        na = actions.omit('cancel')
+        ca = CancelAction(u'Abbrechen')
+        na.append(ca)
+        return na
 
     def getErrorField(self, error):
         return ""

@@ -3,16 +3,18 @@
 # cklinger@novareto.de
 
 from GenericCache.GenericCache import GenericCache, default_marshaller
-from ul.auth import Principal
+from collections import namedtuple
+from cromlech.sqlalchemy import get_session
+from ordered_set import OrderedSet
+from plone.memoize import ram
+from profilehooks import profile
+from sqlalchemy import and_
 from ukhvoucher import models, log
 from ukhvoucher.interfaces import K1, K2, K3, K4, K5, K6, K7, K8, K9, K10, K11
-from cromlech.sqlalchemy import get_session
-from sqlalchemy import and_
-from plone.memoize import ram
-from ordered_set import OrderedSet
+from ul.auth import Principal
+
+from .caching_query import FromCache, RelationshipCache
 from .interfaces import IAccount, IVoucher
-from collections import namedtuple
-from profilehooks import profile
 
 
 principal_cache = GenericCache(maxsize=5000)
@@ -77,7 +79,7 @@ class ExternalPrincipal(Principal):
 
     @property
     def merkmal(self):
-        account = self.getAccountInfo()
+        account = self.getAccount()
         if not account and not account.merkmal:
             return "M"
         return str(account.merkmal).strip()
@@ -88,31 +90,40 @@ class ExternalPrincipal(Principal):
         fields = [getattr(account, field) for field in list(IAccount)]
         return self.info_factory(*fields)
 
-    #@ram.cache(_render_account_cachekey)
-    def getAccount(self):
+    def getAccount(self, invalidate=False):
         session = get_session('ukhvoucher')
-        account = session.query(models.Account).filter(and_(models.Account.login==self.id, models.Account.az=="eh"))
+        account = session.query(models.Account).options(
+            FromCache("default")).filter(
+                and_(models.Account.login==self.id, models.Account.az=="eh"))
+        if invalidate:
+            print "INVALIDATE"
+            account.invalidate()
         return account.one()
 
     def getAddress(self):
         session = get_session('ukhvoucher')
-        address = session.query(models.Address).get(str(self.oid))
+        address = session.query(models.Address).options(
+            FromCache("default")).get(str(self.oid))
         if address:
             return address
         @ram.cache(_render_details_cachekey)
         def getSlowAdr(oid):
-            address = session.query(models.AddressTraeger).get(oid)
+            address = session.query(models.AddressTraeger).options(
+            FromCache("default")).get(oid)
             if address:
                 return address
-            address = session.query(models.AddressEinrichtung).get(oid)
+            address = session.query(models.AddressEinrichtung).options(
+            FromCache("default")).get(oid)
             if address:
                 return address
         return getSlowAdr(self.oid)
 
-    @profile
-    def getCategory(self):
+    def getCategory(self, invalidate=False):
         session = get_session('ukhvoucher')
-        category = session.query(models.Category).get(self.oid)
+        if invalidate:
+            session.query(models.Category).options(FromCache("default")).filter(models.Category.oid == self.oid).invalidate()
+        category = session.query(models.Category).options(
+            FromCache("default")).get(self.oid)
         if category:
             def createCategory(category):
                 cat = OrderedSet()
@@ -218,27 +229,23 @@ class ExternalPrincipal(Principal):
         elif mnr in ('1.20'):
             cat = OrderedSet([K1, ])
         #elif self.sql_schulen('3','2'):
-        elif mnr in ('3.2.'):
+        elif mnr in ('3.2.', '3.3.'):
             self.sql_schulen('3','2')
             log('%s Schule' % origmnr)
             cat = OrderedSet([K7, ])
         return cat
 
-    @cached(principal_cache, marshaller=vouchers_marshaller)
-    def getVouchersList(self, cat=None):
-        vouchers = self.getVouchers(cat=cat)
-        vouchers_list = []
-        for voucher in vouchers:
-            fields = [getattr(voucher, field) for field in list(IVoucher)]
-            vouchers_list.append(self.voucher_factory(*fields))
-        return vouchers_list
-
-    def getVouchers(self, cat=None):
+    def getVouchers(self, cat=None, invalidate=False):
+        print "getVouchers", cat
         session = get_session('ukhvoucher')
-        query = session.query(models.Voucher).filter(
-            models.Voucher.user_id == self.oid)
+        #query = session.query(models.Voucher).options(
+        #    FromCache("default")).filter(models.Voucher.user_id == self.oid)
+        query = session.query(models.Voucher).filter(models.Voucher.user_id == self.oid)
         if cat:
             query = query.filter(models.Voucher.cat == cat)
+        #if invalidate:
+        #    print "INVALIDATE"
+        #    query.invalidate()
         return query.all()
 
 
@@ -264,7 +271,7 @@ class AdminPrincipal(ExternalPrincipal):
     def title(self):
         return "Administrator"
 
-    def getAccount(self):
+    def getAccount(self, invalidate=False):
         session = get_session('ukhvoucher')
         accounts = session.query(models.Account).filter(models.Account.oid==self.oid, models.Account.az == "eh")
         return accounts
