@@ -38,6 +38,7 @@ setup(name='ukhvoucher',
           "zope.sendmail",
           "GenericCache",
           "profilehooks",
+          "dogpile.cache",
       ],
       entry_points={
          'fanstatic.libraries': [
