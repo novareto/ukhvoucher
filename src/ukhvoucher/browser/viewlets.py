@@ -265,6 +265,13 @@ class PW(uvclight.MenuItem):
     submenu = None
 
     @property
+    def available(self):
+        mnr = self.request.principal.getAddress().mnr
+        if mnr.startswith('3.2.') or mnr.startswith('3.3.'):
+            return False
+        return True
+
+    @property
     def action(self):
         return self.view.application_url() + '/change_pw'
 
