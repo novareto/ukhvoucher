@@ -10,8 +10,8 @@
     <div class="panel panel-default" tal:repeat="cat view.categories">
       <div class="panel-heading" role="tab" id="headingOne" tal:attributes="id string:heading${cat['name']}">
         <h4 class="panel-title">
-          <a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" tal:attributes="href string:#collapse${cat['name']}">
             <span tal:content="cat['doc']"> </span>
+          <a role="button" class="collapsed btn pull-right" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" tal:attributes="href string:#collapse${cat['name']}">
 	    <span class="pull-right sign">&nbsp;</span>
           </a> 
         </h4>
@@ -39,6 +39,7 @@
                 <!--Nachfolgende Zeile wurde ausgeblendet, doppelter Titel...-->
                 <!--<h4 class="modal-title" id="myModalLabel" tal:content="cat['doc']" > </h4>-->
                 <h4>Kontingent</h4>
+                <a href="" tal:attributes="href cat['infolink']" target="_blank" class="btn btn-primary pull-right"> Info </a>
                 <p tal:content="structure cat['desc']"> </p>
               </div>
               <div class="modal-body" tal:content="structure cat['form'].render()"> </div>

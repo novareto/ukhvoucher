@@ -15,7 +15,9 @@ from ul.auth import Principal
 
 from .caching_query import FromCache, RelationshipCache
 from .interfaces import IAccount, IVoucher
+from .models import get_ukh_config
 
+TABLENAMES = get_ukh_config()
 
 principal_cache = GenericCache(maxsize=5000)
 
@@ -157,19 +159,32 @@ class ExternalPrincipal(Principal):
         return []
 
     def sql_base(self, enrea1, enrea2):
+        umgebung = TABLENAMES['sqlbase']
         session = get_session('ukhvoucher')
-        sql = """SELECT  TRGMNR FROM tstcusadat.mitrg1aa a, tstcusadat.mienr1aa b
-        WHERE A.TRGRCD = b.Enroid
-        and a.trgbv in(1, 3) and substr(a.trgmnr, 3, 2) in(10, 30)
-        and b.enrea1  in(%s) and b.enrea2 in(%s)""" % (enrea1, enrea2)
+        if umgebung == 'test':
+            sql = """SELECT  TRGMNR FROM tstcusadat.mitrg1aa a, tstcusadat.mienr1aa b
+            WHERE A.TRGRCD = b.Enroid
+            and a.trgbv in(1, 3) and substr(a.trgmnr, 3, 2) in(10, 30)
+            and b.enrea1  in(%s) and b.enrea2 in(%s)""" % (enrea1, enrea2)
+        if umgebung == 'prod':
+            sql = """SELECT  TRGMNR FROM educusadat.mitrg1aa a, educusadat.mienr1aa b
+            WHERE A.TRGRCD = b.Enroid
+            and a.trgbv in(1, 3) and substr(a.trgmnr, 3, 2) in(10, 30)
+            and b.enrea1  in(%s) and b.enrea2 in(%s)""" % (enrea1, enrea2)
         res = session.execute(sql).fetchall()
         return [x[0].strip() for x in res]
 
     def sql_schulen(self, enrea1, enrea2):
+        umgebung = TABLENAMES['sqlbase']
         session = get_session('ukhvoucher')
-        sql = """SELECT  TRGMNR FROM tstcusadat.mitrg1aa a, tstcusadat.mienr1aa b
-        WHERE A.TRGRCD = b.Enroid
-        and b.enrea1  in(%s) and b.enrea2 in(%s) and b.enrea3 = 'N'""" % (enrea1, enrea2)
+        if umgebung == 'test':
+            sql = """SELECT  TRGMNR FROM tstcusadat.mitrg1aa a, tstcusadat.mienr1aa b
+            WHERE A.TRGRCD = b.Enroid
+            and b.enrea1  in(%s) and b.enrea2 in(%s) and b.enrea3 = 'N'""" % (enrea1, enrea2)
+        if umgebung == 'prod':
+            sql = """SELECT  TRGMNR FROM educusadat.mitrg1aa a, educusadat.mienr1aa b
+            WHERE A.TRGRCD = b.Enroid
+            and b.enrea1  in(%s) and b.enrea2 in(%s) and b.enrea3 = 'N'""" % (enrea1, enrea2)
         res = session.execute(sql).fetchall()
         return [x[0].strip() for x in res]
 
@@ -193,9 +208,9 @@ class ExternalPrincipal(Principal):
             elif origmnr in self.sql_base('2', '5,6,7'):
                 log('%s abwasserbetrieb' % origmnr)
                 cat = OrderedSet([K2, K6])
-            elif origmnr in self.sql_base('1', '1,2,3,4,5,6,7,8'):
+            elif origmnr in self.sql_base('1', '1,2,3,4,6,7,8'):
                 log('%s Gesundheitsdienst' % origmnr)
-                cat = OrderedSet([K2,])
+                cat = OrderedSet([K11,])
             elif origmnr in self.sql_base('2', '7'):
                 log('%s Gas und Wasserversorgung' % origmnr)
                 cat = OrderedSet([K2, K6])
@@ -205,7 +220,7 @@ class ExternalPrincipal(Principal):
             elif origmnr in self.sql_base('4', '1,2,3,4,5,6'):
                 log('%s Bauwesen' % origmnr)
                 cat = OrderedSet([K2,])
-            elif origmnr in self.sql_base('5', '2,3,4'):
+            elif origmnr in self.sql_base('5', '2,4'):
                 log('%s Landwirtschaft' % origmnr)
                 cat = OrderedSet([K2,])
             elif origmnr in self.sql_base('6', '1,2,4,5,9'):
@@ -228,7 +243,6 @@ class ExternalPrincipal(Principal):
             cat = OrderedSet([K5, ])
         elif mnr in ('1.20'):
             cat = OrderedSet([K1, ])
-        #elif self.sql_schulen('3','2'):
         elif mnr in ('3.2.', '3.3.'):
             self.sql_schulen('3','2')
             log('%s Schule' % origmnr)
