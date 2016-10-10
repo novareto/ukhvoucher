@@ -1,5 +1,24 @@
 <fieldset tal:condition="viewlet.data">
-  <legend>Berechtigungsschein Information</legend>
+  <legend> Information Mitglied </legend>
+
+  <div tal:define="adr viewlet.getAddress()">
+      <p tal:content="adr.name1"/>
+      <p tal:content="adr.name2"/>
+      <p tal:content="adr.name3"/>
+      <p tal:content="string: ${adr.street} ${adr.number}"/>
+      <p tal:content="string: ${adr.zip_code} ${adr.city}"/>
+  </div>
+</fieldset>
+
+<fieldset>
+ <legend> Information zur Kategorie </legend>
+ <p tal:content="context.displayKat"/>
+ <p tal:content="string: Anzahl: ${len(viewlet.context.generation.voucher)}"/>
+</fieldset>
+
+
+<fieldset tal:condition="viewlet.data">
+  <legend> Information Ersteller </legend>
   <!--
   <p>
     Dieser Berechtigungsschein ist einer von ${viewlet.context.generation.oid}
@@ -8,24 +27,32 @@
   -->
   <dl>
     <dt>Erstellt am:</dt>
-    <dd tal:content="viewlet.context.generation.date.strftime('%d.%m.%Y')"> </dd>
-    <dt>Erstellt durch den Benutzer:</dt>
-    <dd tal:content="viewlet.context.generation.user" />
+      <dd tal:content="viewlet.context.generation.date.strftime('%d.%m.%Y')"> </dd>
+    <br/>
+
+    <div tal:condition="viewlet.data == 'Manuelle Erzeugung'">
+      <dt>Erstellt durch den Administrator:</dt>
+        <dd tal:content="viewlet.context.generation.user" />
+    </div>
+
+
+    <div tal:condition="viewlet.data != 'Manuelle Erzeugung'">
+      <dt>Erstellt durch den Benutzer:</dt>
+      <dt>Benutzerkennung:</dt>
+        <dd tal:content="viewlet.context.user.login"/>
+      <dt>Name:</dt>
+        <dd tal:content="viewlet.context.user.vname + ' ' + viewlet.context.user.nname" />
+      <dt>Telefon:</dt>
+        <dd tal:content="viewlet.context.user.vorwahl + ' ' + viewlet.context.user.phone" />
+      <dt>E-Mail:</dt>
+        <dd tal:content="viewlet.context.user.email" />
+    </div>
+
+    <br/>
+
     <dt>Informationen zur Erstellung:</dt>
-    <dd>
-    <span tal:content="viewlet.data"/>
-    <!--
-      <table class="table table-bordered table-vertical">
-	<tr tal:repeat="field viewlet.data.items()">
-	  <th tal:content="field[0]" />
-	  <td tal:content="field[1]" />
-	</tr>
-      </table>
-	  <div tal:repeat="field viewlet.data.items()">
-	    <span tal:content="field[0]" />
-	    <span tal:content="field[1]" />
-      </div>
-    -->  
-    </dd>
+      <dd>
+        <span tal:content="viewlet.data"/>
+      </dd>
   </dl>
 </fieldset>

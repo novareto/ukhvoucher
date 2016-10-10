@@ -22,7 +22,7 @@ HK1 = u"""
    und werden daher nicht mitgezählt.</p>
 <h4><u>Standorte:</u></h4>
 <p>Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens zwei versicherte
-   Beschäftigte üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
+   Beschäftigte anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
    jedoch nicht verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes.</p>
 <p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
@@ -54,7 +54,7 @@ HK2 = u"""
 <p>c) Beschäftigte mit spezieller Gefährdung gemäß aufgeführtem Sonderkontingent</p>
 <h4><u>Standorte:</u></h4>
 <p>Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens zwei versicherte
-   Beschäftigte üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
+   Beschäftigte anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
    jedoch nicht verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes.</p>
 <p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
@@ -65,7 +65,7 @@ HK3 = u"""
 <p>Bitte tragen Sie ein, wie viele Kindergruppen in Ihren Einrichtungen  maximal gleichzeitig betrieben werden.
    Beispiel: 4 Vormittagsgruppen und 2 Nachmittagsgruppen sind maximal 4 Gruppen gleichzeitig.</p>
 <p>Tragen Sie bitte ein, an wie vielen räumlich abgeschlossenen Arbeitsorten mindestens zwei versicherte Beschäftigte
-   üblicherweise anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
+   anwesend sind. Abgeschlossene Arbeitsorte sind zum Beispiel getrennte Gebäude,
    jedoch nicht verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes.</p>
 <p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
@@ -76,7 +76,7 @@ HK4 = u"""
 <p>Bitte tragen Sie die maximale Zahl der Kolonnen ein, in denen Beschäftigte in der Entsorgung oder im Bauhof
    außerhalb gleichzeitig tätig sind.</p>
 <p>Hinweis: Die übrigen Beschäftigten des Betriebs, die an festen Standorten tätig sind, sind mit der Personenzahl
-   unter der Kontingent Kategorie 2 „Sonstige Betriebe“ zu erfassen.</p>
+   unter dem Kontingent 2 "Sonstige Betriebe" zu erfassen.</p>
 <p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
@@ -84,8 +84,8 @@ HK5 = u"""
 <h2>K5: Beschäftigte und Einrichtungen mit erhöhter Gefährdung</h2>
 <h4><u>Beschäftigte:</u></h4>
 <p>Bitte tragen Sie die bei der UKH versicherten Beschäftigten ein, die eine Tätigkeit mit erhöhter Gefährdung ausüben.</p>
-<p>Beachten Sie bitte auch, dass diese Personen in keiner anderen Kontingent Kategorie aufzuführen sind.</p>
-<p>Hinweise zu Tätigkeiten mit erhöhter Gefährdung entnehmen Sie bitte dem Informationsblatt.</p>
+<p>Beachten Sie bitte auch, dass diese Personen in keinem anderen Kontingent aufzuführen sind.</p>
+<p>Hinweise zu Tätigkeiten mit erhöhter Gefährdung entnehmen Sie bitte den Informationen unter dem Button "Info".</p>
 <p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
@@ -93,8 +93,8 @@ HK6 = u"""
 <h2>K6: Betriebe mit besonders hoher Gefährdung</h2>
 <h4><u>Beschäftigte:</u></h4>
 <p>Bitte tragen Sie die bei der UKH versicherten Beschäftigten ein, die eine Tätigkeit mit besonders hoher Gefährdung ausüben.</p>
-<p>Beachten Sie bitte auch, dass diese Personen in keiner anderen Kontingent Kategorie aufzuführen sind.</p>
-<p>Hinweise zu Tätigkeiten mit besonders hoher Gefährdung entnehmen Sie bitte dem Informationsblatt.</p>
+<p>Beachten Sie bitte auch, dass diese Personen in keinem anderen Kontingent aufzuführen sind.</p>
+<p>Hinweise zu Tätigkeiten mit besonders hoher Gefährdung entnehmen Sie bitte den Informationen unter dem Button "Info".</p>
 <br>
 <p>Für Kommunen gilt: </p>
 <p>Hier sind Beschäftigte in Abwasserbetrieben (Arbeiten im Kanalnetz) und auf Deponien anzugeben.</p>
@@ -107,8 +107,10 @@ HK7 = u"""
 <h2>K7: Schulen (nur Lehrkräfte)</h2>
 <h4><u>Lehrkräfte:</u></h4>
 <p>Bitte tragen Sie die Zahl der Lehrkräfte ein, die an der Schule und ggf. an den Außenstellen der Schule tätig sind.
-   Wir übernehmen Lehrgangsgebühren für die Teilnahme an Erste Hilfe-Fortbildungen im Sinne des DGUV Grundsatzes 304-001
-   für Erste Hilfe-Fortbildungen Schule für 15 % des gesamten Kollegiums in einem Zeitraum von 2 Jahren.</p>
+   Wir übernehmen Lehrgangsgebühren für die Teilnahme an</p>
+<p>-  Erste-Hilfe-Fortbildungen im Sinne des DGUV Grundsatzes 304-001</p>
+<p>-  Erste-Hilfe-Fortbildungen Schule</p>
+<p>für 15 % des gesamten Kollegiums in einem Zeitraum von 2 Jahren.</p>
 <p>Hinweis: Bitte zählen Sie Personal in anderen Bereichen, bspw. in der Schulbetreuung, Reinigung,
    Sekretariat oder Hausmeister nicht mit. Für dieses Personal beantragt der Arbeitgeber die Kostenübernahme
    der Lehrgangsgebühren bei der zuständigen Fach-Berufsgenossenschaft oder bei uns als Mitgliedsunternehmen.</p>
@@ -136,11 +138,11 @@ HK10 = u"""
 <h2>K10: Freiwillige Feuerwehren</h2>
 <h4><u>Aktive Einsatzkräfte:</u></h4>
 <p>Bitte tragen Sie die Summe der aktiven Einsatzkräfte aus allen Orts- oder Stadtteilfeuerwehren ein.
-   Die UKH übernimmt die Kosten für Erste Hilfe Lehrgänge über 9 Unterrichtseinheiten für 10% der
+   Die UKH übernimmt die Kosten für Erste-Hilfe-Lehrgänge über 9 Unterrichtseinheiten für 10 % der
    aktiven Einsatzkräfte im Zeitraum von 2 Jahren.</p>
 <h4><u>Jugendbetreuer/innen:</u></h4>
 <p>Bitte tragen Sie auch hier alle Jugendbetreuer/innen der Orts oder Stadtteilfeuerwehren ein.
-   Die UKH übernimmt für alle einmal in 2 Jahren die Kosten der Erste Hilfe Lehrgänge.</p>
+   Die UKH übernimmt für alle einmal in 2 Jahren die Kosten der Erste-Hilfe-Lehrgänge.</p>
 <p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
@@ -157,7 +159,7 @@ HK11 = u"""
 <h4><u>Standorte</u></h4>
 <p>Bitte tragen Sie nur Standorte für die jeweiligen Bereiche ein, die vom Medizinbetrieb getrennt sind.
    Als eigene Standorte gelten räumlich abgeschlossene Arbeitsorte, an denen mindestens zwei versicherte
-   Beschäftigte üblicherweise anwesend sind.
+   Beschäftigte anwesend sind.
    Verschiedene Stockwerke oder Abteilungen innerhalb eines Gebäudes zählen nicht als abgeschlossene Arbeitsorte.</p>
 <p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
@@ -201,15 +203,15 @@ def getInvoiceId():
 def get_reason(context):
     rc = [
         SimpleTerm(u'', u'', u''),
-        SimpleTerm(u'Ablehnung, da keine Teilnehmercodes anbei',
-                   u'Ablehnung, da keine Teilnehmercodes anbei',
-                   u'Ablehnung, da keine Teilnehmercodes anbei'),
-        SimpleTerm(u'Ablehnung, da nicht ausreichend Teilnehmercodes anbei',
-                   u'Ablehnung, da nicht ausreichend Teilnehmercodes anbei',
-                   u'Ablehnung, da nicht ausreichend Teilnehmercodes anbei'),
-        SimpleTerm(u'Ablehnung, da doppelte Teilnehmercodes eingereicht wurden',
-                   u'Ablehnung, da doppelte Teilnehmercodes eingereicht wurden',
-                   u'Ablehnung, da doppelte Teilnehmercodes eingereicht wurden'),
+        SimpleTerm(u'Ablehnung, da keine Berechtigungsscheine anbei',
+                   u'Ablehnung, da keine Berechtigungsscheine anbei',
+                   u'Ablehnung, da keine Berechtigungsscheine anbei'),
+        SimpleTerm(u'Ablehnung, da nicht ausreichend Berechtigungsscheine anbei',
+                   u'Ablehnung, da nicht ausreichend Berechtigungsscheine anbei',
+                   u'Ablehnung, da nicht ausreichend Berechtigungsscheine anbei'),
+        SimpleTerm(u'Ablehnung, da doppelte Berechtigungsscheine eingereicht wurden',
+                   u'Ablehnung, da doppelte Berechtigungsscheine eingereicht wurden',
+                   u'Ablehnung, da doppelte Berechtigungsscheine eingereicht wurden'),
         SimpleTerm(u'Ablehnung, da unterzeichnete Original-Teilnehmerliste fehlt',
                    u'Ablehnung, da unterzeichnete Original-Teilnehmerliste fehlt',
                    u'Ablehnung, da unterzeichnete Original-Teilnehmerliste fehlt'),
@@ -231,12 +233,12 @@ def get_reason(context):
         SimpleTerm(u'Ablehnung, da keine vollstaendigen Unterlagen und Daten',
                    u'Ablehnung, da keine vollstaendigen Unterlagen und Daten',
                    u'Ablehnung, da keine vollständigen Unterlagen und Daten'),
-        SimpleTerm(u'Kuerzung, da nicht ausreichend Teilnehmercodes anbei',
-                   u'Kuerzung, da nicht ausreichend Teilnehmercodes anbei',
-                   u'Kürzung, da nicht ausreichend Teilnehmercodes anbei'),
-        SimpleTerm(u'Kuerzung, da doppelte Teilnehmercodes eingereicht wurden',
-                   u'Kuerzung, da doppelte Teilnehmercodes eingereicht wurden',
-                   u'Kürzung, da doppelte Teilnehmercodes eingereicht wurden'),
+        SimpleTerm(u'Kuerzung, da nicht ausreichend Berechtigungsscheine anbei',
+                   u'Kuerzung, da nicht ausreichend Berechtigungsscheine anbei',
+                   u'Kürzung, da nicht ausreichend Berechtigungsscheine anbei'),
+        SimpleTerm(u'Kuerzung, da doppelte Berechtigungsscheine eingereicht wurden',
+                   u'Kuerzung, da doppelte Berechtigungsscheine eingereicht wurden',
+                   u'Kürzung, da doppelte Berechtigungsscheine eingereicht wurden'),
         SimpleTerm(u'Kuerzung, da unterzeichnete Original-Teilnehmerliste fehlt',
                    u'Kuerzung, da unterzeichnete Original-Teilnehmerliste fehlt',
                    u'Kürzung, da unterzeichnete Original-Teilnehmerliste fehlt'),
@@ -286,8 +288,8 @@ class IVouchersCreation(Interface):
         )
 
     kategorie = schema.Choice(
-        title=u"Kategorie",
-        description=u"Für welche Kategorie wollen sie Berechtigungsscheine anlegen",
+        title=u"Kontingent",
+        description=u"Für welche Kontingente wollen sie Berechtigungsscheine anlegen",
         source=get_kategorie,
         )
 
@@ -371,7 +373,7 @@ class IAccount(Interface):
 
     titel = schema.TextLine(
         title=_(u"Titel"),
-        description=_(u"Bitte geben Sie hier einen Titel ein."),
+        description=_(u"Bitte geben Sie hier Ihren Titel ein."),
         required = False,
     )
 
@@ -389,25 +391,25 @@ class IAccount(Interface):
 
     vorwahl = schema.TextLine(
         title=_(u"Vorwahl"),
-        description=u"Bitte geben Sie hier Ihre Vorwahl-Telefonnummer für Rückfragen an.",
+        description=u"Bitte geben Sie hier Ihre Vorwahl ein.",
         required=True,
     )
 
     phone = schema.TextLine(
         title=_(u"Phone"),
-        description=u"Bitte geben Sie hier Ihre Telefonnummer für Rückfragen an.",
+        description=u"Bitte geben Sie hier Ihre Telefonnummer ein.",
         required=True,
     )
 
     email = schema.TextLine(
         title=_(u"E-Mail"),
-        description=u"Ihre E-Mailadresse benötigen Sie später beim Login.",
+        description=u"Bitte geben Sie hier Ihre E-Mail-Adresse ein.",
         required=True,
     )
 
     funktion = schema.TextLine(
         title=_(u"Funktion"),
-        description=u"Weleche Funktion bekleiden Sie im Unternehmen..",
+        description=u"Welche Funktion bekleiden Sie im Unternehmen.",
         required=True,
     )
 
@@ -816,7 +818,7 @@ class IVoucherSearch(Interface):
 class IInvoiceSearch(Interface):
 
     oid = schema.Choice(
-        title=_(u"Zuordnungsnummer"),
+        title=_(u"Zuordnung"),
         required=False,
         source=get_source('invoices'),
     )
@@ -828,18 +830,15 @@ def voc_subject(context):
         SimpleTerm(u'',
                    u'',
                    u''),
-        SimpleTerm(u'Aenderung der Kontaktdaten',
+        SimpleTerm(u'Änderung der Kontaktdaten',
                    u'Aenderung der Kontaktdaten',
-                   u'Änderung der Kontaktdaten (Anschrift, Name, Tel., Email'),
-        SimpleTerm(u'Kontingentkategorien',
-                   u'Kontingentkategorien',
-                   u'Kontingentkategorien'),
-        SimpleTerm(u'Berechtigungsscheine anfordern',
-                   u'Berechtigungsscheine anfordern',
-                   u'Berechtigungsscheine anfordern'),
-        SimpleTerm(u'Berechtigungsscheine downloaden',
-                   u'Berechtigungsscheine downloaden',
-                   u'Berechtigungsscheine downloaden'),
+                   u'Änderung der Kontaktdaten (Anschrift, Name, Tel., Email)'),
+        SimpleTerm(u'Kontingente',
+                   u'Kontingente',
+                   u'Kontingente'),
+        SimpleTerm(u'Berechtigungsscheine',
+                   u'Berechtigungsscheine',
+                   u'Berechtigungsscheine'),
         SimpleTerm(u'Lehrgangsteilnahme',
                    u'Lehrgangsteilnahme',
                    u'Lehrgangsteilnahme'),

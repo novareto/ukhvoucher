@@ -48,7 +48,6 @@ class PDF(uvclight.Page):
         #z2 = len(principal.getVouchers())
         for voucher in principal.getVouchers(cat=self.request.form.get('cat')):
             if voucher.status.strip() == CREATED:
-                # ikg = Kategorie für Überschriften etc.
                 ikg = str(voucher.cat.strip())
                 # ######################################
                 c.setFont(schriftart, 12)
@@ -65,9 +64,7 @@ class PDF(uvclight.Page):
                 c.drawString(15.5 * cm, 24.4 * cm, u'Internet')
                 c.drawString(17.3 * cm, 24.4 * cm, u'www.ukh.de')
                 c.drawString(15.5 * cm, 24.0 * cm, u'E-Mail')
-                c.drawString(17.3 * cm, 24.0 * cm, u'ukh@ukh.de')
-                c.drawString(15.5 * cm, 23.2 * cm, u'Durchwahl')
-                c.drawString(17.3 * cm, 23.2 * cm, u'069 29972-459')
+                c.drawString(17.3 * cm, 24.0 * cm, u'erste-hilfe@ukh.de')
                 # Adressdaten
                 c.setFont(schriftartfett, 12)
                 x = 23.5
@@ -92,61 +89,61 @@ class PDF(uvclight.Page):
                 #####################################################
                 # Überschrift
                 if ikg == 'K1':
-                    kattext = u'K1 - Verwaltung, Büro'
+                    kattext = u'1 (K1) - Verwaltung, Büro'
                 elif ikg == 'K2':
-                    kattext = u'K2 - Sonstige Betriebe'
+                    kattext = u'2 (K2) - Sonstige Betriebe'
                 elif ikg == 'K3':
-                    kattext = u'K3 - Kindertageseinrichtungen'
+                    kattext = u'3 (K3) - Kindertageseinrichtungen'
                 elif ikg == 'K4':
-                    kattext = u'K4 - Bauhof / Entsorgung'
+                    kattext = u'4 (K4) - Bauhof / Entsorgung'
                 elif ikg == 'K5':
-                    kattext = u'K5 - Beschäftigte und Einrichtungen mit erhöhter Gefährdung'
+                    kattext = u'5 (K5) - Beschäftigte und Einrichtungen mit erhöhter Gefährdung'
                 elif ikg == 'K6':
-                    kattext = u'K6 - Einrichtungen mit besonders hoher Gefährdung'
+                    kattext = u'6 (K6) - Einrichtungen mit besonders hoher Gefährdung'
                 elif ikg == 'K7':
-                    kattext = u'K7 - Schulen'
+                    kattext = u'7 (K7) - Schulen'
                 elif ikg == 'K8':
-                    kattext = u'K8 - Schulpersonal'
+                    kattext = u'8 (K8) - Schulpersonal'
                 elif ikg == 'K9':
-                    kattext = u'K9 - Schulbetreuung'
+                    kattext = u'9 (K9) - Schulbetreuung'
                 elif ikg == 'K10':
-                    kattext = u'K10 - Freiwillige Feuerwehren'
+                    kattext = u'10 (K10) - Freiwillige Feuerwehren'
                 elif ikg == 'K11':
-                    kattext = u'K11 - Gesundheitsdienste'
+                    kattext = u'11 (K11) - Gesundheitsdienste'
                 else:
                     kattext = u''
                 c.setFillColor(black)
                 c.setFont(schriftartfett, 12)
                 c.drawString(2.5 * cm, 18.5 * cm, u'Berechtigungsschein ')  # + str(z1) + ' von ' + str(z2))
-                c.drawString(2.5 * cm, 17.9 * cm, u'Kontingentkategorie ' + kattext)
+                c.drawString(2.5 * cm, 17.9 * cm, u'Kontingent ' + kattext)
                 # Überschrift 2. Zeile
                 c.setFont(schriftartfett, 10)
                 y = 16.8
                 c.drawString(2.5 * cm, y * cm, u'Diese Bescheinigung berechtigt eine Person zu einer einmaligen Teilnahme an einer')
                 y = y - 0.6
                 if ikg == 'K3':
-                    c.drawString(3.0 * cm, y * cm, u'-    Erste Hilfe-Aus- oder Fortbildung oder')
+                    c.drawString(3.0 * cm, y * cm, u'-    Erste-Hilfe-Aus- oder Fortbildung oder')
                     y = y - 0.6
-                    c.drawString(3.0 * cm, y * cm, u'-    Erste Hilfe-Aus- oder Fortbildung in Bildungs- und Betreuungseinrichtungen für Kinder')
+                    c.drawString(3.0 * cm, y * cm, u'-    Erste-Hilfe-Schulung in Bildungs- und Betreuungseinrichtungen für Kinder')
                     y = y - 0.6
                     c.drawString(2.5 * cm, y * cm, u'im Sinne des DGUV Grundsatzes 304-001')
                     y = y - 1.9
                 elif ikg == 'K7':
-                    c.drawString(2.5 * cm, y * cm, u'Erste Hilfe-Fortbildung im Sinne des DGUV Grundsatzes 304-001')
+                    c.drawString(2.5 * cm, y * cm, u'Erste-Hilfe-Fortbildung im Sinne des DGUV Grundsatzes 304-001')
                     y = y - 0.6
-                    c.drawString(2.5 * cm, y * cm, u'oder einer Erste Hilfe-Fortbildung Schule.')
+                    c.drawString(2.5 * cm, y * cm, u'oder einer Erste-Hilfe-Fortbildung Schule.')
                     y = y - 1.2
-                    c.drawString(2.5 * cm, y * cm, u'Lehrgangsgebühren für die Erste Hilfe-Ausbildung werden nicht übernommen.')
+                    c.drawString(2.5 * cm, y * cm, u'Lehrgangsgebühren für die Erste-Hilfe-Ausbildung werden nicht übernommen.')
                     y = y - 1.3
                 elif ikg == 'K9':
-                    c.drawString(2.5 * cm, y * cm, u'Erste Hilfe-Aus- oder Fortbildung im Sinne des DGUV Grundsatzes 304-001.')
+                    c.drawString(2.5 * cm, y * cm, u'Erste-Hilfe-Aus- oder Fortbildung im Sinne des DGUV Grundsatzes 304-001.')
                     y = y - 1.2
-                    c.drawString(2.5 * cm, y * cm, u'Lehrgangsgebühren für die Erste Hilfe-Aus- oder Fortbildung in Bildungs-')
+                    c.drawString(2.5 * cm, y * cm, u'Lehrgangsgebühren für die Erste-Hilfe-Schulung in Bildungs-')
                     y = y - 0.6
                     c.drawString(2.5 * cm, y * cm, u'und Betreuungseinrichtungen für Kinder werden nicht übernommen.')
                     y = y - 1.3
                 else:
-                    c.drawString(2.5 * cm, y * cm, u'Erste Hilfe-Aus- oder Fortbildung im Sinne des DGUV Grundsatzes 304-001.')
+                    c.drawString(2.5 * cm, y * cm, u'Erste-Hilfe-Aus- oder Fortbildung im Sinne des DGUV Grundsatzes 304-001.')
                     y = y - 3.1
                 # Datum der Erstellung
                 d = str(voucher.creation_date)
@@ -158,7 +155,7 @@ class PDF(uvclight.Page):
                 y = y - 0.6
                 c.drawString(2.5 * cm, y * cm, u'Gültigkeit für einen Lehrgang zwischen 01.01.2017 und 31.12.2018')
                 y = y - 0.6
-                c.drawString(2.5 * cm, y * cm, u'Der Berechtigungsschein ist spätestens bei Lehrgangsteilnahme der Ermächtigten Stelle')
+                c.drawString(2.5 * cm, y * cm, u'Der Berechtigungsschein ist spätestens bei Lehrgangsteilnahme der ermächtigten Stelle')
                 y = y - 0.6
                 c.drawString(2.5 * cm, y * cm, u'zu übermitteln. Die ermächtigte Stelle hat diesen der Rechnung beizufügen.')
                 y = y - 2.7
@@ -174,13 +171,19 @@ class PDF(uvclight.Page):
                 y = y - 0.6
                 c.drawString(2.5 * cm, y * cm, barcode_value)
 
+
                 #Ansprechpartner
+                telnummer = account.vorwahl.strip() + ' ' + account.phone.strip()
+                titel = account.titel.strip()
                 y = y - 3.0
                 c.drawString(2.5 * cm, y *cm, u'Ansprechpartner')
                 y = y - 0.8
-                c.drawString(2.5 * cm, y * cm, "%s %s" % (account.vname.strip(), account.nname.strip()))
+                if titel != '':
+                    c.drawString(2.5 * cm, y * cm, "%s %s %s %s" % (account.anrede.strip(), account.titel.strip(), account.vname.strip(), account.nname.strip()))
+                else:
+                    c.drawString(2.5 * cm, y * cm, "%s %s %s" % (account.anrede.strip(), account.vname.strip(), account.nname.strip()))
                 y = y - 0.5
-                c.drawString(2.5 * cm, y * cm, "Telefon: %s" % (account.phone.strip()))
+                c.drawString(2.5 * cm, y * cm, "Telefon: %s" % telnummer)
                 y = y - 0.5
                 c.drawString(2.5 * cm, y * cm, "E-Mail: %s" % (account.email.strip()))
                 z1 = z1 + 1
@@ -213,7 +216,7 @@ class PDFOnlyBarcode(uvclight.Page):
         tmp = tempfile.TemporaryFile()
         c = canvas.Canvas(tmp, pagesize=A4)
         c.setAuthor("UKH")
-        c.setTitle(u'Erste Hilfe')
+        c.setTitle(u'Erste-Hilfe')
         schriftart = "Helvetica"
         schriftartfett = "Helvetica-Bold"
         #datum = strftime("%d.%m.%Y", gmtime())

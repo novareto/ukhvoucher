@@ -31,7 +31,7 @@ class UserMasquarade(uvclight.ViewletForm):
     uvclight.layer(IAdminLayer)
     uvclight.auth.require('display.vouchers')
     uvclight.order(20)
-    template = uvclight.get_template('selectunternehmen.cpt', __file__)
+    template = uvclight.get_template('ajax_selectunternehmen.cpt', __file__)
 
     fields = uvclight.Fields(IAccounts)
     ignoreContent = False

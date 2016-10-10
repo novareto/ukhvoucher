@@ -1,12 +1,12 @@
 <div tal:condition="request.principal.masquarade">
-<fieldset tal:define="adr request.principal.getAddress()">
-    <legend> Adresse </legend>
+<fieldset tal:define="adr view.getAdrActions(request.principal)">
+    <legend>Adresse</legend>
     <div class="btn-group pull-right" tal:condition="request.principal.canEdit">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Aktion <span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
-            <li tal:repeat="aA view.getAdrActions(adr)">
+            <li tal:repeat="aA adr[1]">
             <span tal:replace="aA"> </span>
             </li>
         </ul>
@@ -21,9 +21,9 @@
               Name:  
             </td>
             <td>
-              <span tal:content="adr.name1" />
-              <span tal:content="adr.name2" />
-              <span tal:content="adr.name3" />
+              <span tal:content="adr[0]['name1']" />
+              <span tal:content="adr[0]['name2']" />
+              <span tal:content="adr[0]['name3']" />
             </td>
         </tr>
         <tr>
@@ -31,8 +31,8 @@
               Straße, Nr.:  
             </td>
             <td>
-              <span tal:content="adr.street" />
-              <span tal:content="adr.number" />
+              <span tal:content="adr[0]['street']" />
+              <span tal:content="adr[0]['number']" />
             </td>
         </tr>
         <tr>
@@ -40,20 +40,11 @@
               Plz, Ort:  
             </td>
             <td>
-              <span tal:content="adr.zip_code" />
-              <span tal:content="adr.city" />
+              <span tal:content="adr[0]['zip_code']" />
+              <span tal:content="adr[0]['city']" />
             </td>
         </tr>
     </table>
-    <!--
-    <p tal:content="adr.name1"/>
-    <p tal:content="adr.name2"/>
-    <p tal:content="adr.name3"/>
-    <p tal:content="adr.street"/>
-    <p tal:content="adr.number"/>
-    <p tal:content="adr.zip_code"/>
-    <p tal:content="adr.city"/>
-    -->
 </fieldset>
 <fieldset tal:define="accounts request.principal.getAccount()">
     <legend> Benutzer </legend>
@@ -71,7 +62,7 @@
         <tr>
             <th>Login </th>
             <th>Passwort </th>
-            <th>Email </th>
+            <th>E-Mail </th>
             <th>Vorname </th>
             <th>Name </th>
             <th>Vorwahl </th>
@@ -93,7 +84,7 @@
     </table>
 </fieldset>
 <fieldset tal:define="kat request.principal.getCategory()">
-    <legend> Kategorien</legend>
+    <legend> Kontingente</legend>
     <div class="btn-group pull-right" tal:condition="request.principal.canEdit">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Aktion <span class="caret"></span>
@@ -107,10 +98,12 @@
     <ul tal:repeat="k kat">
         <li> 
           <b tal:content="k.getDoc()"> </b> <br>
-          Sie haben <span tal:content="len(request.principal.getVouchers(cat=k.getName()))"> Gutscheine in dieser Kategorie.
+          Sie haben <span tal:content="len(request.principal.getVouchers(cat=k.getName()))"> Berechtigungsscheine in diesem Kontingent.
         </li>
     </ul>
 </fieldset>
+
+<!--
 <fieldset tal:define="vouchers request.principal.getVouchers()">
     <legend> Berechtigungsscheine </legend>
     <div class="btn-group pull-right" tal:condition="request.principal.canEdit">
@@ -128,27 +121,64 @@
             <th width="75"> Nummer / id </th>
             <th width="80"> Datum </th>
             <th> Status </th>
-            <th> Kategorie </th>
+            <th> Kontingent </th>
             <th> Grundlage </th>
         </tr>
         <tr tal:repeat="voucher vouchers">
             <td tal:content="voucher.oid"></td>
             <td tal:content="voucher.creation_date"></td>
             <td tal:content="voucher.status"></td>
-            <!--<td tal:content="voucher.cat"></td>-->
             <td tal:content="voucher.displayKat"></td>
             <td tal:content="voucher.displayData"></td>
         </tr>
     </table>
 </fieldset>
+-->
 
+<!-- Tabelle mit Sortierfunktion -->
+<fieldset tal:define="vouchers request.principal.getVouchers()">
+  <legend> Berechtigungsscheine </legend>
+    <div class="btn-group pull-right" tal:condition="request.principal.canEdit">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Aktion <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li tal:repeat="aA view.getVoucherActions()">
+            <span tal:replace="aA"> </span>
+            </li>
+        </ul>
+    </div>
+    <table id="journal_table" class="tablesorter table table-bordered table-striped table-condensed" tal:condition="vouchers">
+      <thead>
+        <tr>
+            <th width="75"> Nummer </th>
+            <th width="80"> Datum </th>
+            <th> Status </th>
+            <th> Kontingent </th>
+            <th> Grundlage </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr tal:repeat="voucher vouchers" tal:attributes="class repeat['voucher']">
+            <td tal:content="voucher.oid"></td>
+            <td tal:content="voucher.creation_date"></td>
+            <td tal:content="voucher.status"></td>
+            <td tal:content="voucher.displayKat"></td>
+            <td tal:content="voucher.displayData"></td>
+        </tr>
+        </tbody>
+    </table>
+</fieldset>
+
+
+<!--
 <fieldset tal:define="entries request.principal.getJournalEntries()">
-    <legend> Bemerkungen </legend>
+    <legend> Historie </legend>
     <table class="EHtable">
         <tr>
             <th width="80"> Datum </th>
             <th> Aktion </th>
-            <th> Bemerkung </th>
+            <th> Notiz </th>
             <th> Autor </th>
         </tr>
         <tr tal:repeat="entry entries">
@@ -159,4 +189,30 @@
         </tr>
     </table>
 </fieldset>
+-->
+
+
+<!-- Tabelle mit Sortierfunktion -->
+<fieldset>
+  <legend> Historie </legend>
+   <table id="journal_table" class="tablesorter table table-bordered table-striped table-condensed" tal:define="entries request.principal.getJournalEntries()" tal:condition="entries">
+     <thead>
+       <tr>
+         <th width="80"> Datum </th>
+            <th> Aktion </th>
+            <th> Notiz </th>
+            <th> Autor </th>
+       </tr>
+     </thead>
+     <tbody>
+       <tr tal:repeat="result entries" tal:attributes="class repeat['result']">
+         <td tal:content="result.date.strftime('%Y-%m-%d')"> </td>
+         <td tal:content="result.action"> </td>
+         <td tal:content="result.note.strip()"> </td>
+         <td tal:content="result.userid"> </td>
+       </tr>
+     </tbody>
+   </table>
+</fieldset>
+
 </div>

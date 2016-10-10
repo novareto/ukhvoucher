@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
 
 import webob.exc
+import transaction
+
 
 from . import Site
 from .components import ExternalPrincipal, AdminPrincipal
 from .interfaces import IAdminLayer, IUserLayer
 from .models import Accounts, Addresses, Account, Vouchers, Invoices, Categories
+from .caching_query import query_callable
+from .environment import regions
 
 from cromlech.browser import IPublicationRoot, getSession
 from cromlech.security import Interaction, unauthenticated_principal
-from cromlech.sqlalchemy import get_session
+from cromlech.sqlalchemy import get_session, SQLAlchemySession
 from ul.auth import SecurePublication, ICredentials
 from ul.browser.context import ContextualRequest
 from ul.browser.decorators import sessionned
-from ul.sql.decorators import transaction_sql
 from uvclight import GlobalUtility, name
 from uvclight.backends.sql import SQLPublication
 from zope.component import getGlobalSiteManager
@@ -26,6 +29,18 @@ from .resources import ukhcss
 from base64 import decodestring
 
 
+def transaction_sql(engine):
+    def sql_wrapped(wrapped):
+        def caller(*args):
+            with transaction.manager as tm:
+                query_cls = query_callable(regions)
+                with SQLAlchemySession(
+                        engine, transaction_manager=tm, query_cls=query_cls):
+                    return wrapped(*args)
+        return caller
+    return sql_wrapped
+
+
 USERS = {
     'admin': dict(login="admin", passwort="!admin!", permissions=('manage.vouchers', 'display.vouchers')),
     'mseibert': dict(login="mseibert", passwort="susanne09", permissions=('manage.vouchers', 'display.vouchers')),
@@ -36,6 +51,7 @@ USERS = {
     'rknittel': dict(login="rknittel", passwort="XA056!", permissions=('manage.vouchers', 'display.vouchers')),
     'evstraub': dict(login="evstraub", passwort="AH221!", permissions=('manage.vouchers', 'display.vouchers')),
     'bsvejda': dict(login="bsvejda", passwort="ZT780!", permissions=('manage.vouchers', 'display.vouchers')),
+    'pschaeferdeluca': dict(login="pschaeferdeluca", passwort="UK926!", permissions=('manage.vouchers', 'display.vouchers')),
     'viewer': dict(login="viewer", passwort="viewer", permissions=("display.vouchers",)),
     }
 
@@ -129,10 +145,10 @@ class Admin(SQLPublication, SecurePublication):
 
     def __runner__(self, func):
         return SQLPublication.__runner__(self, func)
-    
+
     def __interact__(self, *args, **kwargs):
         return SQLPublication.__interact__(self, *args, **kwargs)
-    
+
     def publish_traverse(self, request):
         user = self.get_credentials(request.environment)
         request.principal = self.principal_factory(user)
@@ -172,6 +188,7 @@ class UserRoot(Location):
         return getGlobalSiteManager()
 
 
+
 class User(SQLPublication, SecurePublication):
 
     layers = [IUserLayer]
@@ -206,7 +223,7 @@ class User(SQLPublication, SecurePublication):
                     return response
         except webob.exc.HTTPException as e:
             return e
-        
+
     def __call__(self, environ, start_response):
 
         @sessionned(self.session_key)

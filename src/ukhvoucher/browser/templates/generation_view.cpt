@@ -1,9 +1,9 @@
-<h1> Mehrere Gutscheine sperren (komplette Charge) </h1>
+<h1> Mehrere Berechtigungsscheine sperren (komplette Charge) </h1>
 
 <table class="table">
     <tr>
         <th> Benutzer </th>
-        <th> Kategorie </th>
+        <th> Kontingent </th>
         <th> Datum </th>
         <th> Anzahl </th>
         <th> Aktion </th>

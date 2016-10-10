@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import uvclight
+from GenericCache.GenericCache import GenericCache
 from webhelpers.html.builder import HTML
 from ukhvoucher import models
 from ..apps import AdminRoot, UserRoot
@@ -20,6 +21,14 @@ from zope.i18n import translate
 from zope.interface import Interface
 from profilehooks import profile
 from natsort import natsorted
+from ..components import cached
+
+
+cache = GenericCache(maxsize=5000)
+
+
+def principal_marshaller(func, view, principal):
+    return repr((func.__name__, view.__name__, principal.oid))
 
 
 class SearchUnternehmen(uvclight.JSON):
@@ -96,9 +105,22 @@ class AdminRootIndex(uvclight.Page):
     def update(self):
         ukhvouchers.need()
 
-    def getAdrActions(self, adr):
+    @cached(cache, marshaller=principal_marshaller)
+    def getAdrActions(self, principal):
         rc = []
-        oid = self.request.principal.oid
+        adr = principal.getAddress()
+
+        address = {
+            'name1': adr.name1,
+            'name2': adr.name2,
+            'name3': adr.name3,
+            'street': adr.street,
+            'number': adr.number,
+            'zip_code': adr.zip_code,
+            'city': adr.city,
+            }
+
+        oid = principal.oid
         if not adr or isinstance(adr, (models.AddressTraeger, models.AddressEinrichtung)):
             rc.append(
                     HTML.tag(
@@ -113,7 +135,7 @@ class AdminRootIndex(uvclight.Page):
                         href="%s/addresses/%s/edit" % (self.application_url(), oid),
                         c="Adresse bearbeiten",)
                     )
-        return rc
+        return address, rc
 
     def getAccountActions(self, account):
         rc = []
@@ -122,14 +144,14 @@ class AdminRootIndex(uvclight.Page):
                 HTML.tag(
                     'a',
                     href="%s/accounts/add?form.field.oid=%s" % (self.application_url(), oid),
-                    c="Neuen Account anlegen",)
+                    c="Neuen Benutzer anlegen",)
                 )
         if not account:
             rc.append(
                     HTML.tag(
                         'a',
                         href="%s/accounts/add" % self.application_url(),
-                        c="Neuen Account anlegen",)
+                        c="Neuen Benutzer anlegen",)
                     )
         return rc
 
@@ -143,14 +165,14 @@ class AdminRootIndex(uvclight.Page):
                     HTML.tag(
                         'a',
                         href="%s/categories/%s/edit" % (self.application_url(), oid),
-                        c="Kategorien bearbeiten",)
+                        c="Kontingente bearbeiten",)
                     )
         else:
             rc.append(
                     HTML.tag(
                         'a',
                         href="%s/categories/add?form.field.oid=%s" % (self.application_url(), oid),
-                        c="Neue Kategorien anlegen",)
+                        c="Neue Kontingente anlegen",)
                     )
         return rc
 

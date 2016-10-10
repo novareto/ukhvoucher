@@ -81,6 +81,6 @@ class DCharge(uvclight.View):
                 oid=str(self.context.oid),
                 note="")
             session.add(entry)
-        self.flash(u'Es wurden alle Gutscheine der Charge %s gesperrt.' % gen_id)
+        self.flash(u'Es wurden alle Berechtigungsscheine der Charge %s gesperrt.' % gen_id)
         self.redirect(self.application_url())
 

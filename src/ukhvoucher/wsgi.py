@@ -2,7 +2,7 @@
 
 from cromlech.configuration.utils import load_zcml
 from cromlech.i18n import register_allowed_languages, setLanguage
-from cromlech.sqlalchemy import create_and_register_engine
+from cromlech.sqlalchemy import create_engine
 from paste.urlmap import URLMap
 from ul.auth import GenericSecurityPolicy
 from zope.i18n import config
@@ -29,7 +29,7 @@ def router(conf, session_key, zcml, dsn, name):
     setSecurityPolicy(GenericSecurityPolicy)
 
     # We register our SQLengine under a given name
-    engine = create_and_register_engine(dsn, name)
+    engine = create_engine(dsn, name)
     # We use a declarative base, if it exists we bind it and create
     engine.bind(Base)
     metadata = Base.metadata

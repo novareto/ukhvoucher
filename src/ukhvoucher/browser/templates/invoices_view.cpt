@@ -2,7 +2,7 @@
 <table class="table table-striped">
   <thead>
       <tr>
-          <th>Rechnungsnummer</th>
+          <th>Zuordnung</th>
           <th>Berechtigungsschein</th>
           <th>Beschreibung</th>
       </tr>

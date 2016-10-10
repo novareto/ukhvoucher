@@ -157,7 +157,7 @@ class Category(Base, Location):
     #__tablename__ = 'z1ehrkat_t'
     __tablename__ = TABLENAMES['category']
     __schema__ = ICategory
-    __label__ = _(u"Kategorie")
+    __label__ = _(u"Kontingent")
 
     if schema:
         __table_args__ = {"schema": schema[:-1]}
@@ -177,7 +177,7 @@ class Category(Base, Location):
 
     @property
     def title(self):
-        return "Kategorie %s" % self.oid
+        return "Kontingent %s" % self.oid
 
     # search attributes
     search_attr = "oid"
@@ -369,7 +369,7 @@ class Invoice(Base, Location):
     #__tablename__ = 'z1ehrrch_t'
     __tablename__ = TABLENAMES['invoice']
     __schema__ = IInvoice
-    __label__ = _(u"Neue Zuordnung erstellt")
+    __label__ = _(u"Zuordnung")
 
     if schema:
         __table_args__ = {"schema": schema[:-1]}
@@ -385,7 +385,8 @@ class Invoice(Base, Location):
     def title(self):
         return "Zuordnung %s" % self.oid
 
-    search_attr = "field.oid"
+    search_attr = "oid"
+    #search_attr = "field.oid"
     searchable_attrs = ("oid", "reason")
 
     @staticmethod
@@ -406,9 +407,7 @@ class Generation(Base):
     type = Column('kat', String(20))
     data = Column('text', String(500))
     user = Column('user_id', Integer, ForeignKey(schema + z1ext9aa + '.oid'))
-    #user = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
     uoid = Column('oid', Integer)
-
     voucher = relationship("Voucher", backref=backref('generation'))
 
 

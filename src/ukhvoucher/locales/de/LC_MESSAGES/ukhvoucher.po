@@ -97,10 +97,10 @@ msgid "Description"
 msgstr "Beschreibung"
 
 msgid "Titel oid Zuordnung"
-msgstr "Zuordnungsnummer"
+msgstr "Zuordnung"
 
 msgid "oid Zuordnung"
-msgstr "Zuordnungsnummer"
+msgstr "Zuordnung"
 
 msgid "Titel oid Berechtigungsschein"
 msgstr "Berechtigungsschein Nummer"
@@ -118,7 +118,7 @@ msgid "User id"
 msgstr "Benutzer"
 
 msgid "Invoice id"
-msgstr "Zuordnungsnummer"
+msgstr "Zuordnung"
 
 msgid "Search : "
 msgstr "Suche : "
@@ -136,7 +136,7 @@ msgid "Add"
 msgstr "Hinzufügen"
 
 msgid "Categories"
-msgstr "Kategorien"
+msgstr "Kontingente"
 
 msgid "Addresses"
 msgstr "Adressen"

@@ -28,7 +28,7 @@ FEHLER01 = u"""
 <h3> Bitte beachten Sie, dass nur die Standorte zu berücksichtigen sind, </h3>
 <h3> an denen gleichzeitig mindestens zwei Beschäftigte tätig sind. </h3>
 <h3> Bei Fragen zur Antragsstellung wenden Sie sich bitte an das Service-Telefon </h3>
-<h3> (069 29972-440, montags bis freitags von 7:30 bis 18:00 Uhr E-Mail: ukh@ukh.de).</h3>
+<h3> (069 29972-440, montags bis freitags von 7:30 bis 18:00 Uhr E-Mail: erste-hilfe@ukh.de).</h3>
 """
 
 FEHLER02 = u"""
@@ -155,6 +155,9 @@ class CalculateInsert(Action):
         insert(form, amount)
         form.flash(u'Wir haben %s Berechtigungsscheine erzeugt.', type="info")
         url = form.application_url()
+        ### INVALIDATION
+        principal = uvclight.utils.current_principal()
+        principal.getVouchers(invalidate=True)
         return SuccessMarker('Success', True, url=url)
 
 
@@ -162,6 +165,7 @@ class KGBaseForm(uvclight.Form):
     uvclight.context(UserRoot)
     uvclight.layer(IUserLayer)
     uvclight.auth.require('users.access')
+    #template = uvclight.get_template('catform.cpt', __file__)
     uvclight.baseclass()
 
     actions = Actions(
