@@ -211,28 +211,43 @@ class ExternalPrincipal(Principal):
             elif origmnr in self.sql_base('1', '1,2,3,4,6,7,8'):
                 log('%s Gesundheitsdienst' % origmnr)
                 cat = OrderedSet([K11,])
+            elif origmnr in self.sql_base('1', '5'):
+                log('%s Sozialstation' % origmnr)
+                cat = OrderedSet([])
             elif origmnr in self.sql_base('2', '7'):
                 log('%s Gas und Wasserversorgung' % origmnr)
                 cat = OrderedSet([K2, K6])
             elif origmnr in self.sql_base('3', '6'):
                 log('%s Beschaeftigungsgesellschaften' % origmnr)
                 cat = OrderedSet([K2,])
-            elif origmnr in self.sql_base('4', '1,2,3,4,5,6'):
+            elif origmnr in self.sql_base('4', '1,2,4,5,'):
                 log('%s Bauwesen' % origmnr)
                 cat = OrderedSet([K2,])
+            elif origmnr in self.sql_base('4', '3'):
+                log('%s Bauhoefe' % origmnr)
+                cat = OrderedSet([K2, K4])
+            elif origmnr in self.sql_base('4', '6'):
+                log('%s Wasserversorgung' % origmnr)
+                cat = OrderedSet([K2, K4])
             elif origmnr in self.sql_base('5', '2,4'):
                 log('%s Landwirtschaft' % origmnr)
                 cat = OrderedSet([K2,])
+            elif origmnr in self.sql_base('5', '3'):
+                log('%s Gartenanlagen,Tiergaerten' % origmnr)
+                cat = OrderedSet([])
             elif origmnr in self.sql_base('6', '1,2,4,5,9'):
                 log('%s Kulturelle Einrichtungen' % origmnr)
                 cat = OrderedSet([K2,])
+            elif origmnr in self.sql_base('6', '3'):
+                log('%s Schwimmbaeder' % origmnr)
+                cat = OrderedSet([])
             elif origmnr in self.sql_base('8', '1,2,3,4,5,6'):
                 log('%s Verkehrsunternehmen' % origmnr)
                 cat = OrderedSet([K2,])
             elif origmnr in self.sql_base('9', '4'):
                 log('%s Forschungseinrichtungen' % origmnr)
                 cat = OrderedSet([K2,])
-            elif origmnr in self.sql_base('7', '1'):
+            elif origmnr in self.sql_base('7', '1,2'):
                 log('%s Feuerwehrvereine' % origmnr)
                 cat = OrderedSet([])
             else:
