@@ -220,7 +220,7 @@ class ExternalPrincipal(Principal):
             elif origmnr in self.sql_base('3', '6'):
                 log('%s Beschaeftigungsgesellschaften' % origmnr)
                 cat = OrderedSet([K2,])
-            elif origmnr in self.sql_base('4', '1,2,4,5,'):
+            elif origmnr in self.sql_base('4', '1,2,4,5'):
                 log('%s Bauwesen' % origmnr)
                 cat = OrderedSet([K2,])
             elif origmnr in self.sql_base('4', '3'):
