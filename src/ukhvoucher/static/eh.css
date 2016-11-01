@@ -20,3 +20,8 @@
 #form-field-password {
     width: 400px;
 }
+
+#form-field-description {
+    width: 100%;
+    height: 100px;
+}

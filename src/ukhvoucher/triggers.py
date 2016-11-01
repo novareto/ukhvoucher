@@ -11,8 +11,8 @@ def rel_modified(target, value, initiator):
 
 
 def rel_deleted(target, value, initiator):
-    #value.status = CREATED
-    value.status = NOT_BOOKED
+    value.status = CREATED
+    #value.status = NOT_BOOKED
     return value
 
 

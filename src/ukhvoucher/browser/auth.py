@@ -51,9 +51,10 @@ class GetSchool(uvclight.JSON):
     def getIKNummer(self, mnr):
         from cromlech.sqlalchemy import get_session
         session = get_session('ukhvoucher')
+        print mnr
         sql = """SELECT ENRRCD
                  FROM EDUCUSADAT.MIENR1AA
-                 WHERE ENREA1 = '3'
+                 WHERE ENREA1 = '3' AND ENREA2 in ('2', '3')
                  AND ENRLFD = %s""" % mnr
         res = session.execute(sql).fetchone()
         print res

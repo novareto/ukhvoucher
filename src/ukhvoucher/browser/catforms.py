@@ -64,6 +64,16 @@ class KontingentValidator(object):
                     mitarbeiter = mitarbeiter / 2
                     if mitarbeiter < standorte:
                         self.errors.append(Error(FEHLER01, identifier="form",),)
+            # K3
+            if data.get('kitas') and data.get('gruppen'):
+
+                kitas = data.get('kitas')
+                gruppen = data.get('gruppen')
+                print kitas
+                print gruppen
+                if str(kitas).isdigit() and str(gruppen).isdigit():
+                    if int(gruppen) < int(kitas):
+                        self.errors.append(Error(u"Die Anzahl der Standorte darf nicht größer sein als die Anzahl der Gruppen.", identifier="form",),)
             # K11
             if data.get('ma_verwaltung'):
                 z = 0
@@ -284,7 +294,8 @@ class K3Form(KGBaseForm):
     dataValidators = [KontingentValidator]
 
     def calculate(self, gruppen, kitas, bestaetigung):
-        ergebniseingabe = gruppen + kitas
+        ergebniseingabe = int(gruppen) + int(kitas)
+        return ergebniseingabe
         mindestmenge_2_je_standort = kitas * 2
         kontingent = ergebniseingabe
         if mindestmenge_2_je_standort > kontingent:

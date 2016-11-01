@@ -118,7 +118,7 @@ HK7 = u"""
 """
 
 HK8 = u"""
-<h2>K9: Schulstandorte </h2>
+<h2>K8: Schulpersonal der Schulträger </h2>
 <h4><u>Standorte:</u></h4>
 <p>Bitte tragen Sie ein, an wie vielen Schulstandorten Personal in den Bereichen Reinigung,
    Sekretariat oder Hausmeister beschäftigt wird.</p>
@@ -141,7 +141,7 @@ HK10 = u"""
    Die UKH übernimmt die Kosten für Erste-Hilfe-Lehrgänge über 9 Unterrichtseinheiten für 10 % der
    aktiven Einsatzkräfte im Zeitraum von 2 Jahren.</p>
 <h4><u>Jugendbetreuer/innen:</u></h4>
-<p>Bitte tragen Sie auch hier alle Jugendbetreuer/innen der Orts oder Stadtteilfeuerwehren ein.
+<p>Bitte tragen Sie auch hier alle Jugendbetreuer/innen der Orts- oder Stadtteilfeuerwehren ein.
    Die UKH übernimmt für alle einmal in 2 Jahren die Kosten der Erste-Hilfe-Lehrgänge.</p>
 <p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
@@ -172,15 +172,15 @@ def get_oid(context):
     rcc = []
     session = get_session('ukhvoucher')
     for x in session.query(Address):
-        rc.append(SimpleTerm(int(x.oid), x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+        rc.append(SimpleTerm(int(x.oid), x.oid, "%s - %s - %s %s %s" % (x.oid, x.mnr, x.name1, x.name2, x.name3)))
         rcc.append(int(x.oid))
     @ram.cache(lambda *args: time() // (600 * 60))
     def getValue():
         res = []
         for x in session.query(AddressTraeger):
-            res.append(SimpleTerm(int(x.oid), x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+            res.append(SimpleTerm(int(x.oid), x.oid, "%s - %s - %s %s %s" % (x.oid, x.mnr, x.name1, x.name2, x.name3)))
         for x in session.query(AddressEinrichtung):
-            res.append(SimpleTerm(int(x.oid), x.oid, "%s - %s - %s %s" % (x.oid, x.mnr, x.name1, x.name2)))
+            res.append(SimpleTerm(int(x.oid), x.oid, "%s - %s - %s %s %s" % (x.oid, x.mnr, x.name1, x.name2, x.name3)))
         return res
     for term in getValue():
         if term.value not in rcc:

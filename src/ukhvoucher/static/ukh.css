@@ -115,4 +115,9 @@ input[type="checkbox"] {
   line-height: normal;
 }
 
-
+table.table td {
+    border: 1px solid #ccc;
+    padding: 3px 8px;
+    text-align: left;
+    white-space: normal;
+}

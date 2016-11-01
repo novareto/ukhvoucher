@@ -17,6 +17,7 @@ from sqlalchemy import *
 from sqlalchemy.orm import relationship, backref
 from uvc.content.interfaces import IContent
 from zope.interface import implementer
+from . import resources
 
 from sqlalchemy import types
 
@@ -73,7 +74,7 @@ class Address(Base, Location):
     name2 = Column('iknam2', String(28))
     name3 = Column('iknam3', String(28))
     street = Column('ikstr', String(46))
-    number = Column('ikhnr', String(3))
+    number = Column('ikhnr', String(10))
     mnr = Column('trgmnr', String(15))
     zip_code = Column('ikhplz', String(5))
     city = Column('ikhort', String(24))
@@ -98,7 +99,7 @@ class Address(Base, Location):
         fields['name2'].htmlAttributes = {'maxlength': 28}
         fields['name3'].htmlAttributes = {'maxlength': 28}
         fields['street'].htmlAttributes = {'maxlength': 46}
-        fields['number'].htmlAttributes = {'maxlength': 3}
+        fields['number'].htmlAttributes = {'maxlength': 10}
         fields['zip_code'].htmlAttributes = {'maxlength': 5}
         fields['city'].htmlAttributes = {'maxlength': 24}
 
@@ -347,7 +348,7 @@ class Voucher(Base, Location):
         elif self.cat.strip() == 'K4':
             dat = u'K4 - Bauhof'
         elif self.cat.strip() == 'K5':
-            dat = u'K4 - Erhöhte Gefährdung'
+            dat = u'K5 - Erhöhte Gefährdung'
         elif self.cat.strip() == 'K6':
             dat = u'K6 - Besonders hohe Gefährdung'
         elif self.cat.strip() == 'K7':
@@ -383,6 +384,7 @@ class Invoice(Base, Location):
 
     @property
     def title(self):
+        resources.ehcss.need()
         return "Zuordnung %s" % self.oid
 
     search_attr = "oid"

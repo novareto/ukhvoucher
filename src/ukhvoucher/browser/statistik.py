@@ -15,6 +15,7 @@ from cromlech.sqlalchemy import get_session
 from ukhvoucher.interfaces import get_kategorie
 from dolmen.forms.base import SUCCESS, NO_VALUE
 from dolmen.forms.base.markers import SuccessMarker
+from ukhvoucher.resources import ukhvouchers as js
 
 
 class ExportMarker(SuccessMarker):
@@ -29,12 +30,12 @@ CSVEXPORT = ExportMarker('CSV', True, content_type="text/csv")
 
 
 class IStatForm(interface.Interface):
-    von = schema.Date(
+    von = schema.TextLine(
         title=u"Von",
         required=False,
      )
 
-    bis = schema.Date(
+    bis = schema.TextLine(
         title=u"Bis",
         required=False,
      )
@@ -88,8 +89,10 @@ class Statistik(uvclight.Form):
         return action, result
 
     def update(self):
+        js.need()
         data, errors = self.extractData()
         kats = get_kategorie(None)
+
         session = get_session('ukhvoucher')
         rc = []
         query = session.query(

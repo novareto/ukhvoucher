@@ -76,7 +76,7 @@ class ExternalPrincipal(Principal):
 
     @property
     def oid(self):
-        account = self.getAccountInfo()
+        account = self.getAccount()
         return int(account.oid)
 
     @property
@@ -94,38 +94,36 @@ class ExternalPrincipal(Principal):
 
     def getAccount(self, invalidate=False):
         session = get_session('ukhvoucher')
-        account = session.query(models.Account).options(
-            FromCache("default")).filter(
+        account = session.query(models.Account).filter(
                 and_(models.Account.login==self.id, models.Account.az=="eh"))
-        if invalidate:
-            print "INVALIDATE"
-            account.invalidate()
+        #account = session.query(models.Account).options(
+        #    FromCache("default")).filter(
+        #        and_(models.Account.login==self.id, models.Account.az=="eh"))
+        #if invalidate:
+        #    print "INVALIDATE"
+        #    account.invalidate()
         return account.one()
 
     def getAddress(self):
         session = get_session('ukhvoucher')
-        address = session.query(models.Address).options(
-            FromCache("default")).get(str(self.oid))
+        address = session.query(models.Address).get(str(self.oid))
         if address:
             return address
         @ram.cache(_render_details_cachekey)
         def getSlowAdr(oid):
-            address = session.query(models.AddressTraeger).options(
-            FromCache("default")).get(oid)
+            address = session.query(models.AddressTraeger).get(oid)
             if address:
                 return address
-            address = session.query(models.AddressEinrichtung).options(
-            FromCache("default")).get(oid)
+            address = session.query(models.AddressEinrichtung).get(oid)
             if address:
                 return address
         return getSlowAdr(self.oid)
 
     def getCategory(self, invalidate=False):
         session = get_session('ukhvoucher')
-        if invalidate:
-            session.query(models.Category).options(FromCache("default")).filter(models.Category.oid == self.oid).invalidate()
-        category = session.query(models.Category).options(
-            FromCache("default")).get(self.oid)
+        #if invalidate:
+        #    session.query(models.Category).options(FromCache("default")).filter(models.Category.oid == self.oid).invalidate()
+        category = session.query(models.Category).get(self.oid)
         if category:
             def createCategory(category):
                 cat = OrderedSet()
@@ -265,7 +263,6 @@ class ExternalPrincipal(Principal):
         return cat
 
     def getVouchers(self, cat=None, invalidate=False):
-        print "getVouchers", cat
         session = get_session('ukhvoucher')
         #query = session.query(models.Voucher).options(
         #    FromCache("default")).filter(models.Voucher.user_id == self.oid)

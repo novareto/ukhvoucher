@@ -261,14 +261,19 @@ class PW(uvclight.MenuItem):
     menu(IPersonalMenu)
     uvclight.layer(IUserLayer)
     uvclight.title(u'Passwort ändern')
+    #uvclight.auth.require('zope.View')
     id = "smi"
     submenu = None
 
     @property
     def available(self):
-        mnr = self.request.principal.getAddress().mnr
-        if mnr.startswith('3.2.') or mnr.startswith('3.3.'):
-            return False
+        principal = self.request.principal
+        from ukhvoucher.apps import USERS
+        print principal.id
+        if principal.id not in USERS.keys():
+            mnr = principal.getAddress().mnr
+            if mnr.startswith('3.2.') or mnr.startswith('3.3.'):
+                return False
         return True
 
     @property

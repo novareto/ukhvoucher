@@ -24,7 +24,7 @@ $(document).ready(function() {
        play("success");
    });
 
-   $(document).bind("chosen:no_results", function(e) {
+   $('select#form-field-vouchers').bind("chosen:no_results", function(e) {
        play('failure');
    });
 
@@ -36,4 +36,6 @@ $(document).ready(function() {
 // MASK
 $('input#form-field-mitarbeiter').mask('99999');
 $('input#form-field-lehrkraefte').mask('9999');
+$('input#form-field-von').mask('99.99.9999', {placeholder:"tt.mm.jjjj"});
+$('input#form-field-bis').mask('99.99.9999', {placeholder:"tt.mm.jjjj"});
 })

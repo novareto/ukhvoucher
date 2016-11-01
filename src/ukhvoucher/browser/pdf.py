@@ -45,9 +45,11 @@ class PDF(uvclight.Page):
         adr = principal.getAddress()
         account = principal.getAccount()
         z1 = 1
+        pz = 0
         #z2 = len(principal.getVouchers())
         for voucher in principal.getVouchers(cat=self.request.form.get('cat')):
             if voucher.status.strip() == CREATED:
+                pz = pz + 1
                 ikg = str(voucher.cat.strip())
                 # ######################################
                 c.setFont(schriftart, 12)
@@ -189,6 +191,53 @@ class PDF(uvclight.Page):
                 z1 = z1 + 1
                 # Seitenumbruch
                 c.showPage()
+        if pz == 0:
+            ikg = str(voucher.cat.strip())
+            # ######################################
+            c.setFont(schriftart, 12)
+            bcp = '%s/static/logo_ukh.JPG' % path.dirname(ukhvoucher.__file__)
+            c.drawImage(bcp, 15.5 * cm, 27.2 * cm, width=4.5 * cm, height=1.3 * cm)
+            # Eigene Adresse
+            c.setFont(schriftart, 9)
+            c.drawString(15.5 * cm, 26.0 * cm, u'Leonardo-da-Vinci-Allee 20')
+            c.drawString(15.5 * cm, 25.6 * cm, u'60486 Frankfurt')
+            c.drawString(15.5 * cm, 25.2 * cm, u'Telefon')
+            c.drawString(17.3 * cm, 25.2 * cm, u'069 29972-440')
+            c.drawString(15.5 * cm, 24.8 * cm, u'Fax')
+            c.drawString(17.3 * cm, 24.8 * cm, u'069 29972-8459')
+            c.drawString(15.5 * cm, 24.4 * cm, u'Internet')
+            c.drawString(17.3 * cm, 24.4 * cm, u'www.ukh.de')
+            c.drawString(15.5 * cm, 24.0 * cm, u'E-Mail')
+            c.drawString(17.3 * cm, 24.0 * cm, u'erste-hilfe@ukh.de')
+            # Adressdaten
+            c.setFont(schriftartfett, 12)
+            x = 23.5
+            # Namensfelder werden nur ausgegeben wenn diese gefuellt sind
+            mnr = adr.mnr.strip()
+            if mnr != '':
+                if ikg == 'K7':
+                    c.drawString(2.5 * cm, x * cm, u'Einrichtungsnummer: ' + mnr)
+                elif ikg == 'K9':
+                    c.drawString(2.5 * cm, x * cm, u'Mitglieds- oder Betriebsnummer: ' + mnr)
+                else:
+                    c.drawString(2.5 * cm, x * cm, u'Mitgliedsnummer: ' + mnr)
+            x = x - 1.0
+            # Namensfelder werden nur ausgegeben wenn diese gefuellt sind
+            c.drawString(2.5 * cm, x * cm, adr.name1.strip() + ' ' + adr.name2.strip())
+            x = x - 0.5
+            c.drawString(2.5 * cm, x * cm, adr.name3.strip())
+            x = x - 0.5
+            c.drawString(2.5 * cm, x * cm, adr.street.strip() + ' ' + adr.number.strip())
+            x = x - 0.5
+            c.drawString(2.5 * cm, x * cm, str(adr.zip_code) + ' ' + adr.city.strip())
+            #####################################################
+            # Überschrift
+            c.setFillColor(black)
+            c.setFont(schriftartfett, 12)
+            c.drawString(2.5 * cm, 18.5 * cm, u'Es stehen keine Berechtigungsscheine zur Verfügung!')
+            c.drawString(2.5 * cm, 17.5 * cm, u'Möglicherweise sind alle Berechtigungsscheine aufgebraucht.')
+            c.drawString(2.5 * cm, 16.9 * cm, u'Bitte setzen Sie sich gegebenenfalls mit der Unfallkasse Hessen')
+            c.drawString(2.5 * cm, 16.3 * cm, u'unter der oben genannten Telefonnummer in Verbindung.')
         # ENDE und Save
         c.save()
         tmp.seek(0)

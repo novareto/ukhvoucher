@@ -35,7 +35,8 @@ class SearchUnternehmen(uvclight.JSON):
     uvclight.name('search_unternehmen')
     uvclight.layer(IAdminLayer)
     uvclight.context(Interface)
-    require('manage.vouchers')
+    require('display.vouchers')
+    #require('manage.vouchers')
 
     #@profile
     def update(self):
@@ -49,6 +50,7 @@ class SearchUnternehmen(uvclight.JSON):
         for item in self.vocabulary:
             if matcher in item.title.lower():
                 terms.append({'id': item.token, 'text': item.title})
+        print "YES EYSES"
         return {'q': self.term, 'results': terms}
 
 

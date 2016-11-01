@@ -463,8 +463,10 @@ class DisableVouchers(Form):
 MT = u"""Der Erste-Hilfe-Benutzer
 
 %s
+
 %s
 %s
+
 
 bittet um Kontaktaufnahme zum Thema: %s
 
@@ -497,7 +499,7 @@ class Kontakt(uvclight.Form):
         from ukhvoucher.utils import send_mail
         adr = self.request.principal.getAddress()
         acu = self.request.principal.getAccount()
-        adrname = adr.name1.strip() + ' ' + adr.name2.strip()
+        adrname = adr.name1.strip() + ' ' + adr.name2.strip() + ' ' + adr.name3.strip()
         adrstrasse = adr.street.strip() + ' ' + str(adr.number.strip())
         adrplzort = str(adr.zip_code) + ' ' + adr.city
         acuname = acu.vname + ' ' + acu.nname

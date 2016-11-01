@@ -11,7 +11,7 @@
             </li>
         </ul>
     </div>
-    <table>
+    <table tal:define="nadr request.principal.getAddress()">
         <tr>
             <th></th>
             <th></th>
@@ -21,9 +21,9 @@
               Name:  
             </td>
             <td>
-              <span tal:content="adr[0]['name1']" />
-              <span tal:content="adr[0]['name2']" />
-              <span tal:content="adr[0]['name3']" />
+              <span tal:content="nadr.name1" />
+              <span tal:content="nadr.name2" />
+              <span tal:content="nadr.name3" />
             </td>
         </tr>
         <tr>
@@ -31,8 +31,8 @@
               Straße, Nr.:  
             </td>
             <td>
-              <span tal:content="adr[0]['street']" />
-              <span tal:content="adr[0]['number']" />
+              <span tal:content="nadr.street" />
+              <span tal:content="nadr.number" />
             </td>
         </tr>
         <tr>
@@ -40,8 +40,8 @@
               Plz, Ort:  
             </td>
             <td>
-              <span tal:content="adr[0]['zip_code']" />
-              <span tal:content="adr[0]['city']" />
+              <span tal:content="nadr.zip_code" />
+              <span tal:content="nadr.city" />
             </td>
         </tr>
     </table>

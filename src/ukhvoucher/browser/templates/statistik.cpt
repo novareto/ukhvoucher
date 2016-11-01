@@ -1,4 +1,6 @@
 <h1> Statistik </h1>
+<p> Datumsangaben bei der Suche bitte im Format TT.MM.JJJJ eintragen! </p>
+
 
 <div metal:use-macro="macro['editform']"/>
 
