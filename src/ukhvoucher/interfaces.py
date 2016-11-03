@@ -39,13 +39,12 @@ HK2 = u"""
 <p>-  Theater- und Musikbetriebe</p>
 <p>-  Betreuungseinrichtungen (ohne Kindertagesstätten, -krippen, Schulbetreuung)</p>
 <p>-  Entsorgungsbetriebe und Bauhöfe ohne Einteilung in Kolonnen</p>
-<p>-  Schulpersonal der Schulträger</p>
-<p>-  Betriebe mit beruflich qualifizierten Ersthelfern wie Gesundheits- und Pflegediensten, Schwimmbädern (K11)</p>
 <br>
 <p>Bitte beachten Sie hier die Besonderheiten für verschiedene Betriebsarten wie beispielsweise:</p>
-<p>-  Kinderbetreuungseinrichtungen (K3) und Schulbetreuung (K9)</p>
+<p>-  Kinderbetreuungseinrichtungen (K3), Schulpersonal der Schulträger (K8) und Schulbetreuung (K9)</p>
 <p>-  Betriebe mit Beschäftigten in Kolonnen (K4)</p>
 <p>-  Betriebe mit besonderer Gefährdung (K5, K6)</p>
+<p>-  Betriebe mit beruflich qualifizierten Ersthelfern wie Gesundheits- und Pflegediensten, Schwimmbädern (K11)</p>
 <h4><u>Beschäftigte:</u></h4>
 <p>Bitte tragen Sie <u>alle</u> bei der UKH versicherten beschäftigten Personen (ohne Beamte) ein, die in
    anderen Bereichen als Verwaltung / Büros arbeiten abzüglich</p>
