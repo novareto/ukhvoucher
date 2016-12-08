@@ -130,6 +130,12 @@ class CalculateInsert(Action):
             now = datetime.datetime.now()
             principal = form.request.principal
             session = get_session('ukhvoucher')
+            kat = form._iface.getName()
+            cat_vouchers = principal.getVouchers(cat=kat)
+            if len(cat_vouchers) > 0:
+                form.flash(u'Die Berechtigungsscheine wurde für diese Kategorie bereits erzeugt.', type="info")
+                url = form.application_url()
+                return SuccessMarker('Success', True, url=url)
             try:
                 oid = int(session.query(max(Voucher.oid)).one()[0]) + 1
             except:
