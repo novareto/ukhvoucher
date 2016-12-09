@@ -20,7 +20,7 @@ from .. import resources
 from dolmen.forms.base.errors import Error
 
 
-FEHLER01 = u"""
+FEHLER01a = u"""
 <h2> Ihre Angaben sind nicht plausibel. </h2>
 <h3> Bitte prüfen Sie Ihre Angaben hinsichtlich der </h3>
 <h3> - Anzahl der Beschäftigten </h3>
@@ -31,6 +31,22 @@ FEHLER01 = u"""
 <h3> (069 29972-440, montags bis freitags von 7:30 bis 18:00 Uhr E-Mail: erste-hilfe@ukh.de).</h3>
 """
 
+FEHLER01b = u"""
+<h2> Ihre Angaben sind nicht plausibel. </h2>
+<h3> Bitte prüfen Sie Ihre Angaben hinsichtlich der </h3>
+<h3> - Anzahl der Kindergruppen </h3>
+<h3> - Anzahl der angegebenen Kita Standorte </h3>
+<h3> Die Anzahl der Standorte darf nicht größer sein als die Anzahl der Gruppen. </h3>
+"""
+
+FEHLER01c = u"""
+<h2> Ihre Angaben sind nicht plausibel. </h2>
+<h3> Bitte prüfen Sie Ihre Angaben hinsichtlich der </h3>
+<h3> - Anzahl der Einsatzkräfte </h3>
+<h3> - Anzahl der Betreuer </h3>
+<h3> Die Anzahl der Betreuer darf nicht größer sein als die Anzahl der Einsatzkräfte. </h3>
+"""
+
 FEHLER02 = u"""
 <h2> Es ist ein Fehler aufgetreten. </h2>
 <h3> Bitte bestätigen Sie die Richtigkeit ihrer Angabe! </h3>
@@ -39,6 +55,12 @@ FEHLER02 = u"""
 FEHLER03 = u"""
 <h2> Es ist ein Fehler aufgetreten. </h2>
 <h3> Bitte bestätigen Sie die Richtigkeit ihrer Angaben! </h3>
+"""
+
+FEHLER04 = u"""
+<h2> Es ist ein Fehler aufgetreten. </h2>
+<h3> Eine Zahl ist kleiner oder gleich "0" </h3>
+<h3> Bitte prüfen Sie Ihre Angaben! </h3>
 """
 
 
@@ -56,40 +78,60 @@ class KontingentValidator(object):
             else:
                 self.errors.append(Error(FEHLER03, identifier="form",),)
         if data.get('bestaetigung') is True:
-            # K1 und K2
-            if data.get('mitarbeiter'):
-                mitarbeiter = data.get('mitarbeiter')
-                standorte = data.get('standorte')
-                if str(mitarbeiter).isdigit() and str(standorte).isdigit():
-                    mitarbeiter = mitarbeiter / 2
-                    if mitarbeiter < standorte:
-                        self.errors.append(Error(FEHLER01, identifier="form",),)
-            # K3
-            if data.get('kitas') and data.get('gruppen'):
-
-                kitas = data.get('kitas')
-                gruppen = data.get('gruppen')
-                print kitas
-                print gruppen
-                if str(kitas).isdigit() and str(gruppen).isdigit():
-                    if int(gruppen) < int(kitas):
-                        self.errors.append(Error(u"Die Anzahl der Standorte darf nicht größer sein als die Anzahl der Gruppen.", identifier="form",),)
-            # K11
-            if data.get('ma_verwaltung'):
-                z = 0
-                for i in range(2):
-                    if z == 0:
-                        mitarbeiter = data.get('ma_verwaltung')
-                        standorte = data.get('st_verwaltung')
-                    if z == 1:
-                        mitarbeiter = data.get('ma_technik')
-                        standorte = data.get('st_technik')
+            # Nulleingabe
+            for x in ['mitarbeiter', 'standorte', 'kitas', 'gruppen', 'kolonne', 'lehrkraefte',
+                      'schulstandorte', 'einsatzkraefte', 'betreuer',
+                      'ma_verwaltung', 'st_verwaltung', 'ma_technik', 'st_technik']:
+                if data.get(x) is not None:
+                    if data.get(x) <= 0:
+                        print x, data.get(x)
+                        self.errors.append(Error(FEHLER04, identifier="form",),)
+                        return self.errors
+            if len(data) == 3:
+                # K1 und K2
+                if data.get('mitarbeiter'):
+                    mitarbeiter = data.get('mitarbeiter')
+                    standorte = data.get('standorte')
                     if str(mitarbeiter).isdigit() and str(standorte).isdigit():
                         mitarbeiter = mitarbeiter / 2
                         if mitarbeiter < standorte:
-                            if len(self.errors) < 1:
-                                self.errors.append(Error(FEHLER01, identifier="form",),)
-                    z = z + 1
+                            self.errors.append(Error(FEHLER01a, identifier="form",),)
+                            return self.errors
+                # K3
+                if data.get('kitas'):
+                    kitas = data.get('kitas')
+                    gruppen = data.get('gruppen')
+                    if str(kitas).isdigit() and str(gruppen).isdigit():
+                        if int(gruppen) < int(kitas):
+                            self.errors.append(Error(FEHLER01b, identifier="form",),)
+                            return self.errors
+                # K10
+                if data.get('einsatzkraefte'):
+                    ek = data.get('einsatzkraefte')
+                    bt = data.get('betreuer')
+                    if str(ek).isdigit() and str(bt).isdigit():
+                        if int(ek) < int(bt):
+                            self.errors.append(Error(FEHLER01c, identifier="form",),)
+                            return self.errors
+
+            # K11
+            if len(data) == 5:
+                if data.get('ma_verwaltung'):
+                    z = 0
+                    for i in range(2):
+                        if z == 0:
+                            mitarbeiter = data.get('ma_verwaltung')
+                            standorte = data.get('st_verwaltung')
+                        if z == 1:
+                            mitarbeiter = data.get('ma_technik')
+                            standorte = data.get('st_technik')
+                        if str(mitarbeiter).isdigit() and str(standorte).isdigit():
+                            mitarbeiter = mitarbeiter / 2
+                            if mitarbeiter < standorte:
+                                if len(self.errors) < 1:
+                                    self.errors.append(Error(FEHLER01a, identifier="form",),)
+                                    return self.errors
+                        z = z + 1
         return self.errors
 
 
@@ -130,6 +172,12 @@ class CalculateInsert(Action):
             now = datetime.datetime.now()
             principal = form.request.principal
             session = get_session('ukhvoucher')
+            kat = form._iface.getName()
+            cat_vouchers = principal.getVouchers(cat=kat)
+            if len(cat_vouchers) > 0:
+                form.flash(u'Die Berechtigungsscheine wurde für diese Kategorie bereits erzeugt.', type="info")
+                url = form.application_url()
+                return SuccessMarker('Success', True, url=url)
             try:
                 oid = int(session.query(max(Voucher.oid)).one()[0]) + 1
             except:

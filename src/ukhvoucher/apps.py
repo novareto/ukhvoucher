@@ -53,6 +53,7 @@ USERS = {
     'bsvejda': dict(login="bsvejda", passwort="ZT780!", permissions=('manage.vouchers', 'display.vouchers')),
     'pschaeferdeluca': dict(login="pschaeferdeluca", passwort="UK926!", permissions=('manage.vouchers', 'display.vouchers')),
     'dreichelt': dict(login="dreichelt", passwort="xq819!", permissions=('manage.vouchers', 'display.vouchers')),
+    'amehicjusic': dict(login="amehicjusic", passwort="tz851!", permissions=('manage.vouchers', 'display.vouchers')),
     'viewer': dict(login="viewer", passwort="viewer", permissions=("display.vouchers",)),
     }
 
