@@ -1,4 +1,14 @@
 /*jshint forin:true, noarg:true, noempty:true, eqeqeq:false, bitwise:true, strict:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, onevar:false, nomen:false, regexp:false, plusplus:false, newcap:true */
+
+function appendToChosen(select, id, value){
+    $(select)
+        .append($('<option></option>')
+        .val(id)
+        .attr('selected', 'selected')
+        .html(value)).trigger('liszt:updated');
+}
+
+
 (function ($) {
 	"use strict";
 	//Thanks John - http://ejohn.org/blog/javascript-array-remove/
@@ -14,7 +24,7 @@
 				input,
 				inputBG,
 				callback,
-				throttle = false,
+				throttle = true,
 				requestQueue = [],
 				typing = false,
 				loadingImg = '/img/loading.gif',
@@ -72,10 +82,10 @@
 				if (old || !keep) { return false; }
 			} else {
 				//only 1 request was made by the user remove it from queue and continue processing
-				if (typeof requestQueue.shift() === 'undefined') {
+				//if (typeof requestQueue.shift() === 'undefined') {
 					//If all the old responses have been discarded because we've received the new one already
-					return false;
-				}
+			//		return false;
+		//		}
 			}
 			//while the request was processing did the user "empty" the input box
 			inputEmptiedValue = $.trim(input.val());//if we have a minLength > 1 then we have to preserve the value (TODO::watch out for potential XSS/other breakages)
@@ -87,7 +97,7 @@
 			} else if ('results' in items) {
 				//default behavior if process items isn't defined
 				//expects there to be a results key in data returned that has the results of the search
-				items = items.results;
+			    items = items.results;
 			} else {
 				console.log('Expected results key in data, but was not found. Options could not be built');
 				return false;
@@ -109,13 +119,27 @@
 			//appending this even on single select in the event the user changes their mind and input is blurred. Keeps selected option selected
 			selected.appendTo(select);
 
-			if (!inputEmptied) {
+		        if (items.length == 1) {
+			    $.each(items, function (i, opt) {
+				if ($('option[value="'+opt.id+'"]', select)
+				    .not(':selected')) {
+				    appendToChosen(select, opt.id, opt.text);
+				    
+				}
+			    });
+			}
+			else if (!inputEmptied) {
 				if ($.isArray(items)) {
 					//array of kv pairs [{id:'', text:''}...]
 					$.each(items, function (i, opt) {
-						if (typeof valuesHash[opt.id] === 'undefined') {
-							$('<option value="' + opt.id + '">' + opt.text + '</option>').appendTo(select);
+					    if (typeof valuesHash[opt.id] === 'undefined') {
+						if (opt.disabled == false) {
+						    $('<option value="' + opt.id + '">' + opt.text + '</option>').appendTo(select);
 						}
+						else {
+						    $('<option disabled="disabled" value="' + opt.id + '">' + opt.text + '</option>').appendTo(select);
+						}
+					    }
 					});
 				} else {
 					//hash of kv pairs {'id':'text'...}
@@ -177,6 +201,9 @@
 					q = field.val();
 
 			//don't fire ajax if...
+            console.log(q);
+            console.log(e.type);
+            console.log(e.which);
 			if ((e.type === 'paste' && field.is(':not(:focus)')) ||
         (e.which && (
 				(e.which ===  9)  ||//Tab
@@ -199,7 +226,7 @@
 				(e.which === 45)  ||//Insert
 				(e.which === 144) ||//NumLock
 				(e.which === 145) ||//ScrollLock
-				(e.which === 91)  ||//WIN Key (Start)
+				(e.which === 9122)  ||//WIN Key (Start)
 				(e.which === 93)  ||//WIN Menu
 				(e.which === 224) ||//command key
 				(e.which >= 112 && e.which <= 123)//F1 to F12
