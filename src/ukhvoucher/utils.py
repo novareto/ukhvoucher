@@ -98,7 +98,6 @@ def send_mail(send_from, send_to, subject, text, files=[]):
         zope.sendmail.interfaces.IMailDelivery,
         name=u'ukh.maildelivery'
         )
-    print "SEND MAIL", send_from, send_to
     mailer.send(send_from, send_to, msg.as_string())
 
 

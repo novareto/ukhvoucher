@@ -34,7 +34,6 @@ class SearchAction(uvclight.Action):
         for attr in model.searchable_attrs:
 
             if attr in data:
-                print data
                 value = data[attr]
                 if value is NO_VALUE:
                     continue

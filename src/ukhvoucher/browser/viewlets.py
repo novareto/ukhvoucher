@@ -92,7 +92,6 @@ class VoucherGeneration(uvclight.Viewlet):
             return address
         @ram.cache(_render_details_cachekey)
         def getSlowAdr(oid):
-            print "ADR FROM CAHCE"
             address = session.query(models.AddressTraeger).get(oid)
             if address:
                 return address
@@ -269,7 +268,6 @@ class PW(uvclight.MenuItem):
     def available(self):
         principal = self.request.principal
         from ukhvoucher.apps import USERS
-        print principal.id
         if principal.id not in USERS.keys():
             mnr = principal.getAddress().mnr
             if mnr.startswith('3.2.') or mnr.startswith('3.3.'):

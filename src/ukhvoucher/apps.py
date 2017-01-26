@@ -138,7 +138,6 @@ class Admin(SQLPublication, SecurePublication):
             masquarade = session.get('masquarade', None)
             user = USERS.get(username)
             permissions = frozenset(user['permissions'])
-            print "PERMISSION FOR", user, permissions
             return AdminPrincipal(username, masquarade, permissions)
         return unauthenticated_principal
 

@@ -1,0 +1,16 @@
+<select id="form_field_vouchers" multiple name="form.field.vouchers" style="width: 550px">
+</select>
+
+<Script language="Javascript">
+   
+  $('select#form_field_vouchers').ajaxChosen({
+     dataType: 'json',
+     async: true,
+     type: 'POST',
+     url: '<tal:url replace="'%s/SearchJSONVouchers' % widget.form.application_url()" />'
+   },
+   {
+      minLength: 6 
+   });
+
+</Script>

@@ -87,6 +87,12 @@ class CreateModel(Form):
     def update(self):
         resources.ukhvouchers.need()
         resources.ehcss.need()
+        resources.chosenajax.need()
+
+    def updateWidgets(self):
+        super(CreateModel, self).updateWidgets()
+        field_id = self.fieldWidgets.get('form.field.vouchers')
+        field_id.template = uvclight.get_template('select.cpt', __file__)
 
     @property
     def action_url(self):
@@ -196,7 +202,6 @@ class EditModel(Form):
     @action(_(u'Änderung übernehmen'))
     def handle_save(self):
         data, errors = self.extractData()
-        print data
         journal_note = data.pop('note')
 
         if errors:
@@ -205,8 +210,6 @@ class EditModel(Form):
 
         if isinstance(self.context, Invoice):
             data.pop('oid')
-        print self.getContentData()
-        print data
         apply_data_event(self.fields, self.getContentData(), data)
 
         # journalize
