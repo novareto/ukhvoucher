@@ -5,7 +5,8 @@ function appendToChosen(select, id, value){
         .append($('<option></option>')
         .val(id)
         .attr('selected', 'selected')
-        .html(value)).trigger('liszt:updated');
+		.html(value)).trigger('liszt:updated');
+    $(select).trigger("chosen:close");
 }
 
 
@@ -119,12 +120,13 @@ function appendToChosen(select, id, value){
 			//appending this even on single select in the event the user changes their mind and input is blurred. Keeps selected option selected
 			selected.appendTo(select);
 
+		    var addedAjaxOption = false;
 		        if (items.length == 1) {
 			    $.each(items, function (i, opt) {
-				if ($('option[value="'+opt.id+'"]', select)
-				    .not(':selected')) {
+				if (!$('option[value="'+opt.id+'"]:selected', select).length) {
+				    var addedAjaxOption = true;
 				    appendToChosen(select, opt.id, opt.text);
-				    
+				    input.val('');
 				}
 			    });
 			}
@@ -150,13 +152,17 @@ function appendToChosen(select, id, value){
 					});
 				}
 			}
-			//update chosen
-			select.trigger("chosen:updated");
-			//right key, for highlight options after ajax is performed
-			keyRight = $.Event('keyup');
-			keyRight.which = 39;
-			//highlight
-			var val = null;
+
+		        if (addedAjaxOption == false) {
+			    //update chosen
+			    select.trigger("chosen:updated");
+			    //right key, for highlight options after ajax is performed
+			    keyRight = $.Event('keyup');
+			    keyRight.which = 39;
+			    //highlight
+			    var val = null;
+			}
+
 			if(!inputEmptied){
 				val = typeof data.q === 'undefined' ? inputEmptiedValue : data.q
 			}
