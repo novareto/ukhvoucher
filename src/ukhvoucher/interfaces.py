@@ -135,6 +135,12 @@ HK9 = u"""
 
 HK10 = u"""
 <h2>K10: Freiwillige Feuerwehren</h2>
+<font color="red">
+<p><b>Bitte beachten Sie:</b></p>
+<p><b>Ab 1.4.2017 gilt im Bereich der Freiwilligen Feuerwehren ein mit den Kreisbrandinspektoren
+      abgestimmtes Erste-Hilfe-Verfahren. Weitere Informationen folgen in Kürze. Bis 31.3.2017 steht
+      Ihnen als Kommune das aktuelle Verfahren zur Verfügung.</b></p>
+</font>
 <h4><u>Aktive Einsatzkräfte:</u></h4>
 <p>Bitte tragen Sie die Summe der aktiven Einsatzkräfte aus allen Orts- oder Stadtteilfeuerwehren ein.
    Die UKH übernimmt die Kosten für Erste-Hilfe-Lehrgänge über 9 Unterrichtseinheiten für 10 % der
@@ -541,7 +547,8 @@ class IInvoice(Interface):
     )
 
     vouchers = schema.Set(
-        value_type=schema.Choice(source=get_source('vouchers')),
+        #value_type=schema.Choice(source=get_source('vouchers')),
+        value_type=schema.TextLine(),
         title=_(u"Vouchers"),
         required=True,
     )

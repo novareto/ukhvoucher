@@ -1,12 +1,13 @@
 /*jshint forin:true, noarg:true, noempty:true, eqeqeq:false, bitwise:true, strict:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, onevar:false, nomen:false, regexp:false, plusplus:false, newcap:true */
 
 function appendToChosen(select, id, value){
+    enter = $.Event('keypress');
+    enter.which = 13;
     $(select)
         .append($('<option></option>')
         .val(id)
         .attr('selected', 'selected')
-		.html(value)).trigger('liszt:updated');
-    $(select).trigger("chosen:close");
+    		.html(value)).trigger('liszt:updated').trigger('chosen:updated').trigger(":blur");
 }
 
 
@@ -123,23 +124,24 @@ function appendToChosen(select, id, value){
 		    var addedAjaxOption = false;
 		        if (items.length == 1) {
 			    $.each(items, function (i, opt) {
-				if (!$('option[value="'+opt.id+'"]:selected', select).length) {
-				    var addedAjaxOption = true;
-				    appendToChosen(select, opt.id, opt.text);
-				    input.val('');
+				if (opt.disabled == false) {
+				    if ($.inArray(opt.id.toString(), select.val()) == -1 ) {
+				appendToChosen(select, opt.id, opt.text);
+				    }
 				}
+
 			    });
 			}
-			else if (!inputEmptied) {
+			if (!inputEmptied) {
 				if ($.isArray(items)) {
 					//array of kv pairs [{id:'', text:''}...]
 					$.each(items, function (i, opt) {
 					    if (typeof valuesHash[opt.id] === 'undefined') {
-						if (opt.disabled == false) {
-						    $('<option value="' + opt.id + '">' + opt.text + '</option>').appendTo(select);
+						if (opt.disabled == true) {
+						    $('<option disabled="disabled" value="' + opt.id + '">' + opt.text + '</option>').appendTo(select);
 						}
 						else {
-						    $('<option disabled="disabled" value="' + opt.id + '">' + opt.text + '</option>').appendTo(select);
+						    $('<option value="' + opt.id + '">' + opt.text + '</option>').appendTo(select);
 						}
 					    }
 					});

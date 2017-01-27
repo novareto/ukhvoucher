@@ -7,7 +7,8 @@ $(document).ready(function() {
      var audio = document.getElementById(id);
      audio.play();
    }
-   
+
+/*
    $('select').chosen({
 	placeholder_text_multiple: 'Bitte wählen Sie die Berechtigungsscheine',
 	placeholder_text_single: 'Bitte wählen Sie eine Begründung aus',
@@ -16,6 +17,7 @@ $(document).ready(function() {
     min_length: 5,
 }
 );
+*/
 
    $('select#form-field-vouchers').on('change', function(evt, params) {
        console.log(evt);
