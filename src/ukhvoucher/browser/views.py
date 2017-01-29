@@ -1,27 +1,28 @@
 # -*- coding: utf-8 -*-
 
 import uvclight
-from GenericCache.GenericCache import GenericCache
-from webhelpers.html.builder import HTML
-from ukhvoucher import models
 from ..apps import AdminRoot, UserRoot
+from ..components import cached
 from ..interfaces import IAdminLayer, IUserLayer
 from ..interfaces import IModelContainer, get_oid
 from ..models import JournalEntry
 from ..resources import ukhcss
 from ..resources import ukhvouchers, masked_input
 from .batch import get_dichotomy_batches
+from GenericCache.GenericCache import GenericCache
 from cromlech.sqlalchemy import get_session
 from dolmen.batch import Batcher
+from dolmen.location import get_absolute_url
+from natsort import natsorted
+from profilehooks import profile
 from sqlalchemy import inspect
+from ukhvoucher import models
 from ul.auth import require
+from webhelpers.html.builder import HTML
 from zope.component import getMultiAdapter
 from zope.component.hooks import getSite
 from zope.i18n import translate
 from zope.interface import Interface
-from profilehooks import profile
-from natsort import natsorted
-from ..components import cached
 
 
 cache = GenericCache(maxsize=5000)
@@ -201,6 +202,86 @@ class AdminRootIndex(uvclight.Page):
         return rc
 
 
+from math import ceil
+from urllib import urlencode
+
+def safe_str(v):
+    if isinstance(v, str):
+        return v
+    elif isinstance(v, unicode):
+        return v.encode('utf-8')
+    else:
+        raise TypeError("Can't urlencode param %s" % v)
+
+
+def flatten_params(params):
+    for k, v in params.items():
+        if isinstance(v, (str, unicode)):
+           yield k, v
+        else:
+            try:
+                iterator = iter(v)
+                for i in iterator:
+                        yield k, i
+            except TypeError:
+                yield k, str(v)
+
+
+class Batch(object):
+
+    prefix = 'batch'
+    
+    def __init__(self, context, request, length=None, size=10):
+        self.context = context
+        self.request = request
+        if length is None:
+            length = len(context)
+        self.length = length
+        self.size = size
+        self.current = 1
+
+    def update(self):
+        self.pages = int(ceil(float(self.length) / self.size))
+        self.current = int(self.request.form.get(
+            self.prefix + '.page', self.current))
+
+    def get_elements(self):
+        start = (self.current - 1) * self.size
+        return list(self.context.slice(start, self.size))
+
+    def batch_url(self, page):
+        param = self.prefix + ".page"
+        params = [(k, safe_str(v))
+                  for k, v in flatten_params(self.request.form)
+                  if k not in (param,)]
+        params.append((param, page))
+        return '?' + urlencode(params)
+
+    def batches(self):
+        url = get_absolute_url(self.context, self.request)
+        for page in xrange(1, self.pages + 1):
+            if page == self.current:
+                current = True
+            else:
+                current = False
+            yield {
+                'current': current,
+                'id': page,
+                'url': url + self.batch_url(page),
+                }
+
+    def dichotomy(self):
+        url = get_absolute_url(self.context, self.request)
+        start = (self.current - 1) * self.size
+        for type, value in get_dichotomy_batches(self.pages, self.size):
+            yield {
+                'current': type == 'current',
+                'id': value,
+                'url': url + self.batch_url(value),
+                }
+
+
+            
 class ContainerIndex(uvclight.Page):
     uvclight.name('index')
     uvclight.layer(IAdminLayer)
@@ -228,28 +309,13 @@ class ContainerIndex(uvclight.Page):
                     'value': value,
                     'link': col.identifier == 'oid' and itemurl or ''}]
 
-    def batch_elements(self):
-        return list(self.context)
-
-    def set_batch(self):
-        self.batcher = Batcher(self.context, self.request, size=50)
-        elements = self.batch_elements()
-        if elements:
-            self.batcher.update(elements)
-            self.dichotomy = get_dichotomy_batches(
-                self.batcher.batch.batches,
-                self.batcher.batch.total,
-                self.batcher.batch.number)
-            self.batch = self.batching.render(
-                self, **self.namespace())
-        else:
-            self.batch = u''
-
     def update(self):
         ukhvouchers.need()
         ukhcss.need()
         self.columns = [field.title for field in self.context.listing_attrs]
-        self.set_batch()
+        self.batcher = Batch(self.context, self.request, size=150)
+        self.batcher.update()
+        self.batch = self.batching.render(self, **{'batch': self.batcher})
 
     def relation(self, id, value):
         site = getSite()
@@ -257,6 +323,7 @@ class ContainerIndex(uvclight.Page):
             baseurl = self.url(site) + '/vouchers/'
             for voucher in value:
                 yield voucher, baseurl + str(voucher.oid)
+
 
 class JournalIndex(uvclight.Page):
     uvclight.name('journal')

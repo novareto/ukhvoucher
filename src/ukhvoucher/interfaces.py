@@ -538,6 +538,9 @@ class IAddress(Interface):
     )
 
 
+from ukhvoucher.mytest import mysource
+
+
 class IInvoice(Interface):
 
     oid = schema.TextLine(
@@ -548,7 +551,8 @@ class IInvoice(Interface):
 
     vouchers = schema.Set(
         #value_type=schema.Choice(source=get_source('vouchers')),
-        value_type=schema.TextLine(),
+        value_type=schema.Choice(source=mysource),
+        #value_type=schema.TextLine(),
         title=_(u"Vouchers"),
         required=True,
     )

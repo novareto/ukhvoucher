@@ -58,4 +58,3 @@ class CustomMultiWidgetExtractor(WidgetExtractor):
                 except LookupError:
                     return (None, _(u'The selected value is not available.'))
         return (value, errors)
-

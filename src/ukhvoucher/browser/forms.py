@@ -28,7 +28,7 @@ from uvc.entities.browser import IContextualActionsMenu, IDocumentActions
 MULTI = set()
 
 MULTI_DISABLED = set((
-    "vouchers",
+    "vouchers_",
 ))
 
 
@@ -87,7 +87,7 @@ class CreateModel(Form):
     def update(self):
         resources.ukhvouchers.need()
         resources.ehcss.need()
-        resources.chosenajax.need()
+        resources.chosenajaxe.need()
 
     def updateWidgets(self):
         super(CreateModel, self).updateWidgets()

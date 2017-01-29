@@ -172,7 +172,7 @@ function appendToChosen(select, id, value){
 
 		        if (addedAjaxOption == false) {
 			    //update chosen
-			    select.trigger("chosen:updated");
+			    //select.trigger("chosen:updated");
 			    //right key, for highlight options after ajax is performed
 			    keyRight = $.Event('keyup');
 			    keyRight.which = 39;
@@ -224,9 +224,6 @@ function appendToChosen(select, id, value){
 					q = field.val();
 
 			//don't fire ajax if...
-            console.log(q);
-            console.log(e.type);
-            console.log(e.which);
 			if ((e.type === 'paste' && field.is(':not(:focus)')) ||
         (e.which && (
 				(e.which ===  9)  ||//Tab

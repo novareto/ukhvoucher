@@ -1,7 +1,7 @@
 from math import log
 
 
-def get_dichotomy_batches(batches, N, n):
+def get_dichotomy_batches(N, n):
     """
     A dummy batch object::
 
@@ -66,17 +66,14 @@ def get_dichotomy_batches(batches, N, n):
     last = 0
     for b in markers:
         if b and b > last:
-
-            batch = batches[b - 1]
-
             if last and b > last + 1:
                 yield 'ellipsis', '...'
-
+                
             if b == n:
-                yield 'current', batch
+                yield 'current', b
             elif b > n:
-                yield 'next', batch
+                yield 'next', b
             else:
-                yield 'previous', batch
+                yield 'previous', b
 
             last = b

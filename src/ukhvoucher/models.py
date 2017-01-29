@@ -467,7 +467,7 @@ class Vouchers(SQLContainer):
 
     def key_converter(self, id):
         return int(id)
-
+    
 
 @implementer(IContent, IModelContainer)
 class Invoices(SQLContainer):

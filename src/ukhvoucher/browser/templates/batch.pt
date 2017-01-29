@@ -1,19 +1,15 @@
 <div class="batch">
   <ul>
     <li i18n:translate="">Seiten&nbsp;&nbsp;</li>
-    <li tal:repeat="info view.dichotomy"
-	tal:attributes="class info[0]">
-      <span tal:condition="info[0] == 'ellipsis'"
-	    tal:content="info[1]" />
-
+    <li tal:repeat="info batch.batches()">
       <a class="page"
-	 tal:attributes="href view.batcher.batch_url(info[1])"
-	 tal:condition="info[0] in ['previous', 'next']"
-	 tal:content="info[1].number" />
+	 tal:condition="info['current'] == False"
+	 tal:attributes="href info['url']"
+	 tal:content="info['id']" />
 	
       <a class="page" name="current-page"
-	 tal:condition="info[0] == 'current'"
-	 tal:content="info[1].number" />
+	 tal:condition="info['current'] == True"
+	 tal:content="info['id']" />
     </li>
   </ul>
 </div>
