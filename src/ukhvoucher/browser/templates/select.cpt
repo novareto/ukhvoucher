@@ -1,5 +1,8 @@
 <select id="form_field_vouchers" multiple name="form.field.vouchers" style="width: 550px">
+    <option tal:repeat="opt widget.inputValue()" tal:content="string: ${opt} gebucht" tal:attributes="value opt" selected>
+    </option>
 </select>
+
 
    <input type="hidden" name="#" value="1"
           tal:attributes="name string:${widget.identifier}.present" />

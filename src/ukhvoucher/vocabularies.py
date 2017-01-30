@@ -42,7 +42,6 @@ def all_vouchers(context):
 @grok.provider(IContextSourceBinder)
 def vouchers(context):
     print "VOUCHERS"
-    import pdb; pdb.set_trace()
     session = get_session('ukhvoucher')
     items = []
     disabled = set()

@@ -8,6 +8,16 @@ class MyVoc(SimpleVocabulary):
     def __init__(self):
         print "INIT"
 
+    @property
+    def _terms(self):
+        print "ATTENTION TERMS"
+        session = get_session('ukhvoucher')
+        from ukhvoucher.models import Voucher
+        rc = []
+        for item in session.query(Voucher.oid).all():
+            rc.append(SimpleTerm(item.oid, item.oid, item.oid))
+        return rc
+
     def __contains__(self, value):
         session = get_session('ukhvoucher')
         from ukhvoucher.models import Voucher
@@ -16,7 +26,7 @@ class MyVoc(SimpleVocabulary):
     def getTerm(self, term):
         session = get_session('ukhvoucher')
         from ukhvoucher.models import Voucher
-        item = session.query(Voucher).get(term)
+        item = session.query(Voucher).get(term.oid)
         return SimpleTerm(item, token=item.oid, title="%s - %s %s" %(item.title, item.status.strip(), item.cat))
 
     def getTermByToken(self, token):

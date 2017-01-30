@@ -2,6 +2,7 @@
 
 function play(id) {
     console.log(id)
+    console.log("PLAY PLAY")
     var audio = document.getElementById(id);
     audio.play();
 }

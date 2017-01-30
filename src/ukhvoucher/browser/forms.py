@@ -91,8 +91,10 @@ class CreateModel(Form):
 
     def updateWidgets(self):
         super(CreateModel, self).updateWidgets()
-        field_id = self.fieldWidgets.get('form.field.vouchers')
-        field_id.template = uvclight.get_template('select.cpt', __file__)
+        #import pdb; pdb.set_trace()
+        if 'form.field.vouchers' in self.fieldWidgets:
+            field_id = self.fieldWidgets.get('form.field.vouchers')
+            field_id.template = uvclight.get_template('select.cpt', __file__)
 
     @property
     def action_url(self):
@@ -175,6 +177,13 @@ class EditModel(Form):
             labeltext = u'Zuordnung von Berechtigungsscheinen bearbeiten'
         return labeltext
 
+    def updateWidgets(self):
+        super(EditModel, self).updateWidgets()
+        #import pdb; pdb.set_trace()
+        if 'form.field.vouchers' in self.fieldWidgets:
+            field_id = self.fieldWidgets.get('form.field.vouchers')
+            field_id.template = uvclight.get_template('select.cpt', __file__)
+
     @property
     def fields(self):
         fields = Fields(self.context.__schema__)
@@ -194,6 +203,7 @@ class EditModel(Form):
     def update(self):
         resources.ukhvouchers.need()
         resources.ehcss.need()
+        resources.chosenajaxe.need()
 
     @property
     def action_url(self):
@@ -427,10 +437,19 @@ class DisableVouchers(Form):
 
     def update(self):
         resources.ukhvouchers.need()
+        resources.ehcss.need()
+        #resources.chosenajaxe.need()
 
     @property
     def action_url(self):
         return self.request.path
+
+#    def updateWidgets(self):
+#        super(DisableVouchers, self).updateWidgets()
+#        if 'form.field.vouchers' in self.fieldWidgets:
+#            field_id = self.fieldWidgets.get('form.field.vouchers')
+#            import pdb; pdb.set_trace()
+#            field_id.template = uvclight.get_template('select.cpt', __file__)
 
     @action(_(u'Berechtigungsscheine sperren'))
     def handle_save(self):

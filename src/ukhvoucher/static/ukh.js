@@ -8,8 +8,8 @@ $(document).ready(function() {
      audio.play();
    }
 
-/*
-   $('select').chosen({
+
+   $('form#DisableVouchers select').chosen({
 	placeholder_text_multiple: 'Bitte wählen Sie die Berechtigungsscheine',
 	placeholder_text_single: 'Bitte wählen Sie eine Begründung aus',
     width: '555px',
@@ -17,7 +17,7 @@ $(document).ready(function() {
     min_length: 5,
 }
 );
-*/
+
 
    $('select#form-field-vouchers').on('change', function(evt, params) {
        console.log(evt);
