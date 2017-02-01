@@ -187,7 +187,7 @@ function appendToChosen(select, id, value){
 				val = inputEmptiedValue;
 			}
 
-			//input.val(val).trigger(keyRight).get(0).style.background = inputBG;
+			input.val(val).trigger(keyRight).get(0).style.background = inputBG;
 
 			if (items.length > 0) {
 				$('.no-results', chosen).hide();
