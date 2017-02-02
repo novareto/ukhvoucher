@@ -17,6 +17,24 @@
         </h4>
         <div tal:define="cat_vouchers request.principal.getVouchers(cat['name'])">
           <p tal:condition="cat_vouchers"> Sie haben in diesem Kontingent <span tal:content="len(cat_vouchers)" /> Berechtigungsscheine. </p>
+
+
+             <!-- Sondertext Feuerwehr -->
+             <p tal:condition="cat_vouchers">
+             <div tal:condition="cat['doc'] == u'Freiwillige Feuerwehren (K10)'">
+               <font color="red">
+                 <p><b>Bitte beachten Sie:</b></p>
+                 <p><b>Ab 1.4.2017 gilt im Bereich der Freiwilligen Feuerwehren ein mit den Kreisbrandinspektoren
+                       abgestimmtes Erste-Hilfe-Verfahren.</b></p>
+                 <p><b>Weitere Informationen folgen in Kürze. Bis 31.3.2017 steht
+                       Ihnen als Kommune das aktuelle Verfahren zur Verfügung.</b></p>
+               </font>
+             </div>
+             </p>
+             <!-- #################### -->
+
+
+
           <button tal:condition="not: cat_vouchers" type="button" class="btn btn-primary btn-lg" data-toggle="modal" tal:attributes="data-target '#' + cat['name']">
             Berechtigungsscheine anfordern
           </button>
