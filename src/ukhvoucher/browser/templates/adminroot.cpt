@@ -202,10 +202,12 @@
           <td>Zustehendes Budget:</td>
           <td><span tal:content="ffwdata['betrag']"/></td>
         </tr>
+        <!--
         <tr>
           <td>Nicht ausgeschöpftes Budget:</td>
           <td><span tal:content="ffwdata['last_budget']"/></td>
         </tr>
+        -->
         <tr>
           <td>Auszahlungsbetrag:</td>
           <td><span tal:content="ffwdata['zahlbetrag']"/></td>

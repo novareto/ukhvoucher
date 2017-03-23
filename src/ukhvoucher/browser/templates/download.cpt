@@ -16,12 +16,12 @@ Basierend auf den aktuell gültigen Gebühren* stehen Ihnen <font color="red"><b
 Durchführung von Erste-Hilfe-Lehrgängen für 10 % der aktiven Einsatzkräfte sowie für
 jede/n Betreuer/in für die Kalenderjahre 2017 und 2018 zur Verfügung.
 </p>
-
+<!--
 <p>
 Sie haben letztes Jahr <b tal:content="data['last_budget']"/> € von Ihrem Budget nicht ausgeschöpft. Diesen Betrag verrechnen wir mit
 Ihrem aktuellen Budget.
 <p>
-
+-->
 <p>
 Der Betrag <font color="red"><b tal:content="data['zahlbetrag']"> </b> € </font> soll auf folgendes Konto überwiesen werden:
 </p>

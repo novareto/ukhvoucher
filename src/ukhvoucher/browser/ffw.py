@@ -111,7 +111,7 @@ class FFWForm(api.Form):
 
     @property
     def fields(self):
-        fields = api.Fields(K10).omit('bestaetigung') + api.Fields(IBankverbindung) # + api.Fields(K10).select('bestaetigung')
+        fields = api.Fields(K10).omit('last_budget', 'bestaetigung') + api.Fields(IBankverbindung) # + api.Fields(K10).select('bestaetigung')
         return fields
 
     @api.action(u'Vorschau')
@@ -136,6 +136,7 @@ class FFWForm(api.Form):
         if jahr == "2019" or jahr == "2020":
             verw_zweck = "Erste-Hilfe-Budget 2019/20"
         data['verw_zweck'] = verw_zweck
+        data['last_budget'] = "0,0"
         rep = data['last_budget'].replace(',','.')
         data['last_budget'] = rep
         betrag = (float(data['einsatzkraefte']) * 0.1 + float(data['betreuer'])) * (30.75 + 6.15)
@@ -215,7 +216,7 @@ class FFW(api.Form):
         #doc.save('/tmp/budgetantrag.docx')
         doc.save(filename)
         text = u"Für das Mitglied %s hat %s %s folgenden Budgetantrag gestellt." % (adr.name1.strip(), acc.vname.strip(), acc.nname.strip())
-        send_mail('extranet@ukh.de', ('m.seibert@ukh.de', 'portal-erste-hilfe@ukh.de'), u"Budgetantrag Erste-Hilfe-Feuerwehr", text=text, files=(filename,))
+        send_mail('extranet@ukh.de', ('b.svejda@ukh.de', 'portal-erste-hilfe@ukh.de'), u"Budgetantrag Erste-Hilfe-Feuerwehr", text=text, files=(filename,))
         budget = FWBudget(
             user_id=self.request.principal.oid,
             einsatzk=data.get('einsatzkraefte'),
