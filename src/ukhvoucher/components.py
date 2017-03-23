@@ -191,7 +191,7 @@ class ExternalPrincipal(Principal):
         mnr = mnr[:4]
         cat = OrderedSet()
         if mnr in ('1.02', '1.03', '1.04'):
-            cat = OrderedSet([K1, K2, K3, K4, K6, K9, K10])
+            cat = OrderedSet([K1, K2, K3, K4, K6, K9])
         elif mnr == '1.05':
             cat = OrderedSet([K1, K2, K6, K8, K9])
         elif mnr == '1.11':
@@ -273,6 +273,10 @@ class ExternalPrincipal(Principal):
         #    print "INVALIDATE"
         #    query.invalidate()
         return query.all()
+
+    @property
+    def isFFW(self):
+        return K10 in self.getCategory()
 
 
 class AdminPrincipal(ExternalPrincipal):

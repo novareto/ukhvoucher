@@ -1,0 +1,87 @@
+<div tal:define="data view.data"> 
+<h2> Vorschau </h2>
+<h2> <small> Erste Hilfe in der Freiwilligen Feuerwehr </small> </h2>
+<u> Ihre Angaben </u>
+
+<p>
+Anzahl der aktiven Einsatzkräfte (ohne Betreuer/innen der Kindergruppen und Jugendfeuerwehren): <span><font color="blue"> <b tal:content="data['einsatzkraefte']"></b></font></span>
+</p>
+
+<p>
+Anzahl der Betreuer/innen der Kindergruppen und Jugendfeuerwehren (inkl. deren Vertreter/innen): <span><font color="blue"> <b tal:content="data['betreuer']"></b></font> 
+</p>
+
+<p>
+Basierend auf den aktuell gültigen Gebühren* stehen Ihnen <font color="red"><b tal:content="data['betrag']"> </b> € </font> zur
+Durchführung von Erste-Hilfe-Lehrgängen für 10 % der aktiven Einsatzkräfte sowie für
+jede/n Betreuer/in für die Kalenderjahre 2017 und 2018 zur Verfügung.
+</p>
+
+<p>
+Sie haben letztes Jahr <b tal:content="data['last_budget']"/> € von Ihrem Budget nicht ausgeschöpft. Diesen Betrag verrechnen wir mit
+Ihrem aktuellen Budget.
+<p>
+
+<p>
+Der Betrag <font color="red"><b tal:content="data['zahlbetrag']"> </b> € </font> soll auf folgendes Konto überwiesen werden:
+</p>
+
+<br>
+
+<label> Bankverbindung: </label><br>
+
+<table>
+ <tr>
+   <th width=120px></th>
+   <th width=200px></th>
+ </tr>
+ <tr>
+   <td>Kreditinstitut:</td>
+   <td>
+     <span tal:content="data['bank']"></span>
+   </td>
+ </tr>
+ <tr>
+   <td>Kontoinhaber:</td>
+   <td>
+     <span tal:content="data['kontoinhaber']"></span>
+   </td>
+ </tr>
+ <tr>
+   <td>Verwendungszweck:</td>
+   <td>
+     <span tal:content="data['verw_zweck']"></span>
+   </td>
+ </tr>
+ <tr>
+   <td>IBAN:</td>
+   <td>
+     <span tal:content="data['iban']"></span>
+   </td>
+</table> 
+
+<br>
+<br>
+    
+<form enctype="multipart/form-data" method="post" novalidate="novalidate"
+      action="" class="form" tal:attributes="action view.action_url">
+
+  <div class="form-group" tal:define="widget view.fieldWidgets.get('form.field.best')">
+    <label> Einverständniserklärung </label><br>
+    <span metal:use-macro="macro['field-inline']"/> 
+    <span>
+      Hiermit bestätige ich die Richtigkeit meiner Angaben. Ich versichere die
+      zweckgebundene Verwendung der Mittel. Das von der Unfallkasse Hessen
+      bereitgestellte Budget wird ausschließlich für die Durchführung von Erste-Hilfe-Lehrgängen verwendet. Die ordnungsgemäße Verwaltung und Verwendung des
+      Budgets wird dokumentiert und auf Anfrage der Unfallkasse Hessen zur Überprüfung
+      bereitgestellt.</span>
+  </div>
+  <span tal:define="widget view.actionWidgets.get('form.action.send')">
+    <span metal:use-macro="macro['action-inline']"></span>
+  </span>
+  <span tal:define="widget view.actionWidgets.get('form.action.cancel')">
+    <span metal:use-macro="macro['action-inline']"></span>
+  </span>
+</form>
+* Die aktuell gültigen Gebühren entnehmen Sie bitte www.ukh.de, Webcode U1081.
+</div>

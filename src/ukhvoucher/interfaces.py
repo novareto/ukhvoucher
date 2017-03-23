@@ -12,6 +12,7 @@ from cromlech.sqlalchemy import get_session
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 from plone.memoize import ram
 from time import time
+from uvc.validation import validation
 
 
 HK1 = u"""
@@ -135,12 +136,6 @@ HK9 = u"""
 
 HK10 = u"""
 <h2>K10: Freiwillige Feuerwehren</h2>
-<font color="red">
-<p><b>Bitte beachten Sie:</b></p>
-<p><b>Ab 1.4.2017 gilt im Bereich der Freiwilligen Feuerwehren ein mit den Kreisbrandinspektoren
-      abgestimmtes Erste-Hilfe-Verfahren. Weitere Informationen folgen in Kürze. Bis 31.3.2017 steht
-      Ihnen als Kommune das aktuelle Verfahren zur Verfügung.</b></p>
-</font>
 <h4><u>Aktive Einsatzkräfte:</u></h4>
 <p>Bitte tragen Sie die Summe der aktiven Einsatzkräfte aus allen Orts- oder Stadtteilfeuerwehren ein.
    Die UKH übernimmt die Kosten für Erste-Hilfe-Lehrgänge über 9 Unterrichtseinheiten für 10 % der
@@ -148,6 +143,9 @@ HK10 = u"""
 <h4><u>Jugendbetreuer/innen:</u></h4>
 <p>Bitte tragen Sie auch hier alle Jugendbetreuer/innen der Orts- oder Stadtteilfeuerwehren ein.
    Die UKH übernimmt für alle einmal in 2 Jahren die Kosten der Erste-Hilfe-Lehrgänge.</p>
+<h4><u>Höhe des in 2017/18 nicht verbrauchten Budgets (siehe Themenspeicher)</u></h4>
+<p>Bitte tragen Sie die Höhe des in 2017/18 nicht benötigten Budgets ein. Noch
+vorhandenes Budget wird Ihnen auf den Folgezeitraum 2019/20 angerechnet.</p>
 <p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
@@ -420,7 +418,7 @@ class IAccount(Interface):
 
     password = schema.Password(
         title=_(u"Password for observation access"),
-        description=u"Bitte vergeben Sie ein Passwort.",
+        description=u"Bitte vergeben Sie ein Passwort. (Mindestlänge 8 Zeichen)",
         required=True,
     )
 
@@ -756,19 +754,59 @@ class K9(Interface):
     taggedValue('descr', HK9)
 
 
+from zope.schema import ValidationError
+import re
+
+class PIntError(ValidationError):
+    u""" Bitte tragen Sie eine Zahl ein."""
+
+
+def validatePInt(value):
+    if value:
+        checkzahl = re.compile(r'^[0-9]+$').match
+        if not bool(checkzahl(value)):
+            raise PIntError()
+        else:
+            if int(value) < 0:
+                raise PIntError()
+    return True
+
+
+def validatePFloat(value):
+    if value:
+        value = value.replace(',', '.')
+        try:
+            float(value)
+            if float(value) < 0:
+                raise PIntError()
+        except:
+            raise PIntError()
+    return True
+
 class K10(Interface):
     u"""Freiwillige Feuerwehren (K10)"""
 
-    einsatzkraefte = schema.Int(
-        title=_(u"Anzahl der aktiven Einsatzkräfte"),
+    einsatzkraefte = schema.TextLine(
+        title=_(u"Aktive Einsatzkräfte"),
+        description=_(u'Bitte tragen Sie die Summe der aktiven Einsatzkräfte (ohne Betreuer/innen der Kindergruppen und Jugendfeuerwehren) ein:'),
+        constraint=validatePInt,
     )
 
-    betreuer = schema.Int(
-        title=_(u"Anzahl Betreuer/innen der Jugendfeuerwehr"),
+    betreuer = schema.TextLine(
+        title=_(u"Betreuer/innen der Kindergruppen und Jugendfeuerwehren"),
+        description=_(u'Die Anzahl der Betreuer/innen der Kindergruppen und Jugendfeuerwehren (inkl. deren Vertreter/innen):'),
+        constraint=validatePInt,
+    )
+
+    last_budget = schema.TextLine(
+        title=_(u"Höhe des nicht verbrauchten Budgets in €"),
+        description=_(u'Bitte tragen Sie die Höhe des in 2017/18 nicht benötigten Budgets ein. Noch vorhandenes Budget wird Ihnen auf den Folgezeitraum 2019/20 angerechnet.'),
+        constraint=validatePFloat,
     )
 
     bestaetigung = schema.Bool(
         title = _(u"Bestätigung:"),
+        description=_(u'')
     )
 
     taggedValue('infolink',
@@ -872,3 +910,19 @@ class IKontakt(Interface):
     text = schema.Text(
         title=_(u'Nachricht')
         )
+
+
+class IBankverbindung(Interface):
+
+    kontoinhaber = schema.TextLine(
+        title=u"<h3>Bankverbindung zur Überweisung des Budgets:</h3> <br>Kontoinhaber",
+    )
+
+    bank = schema.TextLine(
+        title=u"Kreditinstitut",
+    )
+
+    iban = schema.TextLine(
+        title=u"IBAN",
+        constraint=validation.validateIBAN,
+    )

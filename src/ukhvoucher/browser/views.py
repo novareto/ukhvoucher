@@ -3,7 +3,7 @@
 import uvclight
 from ..apps import AdminRoot, UserRoot
 from ..components import cached
-from ..interfaces import IAdminLayer, IUserLayer
+from ..interfaces import IAdminLayer, IUserLayer, K10
 from ..interfaces import IModelContainer, get_oid
 from ..models import JournalEntry
 from ..resources import ukhcss
@@ -23,7 +23,7 @@ from zope.component import getMultiAdapter
 from zope.component.hooks import getSite
 from zope.i18n import translate
 from zope.interface import Interface
-
+from .ffw import getData, getKto
 
 cache = GenericCache(maxsize=5000)
 
@@ -74,6 +74,9 @@ class UserRootIndex(uvclight.Page):
                 account.email.strip() == "" or
                 account.vname.strip() == ""):
                 self.redirect(self.url(self.context, 'edit_account'))
+        if K10 in self.request.principal.getCategory():
+            self.redirect(self.url(self.context, 'ffwform'))
+
 
     @property
     def _categories(self):
@@ -106,6 +109,31 @@ class AdminRootIndex(uvclight.Page):
 
     def update(self):
         ukhvouchers.need()
+
+    def getFFWData(self):
+        oid = self.request.principal.oid
+        data = None
+        budget = getData(oid)
+        if budget:
+            kto = getKto(oid)
+            betrag = budget.budget
+            restbudget = budget.budget_vj
+            zahlbetrag = betrag - restbudget
+            betrag = "%0.2f" % float(betrag)
+            restbudget = "%0.2f" % float(restbudget)
+            zahlbetrag = "%0.2f" % float(zahlbetrag)
+            data = {
+                'zahlbetrag': zahlbetrag,
+                'kontoinhaber': kto.kto_inh,
+                'last_budget': restbudget,
+                'einsatzkraefte': budget.einsatzk,
+                'datum': budget.datum,
+                'betrag': betrag,
+                'iban': kto.iban,
+                'verw_zweck': kto.verw_zweck,
+                'betreuer': budget.jugendf,
+                'bank': kto.bank}
+        return data
 
     @cached(cache, marshaller=principal_marshaller)
     def getAdrActions(self, principal):
@@ -230,7 +258,7 @@ def flatten_params(params):
 class Batch(object):
 
     prefix = 'batch'
-    
+
     def __init__(self, context, request, length=None, size=10):
         self.context = context
         self.request = request
@@ -281,7 +309,7 @@ class Batch(object):
                 }
 
 
-            
+
 class ContainerIndex(uvclight.Page):
     uvclight.name('index')
     uvclight.layer(IAdminLayer)

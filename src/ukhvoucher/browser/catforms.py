@@ -63,6 +63,25 @@ FEHLER04 = u"""
 <h3> Bitte prüfen Sie Ihre Angaben! </h3>
 """
 
+FEHLER04a = u"""
+<h2> Es ist ein Fehler aufgetreten. </h2>
+<h3> Anzahl Beschäftigte / Standorte Verwaltung und </h3>
+<h3> Anzahl Beschäftigte / Standorte Technischer Bereich,</h3>
+<h3> beide Bereiche wurden mit "0" angegeben.</h3>
+<h3> Bitte prüfen Sie Ihre Angaben! </h3>
+"""
+
+FEHLER04b = u"""
+<h2> Es ist ein Fehler aufgetreten. </h2>
+<h3> Eine Zahl Anzahl Beschäftigte / Standorte Verwaltung ist kleiner oder gleich "0" </h3>
+<h3> Bitte prüfen Sie Ihre Angaben! </h3>
+"""
+
+FEHLER04c = u"""
+<h2> Es ist ein Fehler aufgetreten. </h2>
+<h3> Eine Zahl Anzahl Beschäftigte / Standorte Technischer Bereich ist kleiner oder gleich "0" </h3>
+<h3> Bitte prüfen Sie Ihre Angaben! </h3>
+"""
 
 class KontingentValidator(object):
 
@@ -79,9 +98,34 @@ class KontingentValidator(object):
                 self.errors.append(Error(FEHLER03, identifier="form",),)
         if data.get('bestaetigung') is True:
             # Nulleingabe
+            # K11
+            # Nulleingabe in beiden Bereichen K11
+            verwaltung = True
+            technik = True
+            if data.get('ma_verwaltung') == 0  and data.get('st_verwaltung') == 0:
+                verwaltung = False
+            if data.get('ma_technik') == 0  and data.get('st_technik') == 0:
+                technik = False
+            if  verwaltung == False and technik == False:
+                self.errors.append(Error(FEHLER04a, identifier="form",),)
+                return self.errors
+            # Nulleingabe Verwaltung K11
+            if verwaltung == True:
+                for x in ['ma_verwaltung', 'st_verwaltung']:
+                    if data.get(x) is not None:
+                        if data.get(x) == 0:
+                            self.errors.append(Error(FEHLER04b, identifier="form",),)
+                            return self.errors
+            # Nulleingabe Technik K11
+            if technik == True:
+                for x in ['ma_technik', 'st_technik']:
+                    if data.get(x) is not None:
+                        if data.get(x) == 0:
+                            self.errors.append(Error(FEHLER04c, identifier="form",),)
+                            return self.errors
+            # Nulleingabe die anderen Kontingente
             for x in ['mitarbeiter', 'standorte', 'kitas', 'gruppen', 'kolonne', 'lehrkraefte',
-                      'schulstandorte', 'einsatzkraefte', 'betreuer',
-                      'ma_verwaltung', 'st_verwaltung', 'ma_technik', 'st_technik']:
+                      'schulstandorte', 'einsatzkraefte', 'betreuer']:
                 if data.get(x) is not None:
                     if data.get(x) <= 0:
                         print x, data.get(x)
@@ -511,57 +555,63 @@ class K11Form(KGBaseForm):
         ##############################################
         ### Verwaltung                             ###
         ##############################################
-        mitarbeiter = ma_verwaltung
-        standorte = st_verwaltung
-        ##############################################
-        originalstandorte = standorte
-        standorte = standorte - 1
-        # Immer Aufrunden !
-        mitarbeiter = float(mitarbeiter)
-        ma = mitarbeiter * 5 / 100
-        mitarbeiter = str(ma)
-        lma = len(mitarbeiter) - 2
-        rundung = mitarbeiter[lma:]
-        mitarbeiter = float(mitarbeiter)
-        mitarbeiter = int(mitarbeiter)
-        if rundung[:1] == '.':
-            rundung = rundung[1:]
-        if rundung != '0':
-            mitarbeiter = mitarbeiter + 1
-        # mitarbeiter + standorte
-        ergebniseingabe = mitarbeiter + standorte
-        mindestmenge_2_je_standort = originalstandorte * 2
-        kontingent = ergebniseingabe
-        if mindestmenge_2_je_standort > kontingent:
-            kontingent = mindestmenge_2_je_standort
-        kontingent1 = kontingent
-        ##############################################
+        if ma_verwaltung <= 0 and st_verwaltung <= 0:
+            kontingent1 = 0
+        else:
+            mitarbeiter = ma_verwaltung
+            standorte = st_verwaltung
+            ##############################################
+            originalstandorte = standorte
+            standorte = standorte - 1
+            # Immer Aufrunden !
+            mitarbeiter = float(mitarbeiter)
+            ma = mitarbeiter * 5 / 100
+            mitarbeiter = str(ma)
+            lma = len(mitarbeiter) - 2
+            rundung = mitarbeiter[lma:]
+            mitarbeiter = float(mitarbeiter)
+            mitarbeiter = int(mitarbeiter)
+            if rundung[:1] == '.':
+                rundung = rundung[1:]
+            if rundung != '0':
+                mitarbeiter = mitarbeiter + 1
+            # mitarbeiter + standorte
+            ergebniseingabe = mitarbeiter + standorte
+            mindestmenge_2_je_standort = originalstandorte * 2
+            kontingent = ergebniseingabe
+            if mindestmenge_2_je_standort > kontingent:
+                kontingent = mindestmenge_2_je_standort
+            kontingent1 = kontingent
+            ##############################################
 
         ##############################################
         ### Technische Bereiche                    ###
         ##############################################
-        mitarbeiter = ma_technik
-        standorte = st_technik
-        ##############################################
-        originalstandorte = standorte
-        standorte = standorte - 1
-        # Immer Aufrunden !
-        mitarbeiter = float(mitarbeiter)
-        ma = mitarbeiter * 10 / 100
-        mitarbeiter = str(ma)
-        lma = len(mitarbeiter) - 2
-        rundung = mitarbeiter[lma:]
-        mitarbeiter = float(mitarbeiter)
-        mitarbeiter = int(mitarbeiter)
-        if rundung[:1] == '.':
-            rundung = rundung[1:]
-        if rundung != '0':
-            mitarbeiter = mitarbeiter + 1
-        # mitarbeiter + standorte
-        ergebniseingabe = mitarbeiter + standorte
-        mindestmenge_2_je_standort = originalstandorte * 2
-        kontingent = ergebniseingabe
-        if mindestmenge_2_je_standort > kontingent:
-            kontingent = mindestmenge_2_je_standort
-        kontingent2 = kontingent
+        if ma_technik <= 0 and st_technik <= 0:
+            kontingent2 = 0
+        else:
+            mitarbeiter = ma_technik
+            standorte = st_technik
+            ##############################################
+            originalstandorte = standorte
+            standorte = standorte - 1
+            # Immer Aufrunden !
+            mitarbeiter = float(mitarbeiter)
+            ma = mitarbeiter * 10 / 100
+            mitarbeiter = str(ma)
+            lma = len(mitarbeiter) - 2
+            rundung = mitarbeiter[lma:]
+            mitarbeiter = float(mitarbeiter)
+            mitarbeiter = int(mitarbeiter)
+            if rundung[:1] == '.':
+                rundung = rundung[1:]
+            if rundung != '0':
+                mitarbeiter = mitarbeiter + 1
+            # mitarbeiter + standorte
+            ergebniseingabe = mitarbeiter + standorte
+            mindestmenge_2_je_standort = originalstandorte * 2
+            kontingent = ergebniseingabe
+            if mindestmenge_2_je_standort > kontingent:
+                kontingent = mindestmenge_2_je_standort
+            kontingent2 = kontingent
         return kontingent1 + kontingent2

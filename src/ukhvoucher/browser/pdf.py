@@ -62,11 +62,11 @@ class PDF(uvclight.Page):
                 c.drawString(15.5 * cm, 25.2 * cm, u'Telefon')
                 c.drawString(17.3 * cm, 25.2 * cm, u'069 29972-440')
                 c.drawString(15.5 * cm, 24.8 * cm, u'Fax')
-                c.drawString(17.3 * cm, 24.8 * cm, u'069 29972-8459')
+                c.drawString(17.3 * cm, 24.8 * cm, u'069 29972-8626')
                 c.drawString(15.5 * cm, 24.4 * cm, u'Internet')
                 c.drawString(17.3 * cm, 24.4 * cm, u'www.ukh.de')
                 c.drawString(15.5 * cm, 24.0 * cm, u'E-Mail')
-                c.drawString(17.3 * cm, 24.0 * cm, u'erste-hilfe@ukh.de')
+                c.drawString(17.3 * cm, 24.0 * cm, u'portal-erste-hilfe@ukh.de')
                 # Adressdaten
                 c.setFont(schriftartfett, 12)
                 x = 23.5
@@ -204,11 +204,11 @@ class PDF(uvclight.Page):
             c.drawString(15.5 * cm, 25.2 * cm, u'Telefon')
             c.drawString(17.3 * cm, 25.2 * cm, u'069 29972-440')
             c.drawString(15.5 * cm, 24.8 * cm, u'Fax')
-            c.drawString(17.3 * cm, 24.8 * cm, u'069 29972-8459')
+            c.drawString(17.3 * cm, 24.8 * cm, u'069 29972-8626')
             c.drawString(15.5 * cm, 24.4 * cm, u'Internet')
             c.drawString(17.3 * cm, 24.4 * cm, u'www.ukh.de')
             c.drawString(15.5 * cm, 24.0 * cm, u'E-Mail')
-            c.drawString(17.3 * cm, 24.0 * cm, u'erste-hilfe@ukh.de')
+            c.drawString(17.3 * cm, 24.0 * cm, u'portal-erste-hilfe@ukh.de')
             # Adressdaten
             c.setFont(schriftartfett, 12)
             x = 23.5

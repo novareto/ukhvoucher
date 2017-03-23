@@ -118,6 +118,32 @@ class JournalEntry(Base):
     oid = Column('oid', Integer)
 
 
+class FWBudget(Base):
+    __tablename__ = TABLENAMES['budget']
+    if schema:
+        __table_args__ = {"schema": schema[:-1]}
+
+    bgt_id = Column('bgt_id', Integer, primary_key=True)
+    datum = Column('datum', DateTime)
+    einsatzk = Column('einsatzk', Integer)
+    jugendf = Column('jugendf', Integer)
+    budget= Column('budget', Float)
+    budget_vj= Column('budget_vj', Float)
+    user_id = Column('user_id', String(30))
+
+class FWKto(Base):
+    __tablename__ = TABLENAMES['kto']
+    if schema:
+        __table_args__ = {"schema": schema[:-1]}
+
+    user_id = Column('user_id', String(30), primary_key=True)
+    bank = Column('bank', String(50))
+    kto_inh = Column('kto_inh', String(50))
+    iban = Column('iban', String(22))
+    verw_zweck = Column('verw_zweck', String(30))
+
+
+
 class AddressEinrichtung(Base):
     #__tablename__ = 'z1ext9ac'
     __tablename__ = TABLENAMES['adreinr']
@@ -467,7 +493,7 @@ class Vouchers(SQLContainer):
 
     def key_converter(self, id):
         return int(id)
-    
+
 
 @implementer(IContent, IModelContainer)
 class Invoices(SQLContainer):

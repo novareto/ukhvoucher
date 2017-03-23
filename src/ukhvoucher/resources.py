@@ -10,6 +10,7 @@ ukhcss = Resource(library, 'ukh.css')
 chosencss = Resource(library, 'chosen.css')
 chosenjs = Resource(library, 'chosen.jquery.js', depends=[jquery, chosencss])
 masked_input = Resource(library, 'jquery.mask.min.js', depends=[jquery,])
+jmi = Resource(library, 'jasny-bootstrap.js', depends=[jquery,])
 
 #chosencss = Resource(library, 'select2.min.css')
 #chosenjs = Resource(library, 'select2.min.js', depends=[jquery, chosencss])
@@ -17,7 +18,7 @@ chosenajax = Resource(library, 'chosen.ajaxaddition.jquery.js', depends=[chosenj
 chosenajaxe = Resource(library, 'chosen.ajaxaddition.jquery.edit.js', depends=[chosenjs])
 
 
-ukhvouchers = Resource(library, 'ukh.js', depends=[chosenjs, tablesorter, masked_input])
+ukhvouchers = Resource(library, 'ukh.js', depends=[chosenjs, tablesorter, masked_input, jmi])
 
 
 ehcss = Resource(library, 'eh.css')

@@ -16,7 +16,6 @@ class SearchJSONVouchers(uvclight.JSON):
     def render(self):
         terms = []
         void = self.request.form.get('data[q]')
-        print void
         if void:
             session = get_session('ukhvoucher')
             if len(void) < 6:
@@ -31,5 +30,4 @@ class SearchJSONVouchers(uvclight.JSON):
                     'disabled': (x.invoice is not None or x.status.strip() in (DISABLED, BOOKED)),
                     #'disabled': True,
                 })
-            print terms
         return {'q': void.strip(), 'results': terms}

@@ -39,6 +39,8 @@ setup(name='ukhvoucher',
           "GenericCache",
           "profilehooks",
           "dogpile.cache",
+          "uvc.validation",
+          "docxtpl",
       ],
       entry_points={
          'fanstatic.libraries': [
