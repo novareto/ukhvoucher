@@ -13,7 +13,7 @@
         </tr>
     </thead>
     <tbody>
-    <tr tal:repeat="data view.statdata">
+    <tr tal:repeat="data view.statdata1">
         <td tal:content="data[0]"> </td>
         <td tal:content="data[1]"> </td>
     </tr>

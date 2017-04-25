@@ -112,6 +112,11 @@ class FFWForm(api.Form):
     @property
     def fields(self):
         fields = api.Fields(K10).omit('last_budget', 'bestaetigung') + api.Fields(IBankverbindung) # + api.Fields(K10).select('bestaetigung')
+        fields['einsatzkraefte'].htmlAttributes = {'maxlength': 5}
+        fields['betreuer'].htmlAttributes = {'maxlength': 5}
+        fields['kontoinhaber'].htmlAttributes = {'maxlength': 50}
+        fields['bank'].htmlAttributes = {'maxlength': 50}
+        fields['iban'].htmlAttributes = {'maxlength': 22}
         return fields
 
     @api.action(u'Vorschau')
@@ -211,11 +216,10 @@ class FFW(api.Form):
             'ort': adr.city.strip(),
             'datum': data.get('datum'),
         }
-        doc.render(context )
-        filename = '/tmp/Budgetantrag_FFW_' + str(adr.name1.strip()) + '.docx'
-        #doc.save('/tmp/budgetantrag.docx')
+        doc.render(context)
+        filename = '/tmp/Budgetantrag_FFW_' + adr.name1.encode('utf-8').strip() + ' ' + adr.name2.encode('utf-8').strip() + ' ' + adr.name3.encode('utf-8').strip() + '.docx'
         doc.save(filename)
-        text = u"Für das Mitglied %s hat %s %s folgenden Budgetantrag gestellt." % (adr.name1.strip(), acc.vname.strip(), acc.nname.strip())
+        text = u"Für das Mitglied %s %s %s hat %s %s folgenden Budgetantrag gestellt." % (adr.name1.strip(), adr.name2.strip(), adr.name3.strip(), acc.vname.strip(), acc.nname.strip())
         send_mail('extranet@ukh.de', ('b.svejda@ukh.de', 'portal-erste-hilfe@ukh.de'), u"Budgetantrag Erste-Hilfe-Feuerwehr", text=text, files=(filename,))
         budget = FWBudget(
             user_id=self.request.principal.oid,
