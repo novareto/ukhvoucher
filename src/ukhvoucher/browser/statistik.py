@@ -134,7 +134,8 @@ class Statistik(uvclight.Form):
             sheet.write(4+i, 3, v.get('manuell', 0), border)
             sheet.write(4+i, 4, v.get('gebucht', 0), border)
             sheet.write(4+i, 5, v.get(u'ung\xfcltig', 0), border)
-            sheet.write_formula(4+i, 6, '=C%s+D%s+E%s-F%s' % (5+i, 5+i, 5+i, 5+i), border ) #=C5+D5+E5-F5
+            #sheet.write_formula(4+i, 6, '=C%s+D%s+E%s-F%s' % (5+i, 5+i, 5+i, 5+i), border ) #=C5+D5+E5-F5
+            sheet.write_formula(4+i, 6, '=C%s+D%s+E%s' % (5+i, 5+i, 5+i), border ) #=C5+D5+E5 ### am 11.05.2017 geaendert -F entfernt
             sheet.write_formula(4+i, 7, '=C%s+D%s' % (5+i, 5+i), border ) #=C5+D5
             sheet.write_formula(4+i, 8, '=E%s*J2' % (5+i), border) # =E5*J2
             sheet.write_formula(4+i, 9, '=H%s*J2' % (5+i), border) # =E5*J2
