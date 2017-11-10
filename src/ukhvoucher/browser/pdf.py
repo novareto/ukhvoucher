@@ -138,12 +138,20 @@ class PDF(uvclight.Page):
                     c.drawString(2.5 * cm, y * cm, u'Lehrgangsgebühren für die Erste-Hilfe-Ausbildung werden nicht übernommen.')
                     y = y - 1.3
                 elif ikg == 'K9':
-                    c.drawString(2.5 * cm, y * cm, u'Erste-Hilfe-Aus- oder Fortbildung im Sinne des DGUV Grundsatzes 304-001.')
-                    y = y - 1.2
-                    c.drawString(2.5 * cm, y * cm, u'Lehrgangsgebühren für die Erste-Hilfe-Schulung in Bildungs-')
+                    # Geändert am 10.11.2017
+                    # Text angepasst wie K3
+                    c.drawString(3.0 * cm, y * cm, u'-    Erste-Hilfe-Aus- oder Fortbildung oder')
                     y = y - 0.6
-                    c.drawString(2.5 * cm, y * cm, u'und Betreuungseinrichtungen für Kinder werden nicht übernommen.')
-                    y = y - 1.3
+                    c.drawString(3.0 * cm, y * cm, u'-    Erste-Hilfe-Schulung in Bildungs- und Betreuungseinrichtungen für Kinder')
+                    y = y - 0.6
+                    c.drawString(2.5 * cm, y * cm, u'im Sinne des DGUV Grundsatzes 304-001')
+                    y = y - 1.9
+                    #c.drawString(2.5 * cm, y * cm, u'Erste-Hilfe-Aus- oder Fortbildung im Sinne des DGUV Grundsatzes 304-001.')
+                    #y = y - 1.2
+                    #c.drawString(2.5 * cm, y * cm, u'Lehrgangsgebühren für die Erste-Hilfe-Schulung in Bildungs-')
+                    #y = y - 0.6
+                    #c.drawString(2.5 * cm, y * cm, u'und Betreuungseinrichtungen für Kinder werden nicht übernommen.')
+                    #y = y - 1.3
                 else:
                     c.drawString(2.5 * cm, y * cm, u'Erste-Hilfe-Aus- oder Fortbildung im Sinne des DGUV Grundsatzes 304-001.')
                     y = y - 3.1
