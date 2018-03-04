@@ -262,10 +262,13 @@ class CalculateInsert(Action):
         principal.getVouchers(invalidate=True)
         return SuccessMarker('Success', True, url=url)
 
+    
+from zope.interface import Interface
 
 class KGBaseForm(uvclight.Form):
-    uvclight.context(UserRoot)
-    uvclight.layer(IUserLayer)
+    #uvclight.context(UserRoot)
+    #uvclight.layer(IUserLayer)
+    uvclight.context(Interface)
     uvclight.auth.require('users.access')
     #template = uvclight.get_template('catform.cpt', __file__)
     uvclight.baseclass()
@@ -476,6 +479,10 @@ class K7Form(KGBaseForm):
         if rundung != '0':
             mitarbeiter = mitarbeiter + 1
         return mitarbeiter
+
+    def update(self):
+        print "UPDATE FORM"
+        print self.request.form
 
 
 class K8Form(KGBaseForm):

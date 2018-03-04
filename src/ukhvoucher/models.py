@@ -160,6 +160,12 @@ class AddressEinrichtung(Base):
     zip_code = Column('ikhplz', String(5))
     city = Column('ikhort', String(24))
 
+    def as_dict(self):
+        return dict(oid=str(self.oid), mnr=self.mnr, name1=self.name1,
+            name2=self.name2, name3=self.name3, street=self.street,
+            number=self.number, zip_code=str(self.zip_code), city=self.city
+            )
+
 
 class AddressTraeger(Base):
     #__tablename__ = 'z1ext9ab'

@@ -7,6 +7,7 @@ from paste.urlmap import URLMap
 from ul.auth import GenericSecurityPolicy
 from zope.i18n import config
 from zope.security.management import setSecurityPolicy
+from webob import Response
 
 from . import Base
 from .apps import Admin, User
@@ -17,7 +18,6 @@ def localize(application):
         setLanguage('de')
         return application(*args, **kwargs)
     return wrapper
-
 
 def router(conf, session_key, zcml, dsn, name):
     allowed = ('de',)

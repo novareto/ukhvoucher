@@ -1,7 +1,6 @@
-<div tal:define="address request.principal.getAddress();
-  vouchers request.principal.getVouchers();
-  vouchers request.principal.getVouchers();
-  categories request.principal.getCategory()">
+<div tal:define="address view.address;
+		 vouchers view.vouchers;
+		 categories view.categories">
   <h1> Willkommen im Erste-Hilfe-Portal der Unfallkasse Hessen</h1>
   <h1 class="lead"> Antrag auf Kostenübernahme für Erste-Hilfe-Lehrgänge </h1>
   <p> Sie können für folgende Kontingente (K) Berechtigungsscheine anfordern. </p>
@@ -15,7 +14,7 @@
 	    <span class="pull-right sign">&nbsp;</span>
           </a> 
         </h4>
-        <div tal:define="cat_vouchers request.principal.getVouchers(cat['name'])">
+        <div tal:define="cat_vouchers view.vouchers(cat['name'])">
           <p tal:condition="cat_vouchers"> Sie haben in diesem Kontingent <span tal:content="len(cat_vouchers)" /> Berechtigungsscheine. </p>
 
 
@@ -66,7 +65,7 @@
         </div>
       </div>
       <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" tal:attributes="id string:collapse${cat['name']}">
-        <div class="panel-body" tal:define="cat_vouchers request.principal.getVouchers(cat['name'])">
+        <div class="panel-body" tal:define="cat_vouchers view.vouchers(cat['name'])">
           <div tal:condition="cat_vouchers">
             <a href="" tal:attributes="href string:${view.application_url()}/pdf?cat=${cat['name']}"><h2> Berechtigungsscheine nur für dieses Kontingent Downloaden </h2></a>
             <table class="EHtable">
@@ -89,7 +88,7 @@
       </div>
     </div>
   </div>
-  <div class="well" tal:condition="vouchers">
+  <div class="well" tal:condition="view.vouchers()">
     <p> Sie haben die Möglichkeit Ihre Berechtigungsscheine nun herunterzuladen. </p>
     <a href="" tal:attributes="href string:${view.application_url()}/pdf"><h3><u> Alle Berechtigungsscheine Downloaden </u></h3></a>
   </div>

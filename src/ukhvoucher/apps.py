@@ -27,6 +27,7 @@ from zope.security.proxy import removeSecurityProxy
 from uvclight.directives import traversable
 from .resources import ukhcss
 from base64 import decodestring
+from webob import Response
 
 
 def transaction_sql(engine):
@@ -227,6 +228,15 @@ class User(SQLPublication, SecurePublication):
 
     def __call__(self, environ, start_response):
 
+        if environ['REQUEST_METHOD'] == 'OPTIONS':
+            response = Response()
+            response.headers["Access-Control-Allow-Origin"] = "*"
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers["Access-Control-Allow-Methods"] = "POST"
+            response.headers["Access-Control-Allow-Headers"] = (
+                "Authorization, Content-Type")
+            return response(environ, start_response)
+
         @sessionned(self.session_key)
         @transaction_sql(self.engine)
         def publish(environ, start_response):
@@ -234,6 +244,8 @@ class User(SQLPublication, SecurePublication):
             ukhcss.need()
             with ContextualRequest(environ, layers=layers) as request:
                 response = self.publish_traverse(request)
+                if response.status[0] == '2':  # 2XX Response, OK !
+                    response.headers["Access-Control-Allow-Origin"] = "*"
                 return response(environ, start_response)
 
         return publish(environ, start_response)

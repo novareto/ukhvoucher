@@ -55,32 +55,29 @@ class SearchUnternehmen(uvclight.JSON):
 
 
 
-class UserRootIndex(uvclight.Page):
-    uvclight.name('index')
-    uvclight.layer(IUserLayer)
-    uvclight.context(UserRoot)
-    require('users.access')
+class UserRootIndexBase(object):
 
     template = uvclight.get_template('userroot.cpt', __file__)
 
+    def get_principal(self):
+        return self.request.principal
+    
     def update(self):
         ukhvouchers.need()
-        self.categories = self._categories
-        account = self.request.principal.getAccount()
-        if account:
-            if (account.phone.strip() == "" or
-                account.vorwahl.strip() == "" or
-                account.nname.strip() == "" or
-                account.email.strip() == "" or
-                account.vname.strip() == ""):
-                self.redirect(self.url(self.context, 'edit_account'))
-        if K10 in self.request.principal.getCategory():
-            self.redirect(self.url(self.context, 'ffwform'))
 
+        self.categories = self._categories
+
+        self.principal = self.get_principal()
+        self.address = self.principal.getAddress()
+        self.vouchers = self.principal.getVouchers
+        self.raw_categories = self.principal.getCategory()
+
+        if K10 in self.raw_categories:
+            self.redirect(self.url(self.context, 'ffwform'))
 
     @property
     def _categories(self):
-        for cat in natsorted(self.request.principal.getCategory(),
+        for cat in natsorted(self.raw_categories,
                           key=lambda x: x.getName()):
             name = cat.getName()
             form = getMultiAdapter((self.context, self.request), Interface,
@@ -94,9 +91,30 @@ class UserRootIndex(uvclight.Page):
                 'desc': form._iface.getTaggedValue('descr'),
                 'infolink': form._iface.getTaggedValue('infolink'),
                 'url': '%s/%sform' % (self.application_url(), name.lower()),
-                'vouchers': self.request.principal.getVouchers(),
+                'vouchers': self.vouchers(),
                 'form': form,
                 }
+
+
+class UserRootIndex(uvclight.Page, UserRootIndexBase):
+    uvclight.name('index')
+    uvclight.layer(IUserLayer)
+    uvclight.context(UserRoot)
+    require('users.access')
+
+    template = uvclight.get_template('userroot.cpt', __file__)
+
+    def update(self):
+        super(UserRootIndex, self).update()
+        UserRootIndexBase.update(self)
+        account = self.principal.getAccount()
+        if account:
+            if (account.phone.strip() == "" or
+                account.vorwahl.strip() == "" or
+                account.nname.strip() == "" or
+                account.email.strip() == "" or
+                account.vname.strip() == ""):
+                self.redirect(self.url(self.context, 'edit_account'))
 
 
 class AdminRootIndex(uvclight.Page):
