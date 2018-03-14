@@ -18,12 +18,26 @@ from reportlab.lib.units import cm, mm
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.colors import black
 from reportlab.graphics.barcode import code128
+from cromlech.sqlalchemy import get_session
+from ukhvoucher import models
+from sqlalchemy import and_
 
 
 class PDF(uvclight.Page):
     uvclight.layer(IUserLayer)
     uvclight.context(UserRoot)
     uvclight.auth.require('users.access')
+
+    def getAccount(self, login):
+        if '-' in login:
+            mnr, az = login.split('-')
+        else:
+            mnr = login
+            az = "eh"
+        session = get_session('ukhvoucher')
+        return session.query(models.Account).filter(
+                and_(models.Account.login == mnr, models.Account.az == az)
+                ).one()
 
     def make_response(self, result):
         response = self.responseFactory(app_iter=result)
@@ -48,6 +62,7 @@ class PDF(uvclight.Page):
         pz = 0
         #z2 = len(principal.getVouchers())
         for voucher in principal.getVouchers(cat=self.request.form.get('cat')):
+            account = self.getAccount(voucher.generation.user)
             if voucher.status.strip() == CREATED:
                 pz = pz + 1
                 ikg = str(voucher.cat.strip())

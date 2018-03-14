@@ -92,10 +92,17 @@ class ExternalPrincipal(Principal):
         fields = [getattr(account, field) for field in list(IAccount)]
         return self.info_factory(*fields)
 
+    def zerlegUser(self):
+        if '-' in self.id:
+            return self.id.split('-')
+        return self.id, 'eh'
+
+
     def getAccount(self, invalidate=False):
         session = get_session('ukhvoucher')
+        mnr, az = self.zerlegUser()
         account = session.query(models.Account).filter(
-                and_(models.Account.login==self.id, models.Account.az=="eh"))
+                and_(models.Account.login==mnr, models.Account.az==az))
         #account = session.query(models.Account).options(
         #    FromCache("default")).filter(
         #        and_(models.Account.login==self.id, models.Account.az=="eh"))
@@ -303,8 +310,14 @@ class AdminPrincipal(ExternalPrincipal):
 
     def getAccount(self, invalidate=False):
         session = get_session('ukhvoucher')
-        accounts = session.query(models.Account).filter(models.Account.oid==self.oid, models.Account.az == "eh")
-        return accounts
+        accounts = session.query(models.Account).filter(models.Account.oid==self.oid)
+        rc = []
+        for account in accounts:
+            if account.az == "eh":
+                rc.append(account)
+            elif 'Erstehilfe' in account.rollen:
+                rc.append(account)
+        return rc
 
     def getVouchers(self, cat=None):
         session = get_session('ukhvoucher')

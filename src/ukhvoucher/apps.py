@@ -75,9 +75,16 @@ class Access(GlobalUtility):
 class AdminUsers(GlobalUtility):
     name('users')
 
+    def zerlegUser(self, username):
+        if '-' in username:
+            return username.split('-')
+        return username, 'eh'
+
     def log_in(self, request, username, password, **kws):
         session = get_session('ukhvoucher')
-        user = session.query(Account).filter(Account.login == username, Account.az == "eh")
+        uname, az = self.zerlegUser(username)
+        print uname, az
+        user = session.query(Account).filter(Account.login == uname, Account.az == az)
         if user.count():
             user = user.one()
             if user.password.strip() == password:

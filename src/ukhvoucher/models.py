@@ -247,6 +247,7 @@ class Account(Base, Location):
     rechte = Column('rechte', String)
     password = Column('passwort', String)
     merkmal = Column('merkmal', String)
+    rollen = Column('rollen', String)
 
     @property
     def title(self):

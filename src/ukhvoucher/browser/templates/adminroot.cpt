@@ -71,7 +71,7 @@
         <tr tal:repeat="account accounts">
             <td>
                 <a href="" tal:attributes="href '%s/accounts/%s %s %s' % (view.application_url(), account.oid, account.login, account.az)"> 
-                    <span tal:content="account.login"></span>
+                  <span tal:content="string: ${account.login}-${account.az}"> </span>
                 </a>
             </td>
             <td tal:content="account.password"></td>
@@ -149,6 +149,7 @@
         <tr>
             <th width="75"> Nummer </th>
             <th width="80"> Datum </th>
+            <th> Ersteller </th>
             <th> Status </th>
             <th> Kontingent </th>
             <th> Grundlage </th>
@@ -158,6 +159,7 @@
         <tr tal:repeat="voucher vouchers" tal:attributes="class repeat['voucher']">
             <td tal:content="voucher.oid"></td>
             <td tal:content="voucher.creation_date"></td>
+            <td tal:content="voucher.generation.user"></td>
             <td tal:content="voucher.status"></td>
             <td tal:content="voucher.displayKat"></td>
             <td tal:content="voucher.displayData"></td>
