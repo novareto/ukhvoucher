@@ -19,7 +19,7 @@ from ..interfaces import IVouchersCreation, IDisablingVouchers
 from ..interfaces import IModel, IModelContainer, IAdminLayer, IUserLayer
 from ..interfaces import IAccount, IJournalize
 from ..interfaces import IKontakt
-from ..models import Voucher, JournalEntry, Vouchers, Addresses, Invoices, Invoice
+from ..models import Voucher, JournalEntry, Vouchers, Addresses, Invoices, Invoice, Accounts
 from .. import _, resources, DISABLED, CREATED
 from ..apps import UserRoot
 from uvc.entities.browser import IContextualActionsMenu, IDocumentActions
@@ -113,6 +113,9 @@ class CreateModel(Form):
         if isinstance(self.context, Invoices):
             if data.get('oid') == '':
                 data.pop('oid')
+        if isinstance(self.context, Accounts):
+            data['rollen'] = ''
+            data['merkmal'] = 'E'
         item = self.context.model(**data)
         self.context.add(item)
         if 'oid' in data and data['oid'] != '':

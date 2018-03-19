@@ -194,13 +194,13 @@ class AdminRootIndex(uvclight.Page):
                     href="%s/accounts/add?form.field.oid=%s" % (self.application_url(), oid),
                     c="Neuen Benutzer anlegen",)
                 )
-        if not account:
-            rc.append(
-                    HTML.tag(
-                        'a',
-                        href="%s/accounts/add" % self.application_url(),
-                        c="Neuen Benutzer anlegen",)
-                    )
+        #if not account:
+        #    rc.append(
+        #            HTML.tag(
+        #                'a',
+        #                href="%s/accounts/add" % self.application_url(),
+        #                c="Neuen Benutzer anlegen",)
+        #            )
         return rc
 
     def getCatActions(self):
