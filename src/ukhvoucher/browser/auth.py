@@ -17,8 +17,8 @@ from Crypto import Random
 from Crypto.Cipher import PKCS1_v1_5
 
 
-with open('/etc/ukhprie.pem', 'r') as fp:
-    pk = RSA.importKey(fp.read(), passphrase='Test123')
+#with open('/etc/ukhprie.pem', 'r') as fp:
+#    pk = RSA.importKey(fp.read(), passphrase='Test123')
 
 
 def v1_5(txt, pk):

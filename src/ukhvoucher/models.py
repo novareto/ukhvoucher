@@ -22,7 +22,7 @@ from . import resources
 from sqlalchemy import types
 
 schema = ''
-schema = 'UKHINTERN.'
+#schema = 'UKHINTERN.'
 
 
 def get_ukh_config():
@@ -235,8 +235,8 @@ class Account(Base, Location):
 
     oid = Column('oid', Integer, primary_key=True)
     email = Column('email', StrippedString)
-    login = Column('login', String, primary_key=True)
-    az = Column('az', String, primary_key=True)
+    login = Column('login', String) #primary_key=True)
+    az = Column('az', String) #primary_key=True)
     titel = Column('titel', StrippedString)
     funktion = Column('funktion', StrippedString)
     vname = Column('vname', StrippedString)
@@ -296,11 +296,6 @@ class Voucher(Base, Location):
     status = Column('status', String)
     cat = Column('kat', String)
     user_id = Column('user_id', Integer, ForeignKey(schema + z1ext9aa + '.oid'))
-    #user_id = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
-    #invoice_id = Column(
-    #    'rech_oid', Integer, ForeignKey(schema + 'z1ehrrch_t.rech_oid'))
-    #generation_id = Column(
-    #    'gen_oid', Integer, ForeignKey(schema + 'z1ehrbgl_t.bgl_oid'))
     invoice_id = Column(
         'rech_oid', Integer, ForeignKey(schema + z1ehrrch + '.rech_oid'))
     generation_id = Column(

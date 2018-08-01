@@ -11,6 +11,13 @@ from webob import Response
 
 from . import Base
 from .apps import Admin, User
+from collections import namedtuple
+
+
+Configuration = namedtuple(
+    'Configuration',
+    ('session_key', 'engine', 'name', 'fs_store', 'layer', 'smtp_server')
+)
 
 
 def localize(application):
@@ -37,9 +44,10 @@ def router(conf, session_key, zcml, dsn, name):
 
     # Router
     root = URLMap()
-    admin_app = Admin(session_key, engine, name)
+    configuration = Configuration(session_key, engine, name, None, None, None)
+    admin_app = Admin(configuration)
     root['/admin'] = localize(admin_app)
-    root['/'] = localize(User(session_key, engine, name))
+    root['/'] = localize(User(configuration))
 
     root.__runner__ = admin_app.__runner__
 

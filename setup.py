@@ -41,6 +41,7 @@ setup(name='ukhvoucher',
           "dogpile.cache",
           "uvc.validation",
           "docxtpl",
+          "psycopg2"
       ],
       entry_points={
          'fanstatic.libraries': [

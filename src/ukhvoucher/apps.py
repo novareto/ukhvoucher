@@ -36,7 +36,7 @@ def transaction_sql(engine):
             with transaction.manager as tm:
                 query_cls = query_callable(regions)
                 with SQLAlchemySession(
-                        engine, transaction_manager=tm, query_cls=query_cls):
+                        engine, transaction_manager=tm): # BBB , query_cls=query_cls):
                     return wrapped(*args)
         return caller
     return sql_wrapped
@@ -172,8 +172,8 @@ class Admin(SQLPublication, SecurePublication):
 
     def __call__(self, environ, start_response):
 
-        @sessionned(self.session_key)
-        @transaction_sql(self.engine)
+        @sessionned(self.configuration.session_key)
+        @transaction_sql(self.configuration.engine)
         def publish(environ, start_response):
             layers = self.layers or list()
             ukhcss.need()
@@ -199,6 +199,7 @@ class UserRoot(Location):
 
 
 class User(SQLPublication, SecurePublication):
+    name = "user"
 
     layers = [IUserLayer]
 
@@ -215,7 +216,7 @@ class User(SQLPublication, SecurePublication):
         if 'HTTP_AUTHORIZATION' in environ.keys():
             auser = decodestring(environ.get('HTTP_AUTHORIZATION')[6:]).split(':')[0]
         session = getSession()
-        user = environ.get('REMOTE_USER') or session.get('username') or auser
+        user = environ.get('REMOTE_USER') or session.session.get('username') or auser ### BBBB
         return user
 
     def site_manager(self, request):
@@ -244,8 +245,8 @@ class User(SQLPublication, SecurePublication):
                 "Authorization, Content-Type")
             return response(environ, start_response)
 
-        @sessionned(self.session_key)
-        @transaction_sql(self.engine)
+        @sessionned(self.configuration.session_key)
+        @transaction_sql(self.configuration.engine)
         def publish(environ, start_response):
             layers = self.layers or list()
             ukhcss.need()
