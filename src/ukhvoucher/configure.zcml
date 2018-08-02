@@ -8,6 +8,7 @@
   <include package="ukhtheme.uvclight" />
   <include package="cromlech.dawnlight" file="consumers.zcml" />
   <include package="dolmen.menu" />
+  <include package="dolmen.message" />
   <include package="dolmen.clockwork" />
   <include package="dolmen.forms.crud" />
   <include package="dolmen.forms.base" />

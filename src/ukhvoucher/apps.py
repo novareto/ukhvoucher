@@ -36,7 +36,7 @@ def transaction_sql(engine):
             with transaction.manager as tm:
                 query_cls = query_callable(regions)
                 with SQLAlchemySession(
-                        engine, transaction_manager=tm): # BBB , query_cls=query_cls):
+                        engine, transaction_manager=tm, query_cls=query_cls):
                     return wrapped(*args)
         return caller
     return sql_wrapped
@@ -150,7 +150,7 @@ class Admin(SQLPublication, SecurePublication):
         return unauthenticated_principal
 
     def site_manager(self, request):
-        return Site(AdminRoot(request, self.name))
+        return Site(AdminRoot(request, self.configuration.name))
 
     def __runner__(self, func):
         return SQLPublication.__runner__(self, func)
@@ -216,7 +216,8 @@ class User(SQLPublication, SecurePublication):
         if 'HTTP_AUTHORIZATION' in environ.keys():
             auser = decodestring(environ.get('HTTP_AUTHORIZATION')[6:]).split(':')[0]
         session = getSession()
-        user = environ.get('REMOTE_USER') or session.session.get('username') or auser ### BBBB
+        ### BBBB
+        user = environ.get('REMOTE_USER') or session.get('username') or auser
         return user
 
     def site_manager(self, request):

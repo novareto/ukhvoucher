@@ -26,6 +26,7 @@ def localize(application):
         return application(*args, **kwargs)
     return wrapper
 
+
 def router(conf, session_key, zcml, dsn, name):
     allowed = ('de',)
     register_allowed_languages(allowed)
