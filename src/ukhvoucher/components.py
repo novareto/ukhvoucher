@@ -130,7 +130,7 @@ class ExternalPrincipal(Principal):
         session = get_session('ukhvoucher')
         #if invalidate:
         #    session.query(models.Category).options(FromCache("default")).filter(models.Category.oid == self.oid).invalidate()
-        category = session.query(models.Category).get(self.oid)
+        category = session.query(models.Category).get(str(self.oid))
         if category:
             def createCategory(category):
                 cat = OrderedSet()

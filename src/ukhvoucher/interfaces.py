@@ -536,7 +536,13 @@ class IAddress(Interface):
     )
 
 
-from ukhvoucher.mytest import mysource
+def ms(name):
+    @grok.provider(IContextSourceBinder)
+    def source(context):
+        return VOCABULARIES[name](context)
+    return source
+
+
 
 
 class IInvoice(Interface):
@@ -549,7 +555,7 @@ class IInvoice(Interface):
 
     vouchers = schema.Set(
         #value_type=schema.Choice(source=get_source('vouchers')),
-        value_type=schema.Choice(source=mysource),
+        value_type=schema.Choice(source=ms('mysource')),
         #value_type=schema.TextLine(),
         title=_(u"Vouchers"),
         required=True,

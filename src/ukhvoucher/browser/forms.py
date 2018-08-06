@@ -374,12 +374,15 @@ class AskForVouchers(Form):
             import json
 
             p = int(session.query(max(Generation.oid)).one()[0] or 0) + 1
+
             generation = Generation(
                 oid=p,
                 date=now.strftime('%Y-%m-%d'),
                 type=data['kategorie'],
                 data=json.dumps('Manuelle Erzeugung'),
-                user=self.request.principal.id,
+                user=self.context.oid,
+                user_az=self.context.az,
+                user_login=self.context.login,
                 uoid=oid
             )
 
@@ -389,6 +392,8 @@ class AskForVouchers(Form):
                     status=CREATED,
                     cat = data['kategorie'],
                     user_id=self.context.oid,
+                    user_az=self.context.az,
+                    user_login=self.context.login,
                     generation_id=p,
                     oid=oid)
                 oid += 1

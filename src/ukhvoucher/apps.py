@@ -115,6 +115,10 @@ class AccountTraverser(Location):
             raise KeyError
 
 
+from functools import partial
+from cromlech.sqlalchemy import get_session
+
+
 @implementer(IPublicationRoot)
 class AdminRoot(Location):
     traversable('categories', 'accounts', 'addresses', 'vouchers', 'invoices', 'account')
@@ -125,11 +129,11 @@ class AdminRoot(Location):
         return getGlobalSiteManager()
 
     def __init__(self, request, session_key):
-        self.accounts = Accounts(self, 'accounts', session_key)
-        self.addresses = Addresses(self, 'addresses', session_key)
-        self.vouchers = Vouchers(self, 'vouchers', session_key)
-        self.invoices = Invoices(self, 'invoices', session_key)
-        self.categories = Categories(self, 'categories', session_key)
+        self.accounts = Accounts(partial(get_session, session_key), parent=self, name='accounts')
+        self.addresses = Addresses(partial(get_session, session_key), parent=self, name='addresses')
+        self.vouchers = Vouchers(partial(get_session, session_key), parent=self, name='vouchers')
+        self.invoices = Invoices(partial(get_session, session_key), parent=self, name='invoices')
+        self.categories = Categories(partial(get_session, session_key), parent=self, name='categories')
         self.account = AccountTraverser(self, 'account')
 
 

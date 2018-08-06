@@ -11,6 +11,41 @@ from zope.interface import provider
 from zope.schema.interfaces import IContextAwareDefaultFactory
 
 
+class MyVoc(SimpleVocabulary):
+
+    @property
+    def _terms(self):
+        session = get_session('ukhvoucher')
+        from ukhvoucher.models import Voucher
+        rc = []
+        for item in session.query(Voucher.oid).all():
+            rc.append(SimpleTerm(item.oid, item.oid, item.oid))
+        return rc
+
+    def __contains__(self, value):
+        session = get_session('ukhvoucher')
+        from ukhvoucher.models import Voucher
+        return session.query(Voucher).get(value.oid)
+
+    def getTerm(self, term):
+        session = get_session('ukhvoucher')
+        from ukhvoucher.models import Voucher
+        item = session.query(Voucher).get(term.oid)
+        return SimpleTerm(item, token=item.oid, title="%s - %s %s" %(item.title, item.status.strip(), item.cat))
+
+    def getTermByToken(self, token):
+        session = get_session('ukhvoucher')
+        from ukhvoucher.models import Voucher
+        item = session.query(Voucher).get(token)
+        return SimpleTerm(item, token=item.oid, title="%s - %s %s" %(item.title, item.status.strip(), item.cat))
+
+
+@provider(IContextSourceBinder)
+def mysource(context):
+    return MyVoc()
+
+
+
 @grok.provider(IContextSourceBinder)
 def accounts(context):
     session = get_session('ukhvoucher')
@@ -90,3 +125,4 @@ VOCABULARIES['all_vouchers'] = all_vouchers
 VOCABULARIES['addresses'] = addresses
 VOCABULARIES['categories'] = categories
 VOCABULARIES['account'] = getNextID
+VOCABULARIES['mysource'] = mysource

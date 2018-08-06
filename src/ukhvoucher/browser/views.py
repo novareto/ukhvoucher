@@ -207,7 +207,7 @@ class AdminRootIndex(uvclight.Page):
         rc = []
         oid = self.request.principal.oid
         session = get_session('ukhvoucher')
-        category = session.query(models.Category).get(oid)
+        category = session.query(models.Category).get(str(oid))
         if category:
             rc.append(
                     HTML.tag(
@@ -359,7 +359,7 @@ class ContainerIndex(uvclight.Page):
         ukhvouchers.need()
         ukhcss.need()
         self.columns = [field.title for field in self.context.listing_attrs]
-        self.batcher = Batch(self.context, self.request, size=150)
+        self.batcher = Batch(getattr(self, 'results', self.context), self.request, size=150)
         self.batcher.update()
         self.batch = self.batching.render(self, **{'batch': self.batcher})
 

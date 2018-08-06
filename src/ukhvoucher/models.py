@@ -52,7 +52,9 @@ class StrippedString(types.TypeDecorator):
 
     def process_result_value(self, value, dialect):
         "Strip the trailing spaces on resulting values"
-        return value.rstrip()
+        if value:
+            return value.rstrip()
+        return value
 
     def copy(self):
         "Make a copy of this type"
@@ -78,8 +80,16 @@ class Address(Base, Location):
     mnr = Column('trgmnr', String(15))
     zip_code = Column('ikhplz', String(5))
     city = Column('ikhort', String(24))
-    user_id = Column('user_id', Integer, ForeignKey(schema + z1ext9aa + '.oid'))
+    user_id = Column('user_id', Integer)
+    user_az = Column('user_az', String)
+    user_login = Column('user_login', String())
     #user_id = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
+    __table_args__ = (ForeignKeyConstraint([user_id, user_az, user_login],
+                                           [schema + z1ext9aa + '.oid', schema + z1ext9aa + '.az', schema + z1ext9aa + '.login']),
+                      {})
+
+    if schema:
+        __table_args__ = {"schema": schema[:-1]}
 
     @property
     def title(self):
@@ -235,8 +245,8 @@ class Account(Base, Location):
 
     oid = Column('oid', Integer, primary_key=True)
     email = Column('email', StrippedString)
-    login = Column('login', String) #primary_key=True)
-    az = Column('az', String) #primary_key=True)
+    login = Column('login', String, primary_key=True)
+    az = Column('az', String, primary_key=True)
     titel = Column('titel', StrippedString)
     funktion = Column('funktion', StrippedString)
     vname = Column('vname', StrippedString)
@@ -295,7 +305,9 @@ class Voucher(Base, Location):
     creation_date = Column('erst_dat', DateTime)
     status = Column('status', String)
     cat = Column('kat', String)
-    user_id = Column('user_id', Integer, ForeignKey(schema + z1ext9aa + '.oid'))
+    user_id = Column('user_id', Integer)
+    user_az = Column('user_az', String)
+    user_login = Column('user_login', String())
     invoice_id = Column(
         'rech_oid', Integer, ForeignKey(schema + z1ehrrch + '.rech_oid'))
     generation_id = Column(
@@ -303,6 +315,12 @@ class Voucher(Base, Location):
 
     # relations
     user = relationship('Account')
+    __table_args__ = (ForeignKeyConstraint([user_id, user_az, user_login],
+                                           [schema + z1ext9aa + '.oid', schema + z1ext9aa + '.az', schema + z1ext9aa + '.login']),
+                      {})
+
+    if schema:
+        __table_args__ = {"schema": schema[:-1]}
 
     def getInvoice(self):
         from cromlech.sqlalchemy import get_session
@@ -429,19 +447,27 @@ class Generation(Base):
     __tablename__ = TABLENAMES['generation']
     z1ext9aa = TABLENAMES['user']
 
-    if schema:
-        __table_args__ = {"schema": schema[:-1]}
+
 
     oid = Column('bgl_oid', Integer, primary_key=True)
     date = Column('vcb_dat', DateTime)
     type = Column('kat', String(20))
     data = Column('text', String(500))
-    user = Column('user_id', Integer, ForeignKey(schema + z1ext9aa + '.oid'))
+    user = Column('user_id', Integer)
+    user_az = Column('user_az', String)
+    user_login = Column('user_login', String())
     uoid = Column('oid', Integer)
     voucher = relationship("Voucher", backref=backref('generation'))
 
+    __table_args__ = (ForeignKeyConstraint([user, user_az, user_login],
+                                           [schema + z1ext9aa + '.oid', schema + z1ext9aa + '.az', schema + z1ext9aa + '.login']),
+                      {})
 
-@implementer(IContent, IModelContainer)
+    if schema:
+        __table_args__ = {"schema": schema[:-1]}
+
+from zope.location.interfaces import ILocation
+@implementer(IContent, IModelContainer, ILocation)
 class Accounts(SQLContainer):
     __label__ = _(u"Accounts")
 

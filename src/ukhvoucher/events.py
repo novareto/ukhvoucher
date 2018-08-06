@@ -7,10 +7,12 @@ from .interfaces import IAccount, ICategory
 
 @grok.subscribe(IAccount, IObjectModifiedEvent)
 def handle_cacheclear(account, event):
+    import pdb; pdb.set_trace()
     principal = uvclight.utils.current_principal()
     principal.getAccount(invalidate=True)
 
 @grok.subscribe(ICategory, IObjectModifiedEvent)
 def handle_cacheclear(account, event):
+    import pdb; pdb.set_trace()
     principal = uvclight.utils.current_principal()
     principal.getCategory(invalidate=True)
