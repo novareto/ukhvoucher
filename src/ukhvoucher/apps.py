@@ -129,11 +129,12 @@ class AdminRoot(Location):
         return getGlobalSiteManager()
 
     def __init__(self, request, session_key):
-        self.accounts = Accounts(partial(get_session, session_key), parent=self, name='accounts')
-        self.addresses = Addresses(partial(get_session, session_key), parent=self, name='addresses')
-        self.vouchers = Vouchers(partial(get_session, session_key), parent=self, name='vouchers')
-        self.invoices = Invoices(partial(get_session, session_key), parent=self, name='invoices')
-        self.categories = Categories(partial(get_session, session_key), parent=self, name='categories')
+        session = partial(get_session, session_key)
+        self.accounts = Accounts(session, parent=self, name='accounts')
+        self.addresses = Addresses(session, parent=self, name='addresses')
+        self.vouchers = Vouchers(session, parent=self, name='vouchers')
+        self.invoices = Invoices(session, parent=self, name='invoices')
+        self.categories = Categories(session, parent=self, name='categories')
         self.account = AccountTraverser(self, 'account')
 
 

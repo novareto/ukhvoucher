@@ -68,7 +68,8 @@ class SearchAction(uvclight.Action):
         view.results = [
             LocationProxy(res, view.context, str(res.oid))
             for res in self.search(session, model, **data)]
-
+        print view
+        print view.results
         return uvclight.SUCCESS
 
 

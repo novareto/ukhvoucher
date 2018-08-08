@@ -84,9 +84,12 @@ class Address(Base, Location):
     user_az = Column('user_az', String)
     user_login = Column('user_login', String())
     #user_id = Column('user_id', Integer, ForeignKey(schema + 'Z1EXT9AA.oid'))
-    __table_args__ = (ForeignKeyConstraint([user_id, user_az, user_login],
-                                           [schema + z1ext9aa + '.oid', schema + z1ext9aa + '.az', schema + z1ext9aa + '.login']),
-                      {})
+    __table_args__ = (
+        ForeignKeyConstraint(
+            [user_id, user_az, user_login],
+            [schema + z1ext9aa + '.oid',
+             schema + z1ext9aa + '.az', schema + z1ext9aa + '.login']),
+        {})
 
     if schema:
         __table_args__ = {"schema": schema[:-1]}
@@ -141,6 +144,7 @@ class FWBudget(Base):
     budget_vj= Column('budget_vj', Float)
     user_id = Column('user_id', String(30))
 
+
 class FWKto(Base):
     __tablename__ = TABLENAMES['kto']
     if schema:
@@ -151,7 +155,6 @@ class FWKto(Base):
     kto_inh = Column('kto_inh', String(50))
     iban = Column('iban', String(22))
     verw_zweck = Column('verw_zweck', String(30))
-
 
 
 class AddressEinrichtung(Base):
@@ -465,6 +468,7 @@ class Generation(Base):
 
     if schema:
         __table_args__ = {"schema": schema[:-1]}
+
 
 from zope.location.interfaces import ILocation
 @implementer(IContent, IModelContainer, ILocation)

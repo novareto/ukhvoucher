@@ -19,13 +19,40 @@
 </fieldset>
 
 <script language="Javascript">
-  $('#select_unternehmen select').ajaxChosen({
-     dataType: 'json',
-     type: 'POST',
-     url: '<tal:url replace="'%s/search_unternehmen' % view.application_url()" />'
-   },
-   {
-      minLength: 3,
-      loadingImg: '/fanstatic/ukhvoucher/loading.gif'
-   });
+
+$("#select_unternehmen select").select2({
+    tags: false,
+    multiple: true,
+    tokenSeparators: [',', ' '],
+    minimumInputLength: 2,
+    minimumResultsForSearch: 100,
+    ajax: {
+        url: '<tal:url replace="'%s/search_unternehmen' % view.application_url()" />',
+        dataType: "json",
+        type: "GET",
+        data: function (params) {
+
+            var queryParameters = {
+                term: params.term
+            }
+            return queryParameters;
+        },
+        processResults: function (data) {
+	    let val = $("#select_unternehmen select").val() || [];
+            return {
+               results: $.map(data.results, function (item) {
+	           if (val.indexOf(item.id.toString()) == -1) {
+                       return {
+                           text: item.text,
+                           id: item.id.toString()
+                       }
+		   }
+                })
+            };
+        }
+    }
+});
+
+
+      
 </script>

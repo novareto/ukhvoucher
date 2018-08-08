@@ -330,6 +330,35 @@ class IDisablingVouchers(Interface):
     )
 
 
+class IJournalEntry(Interface):
+
+    date = schema.Datetime(
+        title=_(u"Date"),
+        required=True,
+    )
+
+    action = schema.TextLine(
+        title=_(u"Aktion"),
+        required=True,
+    )
+
+    userid = schema.Choice(
+        source=get_source('accounts'),
+        title=_(u"User identifier"),
+        required=True,
+    )
+
+    note = schema.Text(
+        title=_(u"Note"),
+        required=True,
+    )
+
+    oid = schema.Int(
+        title=_(u"Object id"),
+        required=True,
+    )
+
+
 class IJournalize(Interface):
 
     note = schema.TextLine(
