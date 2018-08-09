@@ -2,6 +2,7 @@
 # Copyright (c) 2007-2013 NovaReto GmbH
 # cklinger@novareto.de
 
+import datetime
 from GenericCache.GenericCache import GenericCache, default_marshaller
 from collections import namedtuple
 from cromlech.sqlalchemy import get_session
@@ -80,6 +81,11 @@ class ExternalPrincipal(Principal):
         return int(account.oid)
 
     @property
+    def get_user_info(self):
+        account = self.getAccount()
+        return int(account.oid), account.login, account.az
+
+    @property
     def merkmal(self):
         account = self.getAccount()
         if not account and not account.merkmal:
@@ -103,12 +109,6 @@ class ExternalPrincipal(Principal):
         mnr, az = self.zerlegUser()
         account = session.query(models.Account).filter(
                 and_(models.Account.login==mnr, models.Account.az==az))
-        #account = session.query(models.Account).options(
-        #    FromCache("default")).filter(
-        #        and_(models.Account.login==self.id, models.Account.az=="eh"))
-        #if invalidate:
-        #    print "INVALIDATE"
-        #    account.invalidate()
         return account.one()
 
     def getAddress(self):
@@ -128,8 +128,6 @@ class ExternalPrincipal(Principal):
 
     def getCategory(self, invalidate=False):
         session = get_session('ukhvoucher')
-        #if invalidate:
-        #    session.query(models.Category).options(FromCache("default")).filter(models.Category.oid == self.oid).invalidate()
         category = session.query(models.Category).get(str(self.oid))
         if category:
             def createCategory(category):
@@ -269,16 +267,16 @@ class ExternalPrincipal(Principal):
             cat = OrderedSet([K7, ])
         return cat
 
-    def getVouchers(self, cat=None, invalidate=False):
+    def getVouchers(self, cat=None):
         session = get_session('ukhvoucher')
-        #query = session.query(models.Voucher).options(
-        #    FromCache("default")).filter(models.Voucher.user_id == self.oid)
-        query = session.query(models.Voucher).filter(models.Voucher.user_id == self.oid)
+        query = session.query(models.Voucher).filter(
+                models.Voucher.user_id == self.oid,
+                models.Voucher.creation_date >= datetime.datetime(2017,1,1),
+                models.Voucher.creation_date <= datetime.datetime(2019,1,1),
+        )
         if cat:
             query = query.filter(models.Voucher.cat == cat)
-        #if invalidate:
-        #    print "INVALIDATE"
-        #    query.invalidate()
+        print query
         return query.all()
 
     @property

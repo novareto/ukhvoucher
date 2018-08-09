@@ -88,6 +88,7 @@ class CachingQuery(Query):
         createfunc specified.
 
         """
+        print "get_value CACHE CAHCHE"
         dogpile_region, cache_key = self._get_cache_plus_key()
 
         # ignore_expiration means, if the value is in the cache

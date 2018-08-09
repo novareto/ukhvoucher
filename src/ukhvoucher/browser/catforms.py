@@ -231,12 +231,16 @@ class CalculateInsert(Action):
                 p = int(session.query(max(Generation.oid)).one()[0]) + 1
             except:
                 p=1
+            user_oid, login, az = principal.get_user_info
+            import pdb; pdb.set_trace()
             generation = Generation(
                 oid=p,
                 date=now.strftime('%Y-%m-%d'),
                 type=form._iface.getName(),
                 data=json.dumps(data),
-                user=principal.id,
+                user=user_oid,
+                user_az=az,
+                user_login=login,
                 uoid=oid
             )
 
@@ -247,7 +251,9 @@ class CalculateInsert(Action):
                     creation_date = now.strftime('%Y-%m-%d'),
                     status = CREATED,
                     cat = form._iface.getName(),
-                    user_id = principal.oid,
+                    user_id = user_oid,
+                    user_az = az,
+                    user_login = login,
                     generation_id = p,
                     )
                 session.add(voucher)
