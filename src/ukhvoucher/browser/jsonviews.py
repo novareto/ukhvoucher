@@ -15,7 +15,7 @@ class SearchJSONVouchers(uvclight.JSON):
 
     def render(self):
         terms = []
-        void = self.request.form.get('data[q]')
+        void = self.request.form.get('term')
         if void:
             session = get_session('ukhvoucher')
             if len(void) < 6:

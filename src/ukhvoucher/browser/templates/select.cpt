@@ -8,19 +8,48 @@
           tal:attributes="name string:${widget.identifier}.present" />
 
 <Script language="Javascript">
-   
-  $('select#form_field_vouchers').ajaxChosen({
-     dataType: 'json',
-     async: true,
-     type: 'POST',
-     url: '<tal:url replace="'%s/SearchJSONVouchers' % widget.form.application_url()" />'
-   },
-   {
-      minLength: 6 
-   },
-   {
- placeholder_text_multiple: 'Bitte wählen Sie die Berechtigungsscheine',
-   }
-   );
+
+$("select#form_field_vouchers").select2({
+    tags: false,
+    delay: 250,
+    multiple: true,
+    selectOnBlur: true,
+    tokenSeparators: [',', ' '],
+    minimumInputLength: 5,
+    minimumResultsForSearch: 10,
+    ajax: {
+        url: '<tal:url replace="'%s/SearchJSONVouchers' % widget.form.application_url()" />',
+        dataType: "json",
+        type: "GET",
+        data: function (params) {
+
+            var queryParameters = {
+                term: params.term
+            }
+            return queryParameters;
+        },
+        processResults: function (data) {
+	    let current = $("select#form_field_vouchers").val() || [];
+	    if (data.results.length == 1) {
+		let v = data.results[0];
+		if (current.indexOf(v.id.toString()) == -1) {
+		    let selectElement = $(this)[0].$element[0];
+		    selectElement.innerHTML += '<option value="'+v.id+'">'+v.text+'</option>';
+		    $("select#form_field_vouchers").val(current.concat([data.results[0].id])).trigger('select2:select').select2('close');
+		}
+	    }
+	    return {
+                results: $.map(data.results, function (item) {
+		    if (current.indexOf(item.id.toString()) == -1) {
+			return {
+			    text: item.text,
+			    id: item.id.toString()
+			}
+		    }
+                })
+            };
+        }
+    }
+});
 
 </Script>

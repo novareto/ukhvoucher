@@ -11,7 +11,6 @@ from ..resources import ukhvouchers, masked_input
 from .batch import get_dichotomy_batches
 from GenericCache.GenericCache import GenericCache
 from cromlech.sqlalchemy import get_session
-from dolmen.batch import Batcher
 from dolmen.location import get_absolute_url
 from natsort import natsorted
 from profilehooks import profile
@@ -23,6 +22,7 @@ from zope.component import getMultiAdapter
 from zope.component.hooks import getSite
 from zope.i18n import translate
 from zope.interface import Interface
+from zope.location import ILocation, LocationProxy
 from .ffw import getData, getKto
 
 cache = GenericCache(maxsize=5000)
@@ -41,7 +41,7 @@ class SearchUnternehmen(uvclight.JSON):
 
     #@profile
     def update(self):
-        self.term = self.request.form['data[q]']
+        self.term = self.request.form['term']
         self.vocabulary = get_oid(self.context)
 
     #@profile
@@ -52,7 +52,6 @@ class SearchUnternehmen(uvclight.JSON):
             if matcher in item.title.lower():
                 terms.append({'id': item.token, 'text': item.title})
         return {'q': self.term, 'results': terms}
-
 
 
 class UserRootIndexBase(object):
@@ -209,42 +208,42 @@ class AdminRootIndex(uvclight.Page):
         session = get_session('ukhvoucher')
         category = session.query(models.Category).get(str(oid))
         if category:
-            rc.append(
-                    HTML.tag(
-                        'a',
-                        href="%s/categories/%s/edit" % (self.application_url(), oid),
-                        c="Kontingente bearbeiten",)
-                    )
+            rc.append(HTML.tag(
+                'a',
+                href="%s/categories/%s/edit" % (
+                    self.application_url(), oid),
+                c="Kontingente bearbeiten",)
+            )
         else:
-            rc.append(
-                    HTML.tag(
-                        'a',
-                        href="%s/categories/add?form.field.oid=%s" % (self.application_url(), oid),
-                        c="Neue Kontingente anlegen",)
-                    )
+            rc.append(HTML.tag(
+                'a',
+                href="%s/categories/add?form.field.oid=%s" % (
+                    self.application_url(), oid),
+                c="Neue Kontingente anlegen",)
+            )
         return rc
 
     def getVoucherActions(self):
         rc = []
         oid = self.request.principal.oid
-        rc.append(
-                HTML.tag(
-                    'a',
-                    href="%s/account/%s/ask.vouchers" % (self.application_url(), oid),
-                    c=u"Zusätzliche Berechtigungsscheine erzeugen",)
-                )
-        rc.append(
-                HTML.tag(
-                    'a',
-                    href="%s/account/%s/disable.vouchers" % (self.application_url(), oid),
-                    c=u"Berechtigungsscheine sperren",)
-                )
-        rc.append(
-                HTML.tag(
-                    'a',
-                    href="%s/account/%s/disable.charge" % (self.application_url(), oid),
-                    c=u"Charge sperren",)
-                )
+        rc.append(HTML.tag(
+            'a',
+            href="%s/account/%s/ask.vouchers" % (
+                self.application_url(), oid),
+            c=u"Zusätzliche Berechtigungsscheine erzeugen",)
+        )
+        rc.append(HTML.tag(
+            'a',
+            href="%s/account/%s/disable.vouchers" % (
+                self.application_url(), oid),
+            c=u"Berechtigungsscheine sperren",)
+        )
+        rc.append(HTML.tag(
+            'a',
+            href="%s/account/%s/disable.charge" % (
+                self.application_url(), oid),
+            c=u"Charge sperren",)
+        )
         return rc
 
 
@@ -277,11 +276,16 @@ class Batch(object):
 
     prefix = 'batch'
 
-    def __init__(self, context, request, length=None, size=10):
+    def __init__(self, context, request, results=None, length=None, size=10):
         self.context = context
         self.request = request
+
+        if results is None:
+            results = self.context
+        self.results = results
+        
         if length is None:
-            length = len(context)
+            length = len(self.results)
         self.length = length
         self.size = size
         self.current = 1
@@ -293,7 +297,9 @@ class Batch(object):
 
     def get_elements(self):
         start = (self.current - 1) * self.size
-        return list(self.context.slice(start, self.size))
+        if isinstance(self.results, (list, tuple)):
+            return self.results[start:start+self.size]
+        return list(self.results.slice(start, self.size))
 
     def batch_url(self, page):
         param = self.prefix + ".page"
@@ -304,7 +310,10 @@ class Batch(object):
         return '?' + urlencode(params)
 
     def batches(self):
-        url = get_absolute_url(self.context, self.request)
+        if not ILocation.providedBy(self.results):
+            url = get_absolute_url(self.context, self.request)
+        else:
+            url = get_absolute_url(self.results, self.request)
         for page in xrange(1, self.pages + 1):
             if page == self.current:
                 current = True
@@ -317,7 +326,7 @@ class Batch(object):
                 }
 
     def dichotomy(self):
-        url = get_absolute_url(self.context, self.request)
+        url = get_absolute_url(self.results, self.request)
         start = (self.current - 1) * self.size
         for type, value in get_dichotomy_batches(self.pages, self.size):
             yield {
@@ -325,7 +334,6 @@ class Batch(object):
                 'id': value,
                 'url': url + self.batch_url(value),
                 }
-
 
 
 class ContainerIndex(uvclight.Page):
@@ -336,7 +344,8 @@ class ContainerIndex(uvclight.Page):
 
     template = uvclight.get_template('container.cpt', __file__)
     batching = uvclight.get_template('batch.pt', __file__)
-
+    results = None
+    
     def listing(self, item):
         details = inspect(item)
         relations = details.mapper.relationships.keys()
@@ -359,7 +368,7 @@ class ContainerIndex(uvclight.Page):
         ukhvouchers.need()
         ukhcss.need()
         self.columns = [field.title for field in self.context.listing_attrs]
-        self.batcher = Batch(getattr(self, 'results', self.context), self.request, size=150)
+        self.batcher = Batch(self.context, self.request, results=self.results, size=1)
         self.batcher.update()
         self.batch = self.batching.render(self, **{'batch': self.batcher})
 
@@ -400,4 +409,3 @@ class InvoicesView(uvclight.Page):
     def reverseVouchers(self, vouchers):
         vl = [x for x in vouchers]
         return sorted(vl, key=lambda k: k.oid)
-

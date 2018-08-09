@@ -12,7 +12,6 @@ from profilehooks import profile
 from plone.memoize import forever
 from plone.memoize import ram
 from time import time
-from ..resources import chosenajax
 
 
 class IAccounts(Interface):
@@ -56,7 +55,6 @@ class UserMasquarade(uvclight.ViewletForm):
 
     #@ram.cache(lambda *args: time() // (60 * 60))
     def render(self):
-        chosenajax.need()
         form = uvclight.ViewletForm.render(self)
         return form
 

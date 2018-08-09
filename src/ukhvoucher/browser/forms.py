@@ -17,7 +17,7 @@ from zope.interface import Interface
 
 from ..interfaces import IVouchersCreation, IDisablingVouchers
 from ..interfaces import IModel, IModelContainer, IAdminLayer, IUserLayer
-from ..interfaces import IAccount, IJournalize
+from ..interfaces import IAccount, IJournalize, IJournalEntry
 from ..interfaces import IKontakt
 from ..models import Voucher, JournalEntry, Vouchers, Addresses, Invoices, Invoice, Accounts
 from .. import _, resources, DISABLED, CREATED
@@ -87,7 +87,6 @@ class CreateModel(Form):
     def update(self):
         resources.ukhvouchers.need()
         resources.ehcss.need()
-        resources.chosenajaxe.need()
 
     def updateWidgets(self):
         super(CreateModel, self).updateWidgets()
@@ -543,3 +542,28 @@ class Kontakt(uvclight.Form):
     def handle_cancel(self):
         self.redirect(self.application_url())
         return SUCCESS
+
+
+class JournalEntryAdd(uvclight.Form):
+    uvclight.name('add_journal_entry')
+    uvclight.layer(IAdminLayer)
+    uvclight.context(Interface)
+    require('manage.vouchers')
+
+    fields = uvclight.Fields(IJournalEntry).omit('date', 'userid', 'oid')
+
+    @action(u'Senden')
+    def handle_send(self):
+        data, errors = self.extractData()
+        if errors:
+            return
+
+        # journalize
+        session = get_session('ukhvoucher')
+        data['date'] = datetime.now().strftime('%Y-%m-%d')
+        data['userid'] = self.request.principal.id
+        entry = JournalEntry(**data)
+        session.add(entry)
+
+        self.flash(u'Added Journal entry')
+        self.redirect(self.application_url() + '/journal')
