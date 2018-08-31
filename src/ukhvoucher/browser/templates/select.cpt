@@ -24,7 +24,8 @@ $("select#form_field_vouchers").select2({
         data: function (params) {
 
             var queryParameters = {
-                term: params.term
+                term: params.term,
+                zeitraum: 'eh1'
             }
             return queryParameters;
         },

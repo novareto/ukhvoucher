@@ -221,7 +221,6 @@ class User(SQLPublication, SecurePublication):
         if 'HTTP_AUTHORIZATION' in environ.keys():
             auser = decodestring(environ.get('HTTP_AUTHORIZATION')[6:]).split(':')[0]
         session = getSession()
-        ### BBBB
         user = environ.get('REMOTE_USER') or session.get('username') or auser
         return user
 

@@ -18,6 +18,7 @@ from .caching_query import FromCache, RelationshipCache
 from .interfaces import IAccount, IVoucher
 from .models import get_ukh_config
 
+
 TABLENAMES = get_ukh_config()
 
 principal_cache = GenericCache(maxsize=5000)
@@ -269,14 +270,16 @@ class ExternalPrincipal(Principal):
 
     def getVouchers(self, cat=None):
         session = get_session('ukhvoucher')
+        from .vocabularies import get_default_abrechnungszeitraum
+        default_zeitraum = get_default_abrechnungszeitraum()
+        import pdb; pdb.set_trace()
         query = session.query(models.Voucher).filter(
                 models.Voucher.user_id == self.oid,
-                models.Voucher.creation_date >= datetime.datetime(2017,1,1),
-                models.Voucher.creation_date <= datetime.datetime(2019,1,1),
+                models.Voucher.creation_date >= default_zeitraum.von,
+                models.Voucher.creation_date <= default_zeitraum.bis,
         )
         if cat:
             query = query.filter(models.Voucher.cat == cat)
-        print query
         return query.all()
 
     @property

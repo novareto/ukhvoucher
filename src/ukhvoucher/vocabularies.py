@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import grokcore.component as grok
+from datetime import datetime
 from sqlalchemy import distinct
 from . import VOCABULARIES, DISABLED, BOOKED
 from .models import Account, Invoice, Voucher, Address
@@ -76,7 +77,6 @@ def all_vouchers(context):
 
 @grok.provider(IContextSourceBinder)
 def vouchers(context):
-    print "VOUCHERS"
     session = get_session('ukhvoucher')
     items = []
     disabled = set()
@@ -118,6 +118,32 @@ def getNextID(context):
     return unicode(oid)
 
 
+
+class RangeSimpleTerm(SimpleTerm):
+
+    def __init__(self, value, token=None, title=None, von=None, bis=None):
+        super(RangeSimpleTerm, self).__init__(value, token, title)
+        self.von = von
+        self.bis = bis
+
+
+@provider(IContextAwareDefaultFactory)
+def get_abrechnungszeitraum(context):
+    items = [RangeSimpleTerm('ez1', 'ez1', '01.01.2016 - 31.12.2018', datetime(2016, 01, 01), datetime(2018, 12, 31)),
+             RangeSimpleTerm('ez2', 'ez2', '01.01.2019 - 31.12.2020', datetime(2019, 01, 01), datetime(2020, 12, 31))
+             ]
+    return SimpleVocabulary(items)
+
+
+def get_default_abrechnungszeitraum():
+    vocab = get_abrechnungszeitraum(None)
+    import pdb; pdb.set_trace()
+    for term in vocab:
+        if term.von <= datetime.now() and  datetime.now() <= term.bis:
+            return term
+    return None
+
+
 VOCABULARIES['accounts'] = accounts
 VOCABULARIES['invoices'] = invoices
 VOCABULARIES['vouchers'] = vouchers
@@ -126,3 +152,4 @@ VOCABULARIES['addresses'] = addresses
 VOCABULARIES['categories'] = categories
 VOCABULARIES['account'] = getNextID
 VOCABULARIES['mysource'] = mysource
+VOCABULARIES['abrechnungszeitraum'] = get_abrechnungszeitraum
