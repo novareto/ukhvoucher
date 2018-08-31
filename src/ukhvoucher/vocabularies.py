@@ -137,7 +137,6 @@ def get_abrechnungszeitraum(context):
 
 def get_default_abrechnungszeitraum():
     vocab = get_abrechnungszeitraum(None)
-    import pdb; pdb.set_trace()
     for term in vocab:
         if term.von <= datetime.now() and  datetime.now() <= term.bis:
             return term

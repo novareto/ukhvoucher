@@ -232,7 +232,6 @@ class CalculateInsert(Action):
             except:
                 p=1
             user_oid, login, az = principal.get_user_info
-            import pdb; pdb.set_trace()
             generation = Generation(
                 oid=p,
                 date=now.strftime('%Y-%m-%d'),

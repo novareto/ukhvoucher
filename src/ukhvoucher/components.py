@@ -14,7 +14,6 @@ from ukhvoucher import models, log
 from ukhvoucher.interfaces import K1, K2, K3, K4, K5, K6, K7, K8, K9, K10, K11
 from ul.auth import Principal
 
-from .caching_query import FromCache, RelationshipCache
 from .interfaces import IAccount, IVoucher
 from .models import get_ukh_config
 
@@ -272,7 +271,10 @@ class ExternalPrincipal(Principal):
         session = get_session('ukhvoucher')
         from .vocabularies import get_default_abrechnungszeitraum
         default_zeitraum = get_default_abrechnungszeitraum()
-        import pdb; pdb.set_trace()
+        from ukhvoucher import log
+        print "JAJAAJ"
+        log("Abrechnungszeitraum %s - %s" %
+            (default_zeitraum.von, default_zeitraum.bis))
         query = session.query(models.Voucher).filter(
                 models.Voucher.user_id == self.oid,
                 models.Voucher.creation_date >= default_zeitraum.von,

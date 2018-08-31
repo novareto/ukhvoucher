@@ -8,8 +8,6 @@ from . import Site
 from .components import ExternalPrincipal, AdminPrincipal
 from .interfaces import IAdminLayer, IUserLayer
 from .models import Accounts, Addresses, Account, Vouchers, Invoices, Categories
-from .caching_query import query_callable
-from .environment import regions
 
 from cromlech.browser import IPublicationRoot, getSession
 from cromlech.security import Interaction, unauthenticated_principal
@@ -34,9 +32,9 @@ def transaction_sql(engine):
     def sql_wrapped(wrapped):
         def caller(*args):
             with transaction.manager as tm:
-                query_cls = query_callable(regions)
+                #query_cls = query_callable(regions)
                 with SQLAlchemySession(
-                        engine, transaction_manager=tm, query_cls=query_cls):
+                        engine, transaction_manager=tm):
                     return wrapped(*args)
         return caller
     return sql_wrapped
@@ -83,7 +81,6 @@ class AdminUsers(GlobalUtility):
     def log_in(self, request, username, password, **kws):
         session = get_session('ukhvoucher')
         uname, az = self.zerlegUser(username)
-        print uname, az
         user = session.query(Account).filter(Account.login == uname, Account.az == az)
         if user.count():
             user = user.one()

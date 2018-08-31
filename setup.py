@@ -42,7 +42,8 @@ setup(name='ukhvoucher',
           "uvc.validation",
           "docxtpl",
           "psycopg2",
-          "cromlech.sessions.jwt"
+          "cromlech.sessions.jwt",
+          "uvclight",
       ],
       entry_points={
          'fanstatic.libraries': [
