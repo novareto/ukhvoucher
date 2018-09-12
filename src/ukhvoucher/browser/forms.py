@@ -562,8 +562,9 @@ class JournalEntryAdd(uvclight.Form):
         session = get_session('ukhvoucher')
         data['date'] = datetime.now().strftime('%Y-%m-%d')
         data['userid'] = self.request.principal.id
+        data['oid'] = self.request.principal.getAddress().oid
         entry = JournalEntry(**data)
         session.add(entry)
 
-        self.flash(u'Added Journal entry')
-        self.redirect(self.application_url() + '/journal')
+        self.flash(u'Neue Notiz erfolgreich angelegt!')
+        self.redirect(self.application_url())

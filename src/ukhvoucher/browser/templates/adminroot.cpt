@@ -251,6 +251,16 @@
 <!-- Tabelle mit Sortierfunktion -->
 <fieldset>
   <legend> Historie </legend>
+    <div class="btn-group pull-right" tal:condition="request.principal.canEdit">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Aktion <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+              <a tal:attributes="href string:${view.application_url()}/add_journal_entry"> Neue Notiz anlegen </a>
+            </li>
+        </ul>
+    </div>
    <table id="journal_table" class="tablesorter table table-bordered table-striped table-condensed" tal:define="entries request.principal.getJournalEntries()" tal:condition="entries">
      <thead>
        <tr>
