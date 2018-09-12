@@ -7,7 +7,7 @@ from cromlech.browser import getSession
 from zope.schema import Choice
 from zope.interface import Interface
 from ukhvoucher.browser.views import AdminRootIndex
-from ukhvoucher.vocabularies import VOCABULARIES
+from ukhvoucher.vocabularies import VOCABULARIES, get_default_abrechnungszeitraum
 from ..interfaces import IAdminLayer, get_oid
 from profilehooks import profile
 from plone.memoize import forever
@@ -63,12 +63,20 @@ class UserMasquarade(uvclight.ViewletForm):
         return form
 
 
+def defaultAZRFactory():
+    azr = get_default_abrechnungszeitraum()
+    if azr:
+        return azr.token
+    return
+
+
 class IDateRange(Interface):
     """ Date Range Select"""
 
     date_range = Choice(
         title=u"Abrechungszeitraun auswählen",
-        source = VOCABULARIES['abrechnungszeitraum'](None) 
+        source=VOCABULARIES['abrechnungszeitraum'](None),
+        defaultFactory=defaultAZRFactory
         )
 
 

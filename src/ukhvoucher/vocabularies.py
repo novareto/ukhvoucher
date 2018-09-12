@@ -14,6 +14,9 @@ from zope.schema.interfaces import IContextAwareDefaultFactory
 
 class MyVoc(SimpleVocabulary):
 
+    def __init__(self, context=None):
+        self.context = context
+
     @property
     def _terms(self):
         session = get_session('ukhvoucher')
@@ -43,7 +46,7 @@ class MyVoc(SimpleVocabulary):
 
 @provider(IContextSourceBinder)
 def mysource(context):
-    return MyVoc()
+    return MyVoc(context)
 
 
 

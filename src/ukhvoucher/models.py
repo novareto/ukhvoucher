@@ -9,6 +9,7 @@ from zope.location import Location
 
 import os
 import uvclight
+import datetime
 import ConfigParser
 from urllib import quote, unquote
 from cromlech.sqlalchemy import get_session
@@ -306,6 +307,7 @@ class Voucher(Base, Location):
 
     oid = Column('vch_oid', Integer, primary_key=True)
     creation_date = Column('erst_dat', DateTime)
+    modification_date = Column('mod_dat', DateTime, onupdate=datetime.datetime.now)
     status = Column('status', String)
     cat = Column('kat', String)
     user_id = Column('user_id', Integer)
