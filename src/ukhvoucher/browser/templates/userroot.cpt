@@ -4,6 +4,9 @@
   <h1> Willkommen im Erste-Hilfe-Portal der Unfallkasse Hessen</h1>
   <h1 class="lead"> Antrag auf Kostenübernahme für Erste-Hilfe-Lehrgänge </h1>
   <p> Sie können für folgende Kontingente (K) Berechtigungsscheine anfordern. </p>
+  <p> Bitte beachten Sie, dass die bisherigen Berechtigungsscheine nicht mehr gültig sind
+und verwenden Sie diese für Lehrgangsteilnahmen im aktuellen Gültigkeitszeitraum
+nicht mehr. </p>
   <p> Informationen zu den jeweiligen Kontingenten und den erforderlichen Angaben finden Sie unter dem Button "Info". </p>
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default" tal:repeat="cat view.categories">
