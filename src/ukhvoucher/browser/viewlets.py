@@ -7,7 +7,7 @@ from .. import models
 from ..interfaces import IAccount, IAdminLayer, IUserLayer
 from .forms import ModelIndex, CreateModel
 from dolmen.menu import menu
-from ukhtheme.uvclight.viewlets import BelowContent
+from ukhtheme.uvclight.viewlets import BelowContent, FlashMessages
 from uvc.entities.browser.menus import IPersonalMenu, INavigationMenu
 from zope.interface import Interface
 from cromlech.browser import getSession
@@ -364,3 +364,7 @@ class AccountEditEntry(uvclight.MenuItem):
     uvclight.name('edit')
 
     action="edit"
+
+
+class FlashMessages(FlashMessages):
+    template = uvclight.get_template('flash.cpt', __file__)
