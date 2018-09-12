@@ -81,12 +81,11 @@ class TimeRanngeSelect(uvclight.ViewletForm):
     template = uvclight.get_template('timerangeselect.cpt', __file__)
     fields = uvclight.Fields(IDateRange)
     ignoreContent = False
-    #dataManager = DictDataManager
+    dataManager = DictDataManager
 
-    def __init__1(self, *args):
+    def __init__(self, *args):
         uvclight.ViewletForm.__init__(self, *args)
         session = getSession()
-        print session
         self.setContentData(session)
 
     @property
@@ -98,10 +97,7 @@ class TimeRanngeSelect(uvclight.ViewletForm):
         data, errors = self.extractData()
         if errors:
             return
-        import pdb; pdb.set_trace()
         session = getSession()
-
-        print session
         session['date_range'] = data['date_range']
         self.view.flash(u'Der Abrechungszeitraum wurde gesetzt!')
         self.view.redirect(self.request.path)
