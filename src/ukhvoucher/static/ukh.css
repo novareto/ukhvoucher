@@ -121,3 +121,7 @@ table.table td {
     text-align: left;
     white-space: normal;
 }
+
+div#daterange {
+ margin-right: 20px;
+}

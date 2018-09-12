@@ -1,0 +1,16 @@
+<div id="daterange" class="row">
+<form enctype="multipart/form-data" method="post" novalidate="novalidate"
+  id="selectdatetimerange"
+  action="" class="form-inline pull-right" tal:attributes="action viewlet.action_url">
+
+  <div class="form-group" id="date_range" tal:define="widget form.fieldWidgets.get('form.field.date_range')">
+    <div class="select-wrapper">
+      <span metal:use-macro="macro['field-inline']"> </span>
+    </div>
+  </div>
+
+  <span tal:define="widget form.actionWidgets.get('form.action.cdr')">
+    <span metal:use-macro="macro['action-inline']"></span>
+  </span>
+</form>
+</div>
