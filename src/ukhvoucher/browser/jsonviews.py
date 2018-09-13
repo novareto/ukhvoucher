@@ -26,7 +26,7 @@ class SearchJSONVouchers(uvclight.JSON):
             for x in ress:
                 terms.append({
                     'id': int(x.oid),
-                    'text': "%s - %s %s" %(x.title, x.status.strip(), x.cat),
+                    'text': "%s (%s) - %s %s" %(x.title, x.zeitraum().token, x.status.strip(), x.cat),
                     'disabled': (x.invoice is not None or x.status.strip() in (DISABLED, BOOKED)),
                     #'disabled': True,
                 })

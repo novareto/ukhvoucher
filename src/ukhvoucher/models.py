@@ -307,7 +307,7 @@ class Voucher(Base, Location):
 
     oid = Column('vch_oid', Integer, primary_key=True)
     creation_date = Column('erst_dat', DateTime)
-    modification_date = Column('mod_dat', DateTime, onupdate=datetime.datetime.now)
+    modification_date = Column('mod_dat', DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
     status = Column('status', String)
     cat = Column('kat', String)
     user_id = Column('user_id', Integer)
@@ -413,6 +413,10 @@ class Voucher(Base, Location):
         elif self.cat.strip() == 'K11':
             dat = u'K11 - Gesundheitsdienste'
         return dat
+
+    def zeitraum(self):
+        from ukhvoucher.vocabularies import get_default_abrechnungszeitraum
+        return get_default_abrechnungszeitraum(self.creation_date)
 
 
 @implementer(IModel, IIdentified, IInvoice)

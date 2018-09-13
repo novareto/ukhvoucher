@@ -35,12 +35,14 @@ class MyVoc(SimpleVocabulary):
         session = get_session('ukhvoucher')
         from ukhvoucher.models import Voucher
         item = session.query(Voucher).get(term.oid)
+        import pdb; pdb.set_trace()
         return SimpleTerm(item, token=item.oid, title="%s - %s %s" %(item.title, item.status.strip(), item.cat))
 
     def getTermByToken(self, token):
         session = get_session('ukhvoucher')
         from ukhvoucher.models import Voucher
         item = session.query(Voucher).get(token)
+        import pdb; pdb.set_trace()
         return SimpleTerm(item, token=item.oid, title="%s - %s %s" %(item.title, item.status.strip(), item.cat))
 
 
@@ -138,10 +140,12 @@ def get_abrechnungszeitraum(context):
     return SimpleVocabulary(items)
 
 
-def get_default_abrechnungszeitraum():
+def get_default_abrechnungszeitraum(zeitpunkt=None):
+    if not zeitpunkt:
+        zeitpunkt = datetime.now()
     vocab = get_abrechnungszeitraum(None)
     for term in vocab:
-        if term.von <= datetime.now() and  datetime.now() <= term.bis:
+        if term.von <= zeitpunkt and zeitpunkt <= term.bis:
             return term
     return None
 
