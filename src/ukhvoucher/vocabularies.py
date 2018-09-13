@@ -145,6 +145,13 @@ def get_default_abrechnungszeitraum(zeitpunkt=None):
     return None
 
 
+def get_selected_abrechungszeitraum():
+    from cromlech.browser import getSession
+    session = getSession()
+    date_range = session.get('date_range')
+    return get_abrechnungszeitraum(None).getTermByToken(date_range)
+
+
 VOCABULARIES['accounts'] = accounts
 VOCABULARIES['invoices'] = invoices
 VOCABULARIES['vouchers'] = vouchers

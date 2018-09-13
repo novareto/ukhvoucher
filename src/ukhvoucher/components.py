@@ -48,7 +48,9 @@ def cached(cache, marshaller=default_marshaller):
                 return cache.fetch_with_generator(key, func, *args, **kwargs)
             except NoMarshallError:
                 return func(*args, **kwargs)
+
         return inner
+
     return decorator
 
 
@@ -62,18 +64,18 @@ def vouchers_marshaller(func, principal, cat=None):
 
 class ExternalPrincipal(Principal):
 
-    permissions = frozenset(('users.access',))
+    permissions = frozenset(("users.access",))
     roles = frozenset()
-    info_factory = namedtuple('AccountInfo', list(IAccount))
-    voucher_factory = namedtuple('VoucherInfo', list(IVoucher))
+    info_factory = namedtuple("AccountInfo", list(IAccount))
+    voucher_factory = namedtuple("VoucherInfo", list(IVoucher))
 
-    def __init__(self, id, title=u''):
+    def __init__(self, id, title=u""):
         self.id = id
 
     @property
     def title(self):
         adr = self.getAddress()
-        return "%s %s" %(adr.name1, adr.name2)
+        return "%s %s" % (adr.name1, adr.name2)
 
     @property
     def oid(self):
@@ -99,23 +101,24 @@ class ExternalPrincipal(Principal):
         return self.info_factory(*fields)
 
     def zerlegUser(self):
-        if '-' in self.id:
-            return self.id.split('-')
-        return self.id, 'eh'
-
+        if "-" in self.id:
+            return self.id.split("-")
+        return self.id, "eh"
 
     def getAccount(self, invalidate=False):
-        session = get_session('ukhvoucher')
+        session = get_session("ukhvoucher")
         mnr, az = self.zerlegUser()
         account = session.query(models.Account).filter(
-                and_(models.Account.login==mnr, models.Account.az==az))
+            and_(models.Account.login == mnr, models.Account.az == az)
+        )
         return account.one()
 
     def getAddress(self):
-        session = get_session('ukhvoucher')
+        session = get_session("ukhvoucher")
         address = session.query(models.Address).get(str(self.oid))
         if address:
             return address
+
         @ram.cache(_render_details_cachekey)
         def getSlowAdr(oid):
             address = session.query(models.AddressTraeger).get(oid)
@@ -124,12 +127,14 @@ class ExternalPrincipal(Principal):
             address = session.query(models.AddressEinrichtung).get(oid)
             if address:
                 return address
+
         return getSlowAdr(self.oid)
 
     def getCategory(self, invalidate=False):
-        session = get_session('ukhvoucher')
+        session = get_session("ukhvoucher")
         category = session.query(models.Category).get(str(self.oid))
         if category:
+
             def createCategory(category):
                 cat = OrderedSet()
                 if category.kat1:
@@ -155,6 +160,7 @@ class ExternalPrincipal(Principal):
                 if category.kat11:
                     cat.add(K11)
                 return cat
+
             return createCategory(category)
         else:
             mnr = self.getAddress().mnr
@@ -162,32 +168,44 @@ class ExternalPrincipal(Principal):
         return []
 
     def sql_base(self, enrea1, enrea2):
-        umgebung = TABLENAMES['sqlbase']
-        session = get_session('ukhvoucher')
-        if umgebung == 'test':
+        umgebung = TABLENAMES["sqlbase"]
+        session = get_session("ukhvoucher")
+        if umgebung == "test":
             sql = """SELECT  TRGMNR FROM tstcusadat.mitrg1aa a, tstcusadat.mienr1aa b
             WHERE A.TRGRCD = b.Enroid
             and a.trgbv in(1, 3) and substr(a.trgmnr, 3, 2) in(10, 30)
-            and b.enrea1  in(%s) and b.enrea2 in(%s)""" % (enrea1, enrea2)
-        if umgebung == 'prod':
+            and b.enrea1  in(%s) and b.enrea2 in(%s)""" % (
+                enrea1,
+                enrea2,
+            )
+        if umgebung == "prod":
             sql = """SELECT  TRGMNR FROM educusadat.mitrg1aa a, educusadat.mienr1aa b
             WHERE A.TRGRCD = b.Enroid
             and a.trgbv in(1, 3) and substr(a.trgmnr, 3, 2) in(10, 30)
-            and b.enrea1  in(%s) and b.enrea2 in(%s)""" % (enrea1, enrea2)
+            and b.enrea1  in(%s) and b.enrea2 in(%s)""" % (
+                enrea1,
+                enrea2,
+            )
         res = session.execute(sql).fetchall()
         return [x[0].strip() for x in res]
 
     def sql_schulen(self, enrea1, enrea2):
-        umgebung = TABLENAMES['sqlbase']
-        session = get_session('ukhvoucher')
-        if umgebung == 'test':
+        umgebung = TABLENAMES["sqlbase"]
+        session = get_session("ukhvoucher")
+        if umgebung == "test":
             sql = """SELECT  TRGMNR FROM tstcusadat.mitrg1aa a, tstcusadat.mienr1aa b
             WHERE A.TRGRCD = b.Enroid
-            and b.enrea1  in(%s) and b.enrea2 in(%s) and b.enrea3 = 'N'""" % (enrea1, enrea2)
-        if umgebung == 'prod':
+            and b.enrea1  in(%s) and b.enrea2 in(%s) and b.enrea3 = 'N'""" % (
+                enrea1,
+                enrea2,
+            )
+        if umgebung == "prod":
             sql = """SELECT  TRGMNR FROM educusadat.mitrg1aa a, educusadat.mienr1aa b
             WHERE A.TRGRCD = b.Enroid
-            and b.enrea1  in(%s) and b.enrea2 in(%s) and b.enrea3 = 'N'""" % (enrea1, enrea2)
+            and b.enrea1  in(%s) and b.enrea2 in(%s) and b.enrea3 = 'N'""" % (
+                enrea1,
+                enrea2,
+            )
         res = session.execute(sql).fetchall()
         return [x[0].strip() for x in res]
 
@@ -195,89 +213,92 @@ class ExternalPrincipal(Principal):
         origmnr = mnr.strip()
         mnr = mnr[:4]
         cat = OrderedSet()
-        if mnr in ('1.02', '1.03', '1.04'):
+        if mnr in ("1.02", "1.03", "1.04"):
             cat = OrderedSet([K1, K2, K3, K4, K6, K9])
-        elif mnr == '1.05':
+        elif mnr == "1.05":
             cat = OrderedSet([K1, K2, K6, K8, K9])
-        elif mnr == '1.11':
-            if origmnr == '1.11.60/00007':
-                cat = OrderedSet([K6,])
+        elif mnr == "1.11":
+            if origmnr == "1.11.60/00007":
+                cat = OrderedSet([K6])
             else:
-                cat = OrderedSet([K2,])
-        elif mnr in ('1.10', '1.30', '3.10'):
-            if origmnr in self.sql_base('2', '1,2,3,4'):
-                log('%s entsorgungsbetrieb' % origmnr)
+                cat = OrderedSet([K2])
+        elif mnr in ("1.10", "1.30", "3.10"):
+            if origmnr in self.sql_base("2", "1,2,3,4"):
+                log("%s entsorgungsbetrieb" % origmnr)
                 cat = OrderedSet([K2, K4])
-            elif origmnr in self.sql_base('2', '5,6,7'):
-                log('%s abwasserbetrieb' % origmnr)
+            elif origmnr in self.sql_base("2", "5,6,7"):
+                log("%s abwasserbetrieb" % origmnr)
                 cat = OrderedSet([K2, K6])
-            elif origmnr in self.sql_base('1', '1,2,3,4,6,7,8'):
-                log('%s Gesundheitsdienst' % origmnr)
-                cat = OrderedSet([K11,])
-            elif origmnr in self.sql_base('1', '5'):
-                log('%s Sozialstation' % origmnr)
+            elif origmnr in self.sql_base("1", "1,2,3,4,6,7,8"):
+                log("%s Gesundheitsdienst" % origmnr)
+                cat = OrderedSet([K11])
+            elif origmnr in self.sql_base("1", "5"):
+                log("%s Sozialstation" % origmnr)
                 cat = OrderedSet([])
-            elif origmnr in self.sql_base('2', '7'):
-                log('%s Gas und Wasserversorgung' % origmnr)
+            elif origmnr in self.sql_base("2", "7"):
+                log("%s Gas und Wasserversorgung" % origmnr)
                 cat = OrderedSet([K2, K6])
-            elif origmnr in self.sql_base('3', '6'):
-                log('%s Beschaeftigungsgesellschaften' % origmnr)
-                cat = OrderedSet([K2,])
-            elif origmnr in self.sql_base('4', '1,2,4,5'):
-                log('%s Bauwesen' % origmnr)
-                cat = OrderedSet([K2,])
-            elif origmnr in self.sql_base('4', '3'):
-                log('%s Bauhoefe' % origmnr)
+            elif origmnr in self.sql_base("3", "6"):
+                log("%s Beschaeftigungsgesellschaften" % origmnr)
+                cat = OrderedSet([K2])
+            elif origmnr in self.sql_base("4", "1,2,4,5"):
+                log("%s Bauwesen" % origmnr)
+                cat = OrderedSet([K2])
+            elif origmnr in self.sql_base("4", "3"):
+                log("%s Bauhoefe" % origmnr)
                 cat = OrderedSet([K2, K4])
-            elif origmnr in self.sql_base('4', '6'):
-                log('%s Wasserversorgung' % origmnr)
+            elif origmnr in self.sql_base("4", "6"):
+                log("%s Wasserversorgung" % origmnr)
                 cat = OrderedSet([K2, K4])
-            elif origmnr in self.sql_base('5', '2,4'):
-                log('%s Landwirtschaft' % origmnr)
-                cat = OrderedSet([K2,])
-            elif origmnr in self.sql_base('5', '3'):
-                log('%s Gartenanlagen,Tiergaerten' % origmnr)
+            elif origmnr in self.sql_base("5", "2,4"):
+                log("%s Landwirtschaft" % origmnr)
+                cat = OrderedSet([K2])
+            elif origmnr in self.sql_base("5", "3"):
+                log("%s Gartenanlagen,Tiergaerten" % origmnr)
                 cat = OrderedSet([])
-            elif origmnr in self.sql_base('6', '1,2,4,5,9'):
-                log('%s Kulturelle Einrichtungen' % origmnr)
-                cat = OrderedSet([K2,])
-            elif origmnr in self.sql_base('6', '3'):
-                log('%s Schwimmbaeder' % origmnr)
+            elif origmnr in self.sql_base("6", "1,2,4,5,9"):
+                log("%s Kulturelle Einrichtungen" % origmnr)
+                cat = OrderedSet([K2])
+            elif origmnr in self.sql_base("6", "3"):
+                log("%s Schwimmbaeder" % origmnr)
                 cat = OrderedSet([])
-            elif origmnr in self.sql_base('8', '1,2,3,4,5,6'):
-                log('%s Verkehrsunternehmen' % origmnr)
-                cat = OrderedSet([K2,])
-            elif origmnr in self.sql_base('9', '4'):
-                log('%s Forschungseinrichtungen' % origmnr)
-                cat = OrderedSet([K2,])
-            elif origmnr in self.sql_base('7', '1,2'):
-                log('%s Feuerwehrvereine' % origmnr)
+            elif origmnr in self.sql_base("8", "1,2,3,4,5,6"):
+                log("%s Verkehrsunternehmen" % origmnr)
+                cat = OrderedSet([K2])
+            elif origmnr in self.sql_base("9", "4"):
+                log("%s Forschungseinrichtungen" % origmnr)
+                cat = OrderedSet([K2])
+            elif origmnr in self.sql_base("7", "1,2"):
+                log("%s Feuerwehrvereine" % origmnr)
                 cat = OrderedSet([])
             else:
-                cat = OrderedSet([K1,])
-        elif mnr in ('2.10.64/00005', '2.10.34/00005', '2.10.65/00010'):
-            cat = OrderedSet([K2, ])
-        elif mnr in ('2.10.61/00002'):
-            cat = OrderedSet([K5, ])
-        elif mnr in ('1.20'):
-            cat = OrderedSet([K1, ])
-        elif mnr in ('3.2.', '3.3.'):
-            self.sql_schulen('3','2')
-            log('%s Schule' % origmnr)
-            cat = OrderedSet([K7, ])
+                cat = OrderedSet([K1])
+        elif mnr in ("2.10.64/00005", "2.10.34/00005", "2.10.65/00010"):
+            cat = OrderedSet([K2])
+        elif mnr in ("2.10.61/00002"):
+            cat = OrderedSet([K5])
+        elif mnr in ("1.20"):
+            cat = OrderedSet([K1])
+        elif mnr in ("3.2.", "3.3."):
+            self.sql_schulen("3", "2")
+            log("%s Schule" % origmnr)
+            cat = OrderedSet([K7])
         return cat
 
     def getVouchers(self, cat=None):
-        session = get_session('ukhvoucher')
+        session = get_session("ukhvoucher")
         from .vocabularies import get_default_abrechnungszeitraum
+
         default_zeitraum = get_default_abrechnungszeitraum()
         from ukhvoucher import log
-        log("Abrechnungszeitraum %s - %s" %
-            (default_zeitraum.von, default_zeitraum.bis))
+
+        log(
+            "Abrechnungszeitraum %s - %s" % (default_zeitraum.von, default_zeitraum.bis)
+        )
         query = session.query(models.Voucher).filter(
-                models.Voucher.user_id == self.oid,
-                models.Voucher.creation_date >= default_zeitraum.von,
-                models.Voucher.creation_date <= default_zeitraum.bis,
+            models.Voucher.user_id == self.oid,
+            models.Voucher.creation_date >= default_zeitraum.von,
+            models.Voucher.creation_date <= default_zeitraum.bis,
         )
         if cat:
             query = query.filter(models.Voucher.cat == cat)
@@ -289,8 +310,7 @@ class ExternalPrincipal(Principal):
 
 
 class AdminPrincipal(ExternalPrincipal):
-
-    #permissions = frozenset(('manage.vouchers',))
+    # permissions = frozenset(('manage.vouchers',))
     roles = frozenset()
 
     def __init__(self, id, masquarade, permissions):
@@ -300,7 +320,7 @@ class AdminPrincipal(ExternalPrincipal):
 
     @property
     def canEdit(self):
-        return 'manage.vouchers' in self.permissions
+        return "manage.vouchers" in self.permissions
 
     @property
     def oid(self):
@@ -311,27 +331,33 @@ class AdminPrincipal(ExternalPrincipal):
         return "Administrator"
 
     def getAccount(self, invalidate=False):
-        session = get_session('ukhvoucher')
-        accounts = session.query(models.Account).filter(models.Account.oid==self.oid)
+        session = get_session("ukhvoucher")
+        accounts = session.query(models.Account).filter(models.Account.oid == self.oid)
         rc = []
         for account in accounts:
             if account.az == "eh":
                 rc.append(account)
-            elif 'Erstehilfe' in account.rollen:
+            elif "Erstehilfe" in account.rollen:
                 rc.append(account)
         return rc
 
     def getVouchers(self, cat=None):
-        session = get_session('ukhvoucher')
+        from ukhvoucher.vocabularies import get_selected_abrechungszeitraum
+
+        zeitraum = get_selected_abrechungszeitraum()
+        session = get_session("ukhvoucher")
         query = session.query(models.Voucher).filter(
-            models.Voucher.user_id == self.oid)
+            models.Voucher.user_id == self.oid,
+            models.Voucher.creation_date >= zeitraum.von,
+            models.Voucher.creation_date <= zeitraum.bis,
+        )
         if cat:
             query = query.filter(models.Voucher.cat == cat)
         return query.all()
 
     def getJournalEntries(self):
-        session = get_session('ukhvoucher')
+        session = get_session("ukhvoucher")
         query = session.query(models.JournalEntry).filter(
-            models.JournalEntry.oid == self.oid)
+            models.JournalEntry.oid == self.oid
+        )
         return query.all()
-
