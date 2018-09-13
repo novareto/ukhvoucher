@@ -264,10 +264,10 @@ class CalculateInsert(Action):
         url = form.application_url()
         ### INVALIDATION
         principal = uvclight.utils.current_principal()
-        principal.getVouchers(invalidate=True)
+        principal.getVouchers()
         return SuccessMarker('Success', True, url=url)
 
-    
+ 
 from zope.interface import Interface
 
 class KGBaseForm(uvclight.Form):

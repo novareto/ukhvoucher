@@ -22,7 +22,7 @@
 
 $("#select_unternehmen select").select2({
     tags: false,
-    multiple: true,
+    multiple: false,
     tokenSeparators: [',', ' '],
     minimumInputLength: 2,
     minimumResultsForSearch: 100,
