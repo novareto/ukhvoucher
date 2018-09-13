@@ -283,7 +283,6 @@ class Batch(object):
         if results is None:
             results = self.context
         self.results = results
-        
         if length is None:
             length = len(self.results)
         self.length = length
@@ -345,7 +344,7 @@ class ContainerIndex(uvclight.Page):
     template = uvclight.get_template('container.cpt', __file__)
     batching = uvclight.get_template('batch.pt', __file__)
     results = None
-    
+
     def listing(self, item):
         details = inspect(item)
         relations = details.mapper.relationships.keys()
@@ -368,7 +367,7 @@ class ContainerIndex(uvclight.Page):
         ukhvouchers.need()
         ukhcss.need()
         self.columns = [field.title for field in self.context.listing_attrs]
-        self.batcher = Batch(self.context, self.request, results=self.results, size=1)
+        self.batcher = Batch(self.context, self.request, results=self.results, size=100)
         self.batcher.update()
         self.batch = self.batching.render(self, **{'batch': self.batcher})
 
