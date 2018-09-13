@@ -36,7 +36,6 @@ class Session(JWTCookieSession):
             if token is not None:
                 try:
                     session_data = self.check_token(token.value)
-                    print session_data
                     return session_data
                 except ExpiredToken:
                     environ['session.timeout'] = True

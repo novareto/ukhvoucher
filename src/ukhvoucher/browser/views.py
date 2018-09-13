@@ -408,3 +408,16 @@ class InvoicesView(uvclight.Page):
     def reverseVouchers(self, vouchers):
         vl = [x for x in vouchers]
         return sorted(vl, key=lambda k: k.oid)
+
+
+class Helper(uvclight.Page):
+    uvclight.context(Interface)
+    require('manage.vouchers')
+
+    def render(self):
+        session = get_session('ukhvoucher')
+        from ukhvoucher import models
+        from ukhvoucher import MANUALLY_CREATED
+        query = session.query(models.Voucher).filter(models.Voucher.generation_id == models.Generation.oid, models.Generation.data == '"Manuelle Erzeugung"')
+        for v in query.all():
+            v.status = MANUALLY_CREATED

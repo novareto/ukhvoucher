@@ -27,6 +27,7 @@ VOCABULARIES = {}
 
 DISABLED = u'ungültig'
 CREATED = u"erstellt"
+MANUALLY_CREATED = u"manuell_erstellt"
 BOOKED = u"gebucht"
 NOT_BOOKED = u"ausgebucht"
 

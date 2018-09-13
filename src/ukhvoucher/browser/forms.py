@@ -20,7 +20,7 @@ from ..interfaces import IModel, IModelContainer, IAdminLayer, IUserLayer
 from ..interfaces import IAccount, IJournalize, IJournalEntry
 from ..interfaces import IKontakt
 from ..models import Voucher, JournalEntry, Vouchers, Addresses, Invoices, Invoice, Accounts
-from .. import _, resources, DISABLED, CREATED
+from .. import _, resources, DISABLED, CREATED, MANUALLY_CREATED
 from ..apps import UserRoot
 from uvc.entities.browser import IContextualActionsMenu, IDocumentActions
 
@@ -388,7 +388,7 @@ class AskForVouchers(Form):
             for idx in range(number):
                 voucher = Voucher(
                     creation_date=datetime.now().strftime('%Y-%m-%d'),
-                    status=CREATED,
+                    status=MANUALLY_CREATED,
                     cat = data['kategorie'],
                     user_id=self.context.oid,
                     user_az=self.context.az,

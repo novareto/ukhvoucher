@@ -272,7 +272,6 @@ class ExternalPrincipal(Principal):
         from .vocabularies import get_default_abrechnungszeitraum
         default_zeitraum = get_default_abrechnungszeitraum()
         from ukhvoucher import log
-        print "JAJAAJ"
         log("Abrechnungszeitraum %s - %s" %
             (default_zeitraum.von, default_zeitraum.bis))
         query = session.query(models.Voucher).filter(

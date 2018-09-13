@@ -182,10 +182,11 @@ class Statistik(uvclight.Form):
                 models.Voucher.cat, models.Voucher.status, func.count(models.Voucher.oid)).group_by(
                         models.Voucher.cat, models.Voucher.status).order_by(models.Voucher.cat)
         if data['von'] and data['von'] is not NO_VALUE:
-            query = query.filter(models.Voucher.creation_date > data['von'])
+            query = query.filter(models.Voucher.creation_date >= data['von'])
         if data['bis'] and data['bis'] is not NO_VALUE:
-            query = query.filter(models.Voucher.creation_date < data['bis'])
+            query = query.filter(models.Voucher.creation_date <= data['bis'])
         rr = {}
+        #import pdb; pdb.set_trace() 
         for kat, status, count  in query.all():
             kat = kat.strip()
             if kat == "K10":
@@ -195,7 +196,7 @@ class Statistik(uvclight.Form):
                 rr[kat] = {}
             rr[kat][status] = count
         for k, v in rr.items():
-            v['manuell'] = self.getManuell(k)[0][0]
+            v['manuell'] = v['manuell_erstellt']
             v['title'] = kats.getTerm(k).title
         self.statdata = rr
         rc = []
@@ -203,9 +204,9 @@ class Statistik(uvclight.Form):
             models.Voucher.cat, func.count(models.Voucher.oid)).group_by(models.Voucher.cat).filter(
                 models.Voucher.status == BOOKED).order_by(models.Voucher.cat)
         if data['von'] and data['von'] is not NO_VALUE:
-            query = query.filter(models.Voucher.creation_date > data['von'])
+            query = query.filter(models.Voucher.creation_date >= data['von'])
         if data['bis'] and data['bis'] is not NO_VALUE:
-            query = query.filter(models.Voucher.creation_date < data['bis'])
+            query = query.filter(models.Voucher.creation_date <= data['bis'])
         for cat, count in query.all():
             rc.append((kats.getTerm(cat.strip()).title, str(count)))
         self.statdata1 = rc
