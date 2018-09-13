@@ -1,23 +1,26 @@
 # -*- coding: utf-8 -*-
 
 import uvclight
+
+from dolmen.forms.base.markers import NO_VALUE
+from sqlalchemy import String, inspect
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 from ul.auth import require
+from uvc.design.canvas import menus, managers
+from zope.component import getMultiAdapter
+from zope.interface import Interface
+from zope.lifecycleevent import created
+from zope.location import LocationProxy
+
 from .views import ContainerIndex
 from .. import _
 from ..apps import AdminRoot, UserRoot
 from ..interfaces import IModel, IModelContainer
 from ..interfaces import IAdminLayer, IUserLayer
-from ..models import Invoices, Accounts, Account, Addresses, Address, Vouchers, Voucher
+from ..models import (
+    Invoices, Accounts, Account, Addresses, Address, Vouchers, Voucher)
 from ..resources import ukhvouchers
-from zope.component import getMultiAdapter
-from zope.interface import Interface
 
-from sqlalchemy import String, inspect
-from sqlalchemy.orm.attributes import InstrumentedAttribute
-from zope.lifecycleevent import created
-from zope.location import LocationProxy
-from dolmen.forms.base.markers import NO_VALUE
-from uvc.design.canvas import menus, managers
 
 
 MULTISELECTS = set(('vouchers',))
@@ -68,8 +71,10 @@ class SearchAction(uvclight.Action):
         view.results = [
             LocationProxy(res, view.context, str(res.oid))
             for res in self.search(session, model, **data)]
-        print view
-        print view.results
+
+        if len(view.results) == 1:
+            url = view.url(view.results[0])
+            return uvclight.SuccessMarker('One result found', True, url=url)
         return uvclight.SUCCESS
 
 

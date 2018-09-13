@@ -327,8 +327,8 @@ class Batch(object):
 
     def dichotomy(self):
         url = get_absolute_url(self.results, self.request)
-        start = (self.current - 1) * self.size
-        for type, value in get_dichotomy_batches(self.pages, self.size):
+        start = self.current * self.size
+        for type, value in get_dichotomy_batches(self.pages, start):
             yield {
                 'current': type == 'current',
                 'id': value,
@@ -345,7 +345,7 @@ class ContainerIndex(uvclight.Page):
     template = uvclight.get_template('container.cpt', __file__)
     batching = uvclight.get_template('batch.pt', __file__)
     results = None
-    
+
     def listing(self, item):
         details = inspect(item)
         relations = details.mapper.relationships.keys()

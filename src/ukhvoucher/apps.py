@@ -81,7 +81,8 @@ class AdminUsers(GlobalUtility):
     def log_in(self, request, username, password, **kws):
         session = get_session('ukhvoucher')
         uname, az = self.zerlegUser(username)
-        user = session.query(Account).filter(Account.login == uname, Account.az == az)
+        user = session.query(Account).filter(
+            Account.login == uname, Account.az == az)
         if user.count():
             user = user.one()
             if user.password.strip() == password:

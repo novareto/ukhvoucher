@@ -98,10 +98,8 @@ class TimeRanngeSelect(uvclight.ViewletForm):
         data, errors = self.extractData()
         if errors:
             return
-        import pdb; pdb.set_trace()
-        session = getSession()
 
-        print session
+        session = getSession()
         session['date_range'] = data['date_range']
         self.view.flash(u'Der Abrechungszeitraum wurde gesetzt!')
         self.view.redirect(self.request.path)

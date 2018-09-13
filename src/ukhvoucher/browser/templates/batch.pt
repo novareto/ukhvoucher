@@ -1,7 +1,7 @@
 <div class="batch">
   <ul>
     <li i18n:translate="">Seiten&nbsp;&nbsp;</li>
-    <li tal:repeat="info batch.batches()">
+    <li tal:repeat="info batch.dichotomy()">
       <a class="page"
 	 tal:condition="info['current'] == False"
 	 tal:attributes="href info['url']"

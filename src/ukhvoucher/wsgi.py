@@ -36,6 +36,7 @@ class Session(JWTCookieSession):
             if token is not None:
                 try:
                     session_data = self.check_token(token.value)
+                    print session_data
                     return session_data
                 except ExpiredToken:
                     environ['session.timeout'] = True
@@ -66,9 +67,8 @@ def router(conf, session_key, zcml, dsn, name, root):
     metadata.create_all(engine.engine, checkfirst=True)
 
     # We create the session wrappper
-    session_key = "session"
     key = key_from_file(path.join(root, 'jwt.key'))
-    session_wrapper = Session(key, 60, environ_key=session_key)
+    session_wrapper = Session(key, 6000, environ_key=session_key)
 
     # Router
     root = URLMap()
