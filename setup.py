@@ -44,6 +44,9 @@ setup(name='ukhvoucher',
           "psycopg2-binary",
           "cromlech.sessions.jwt",
           "uvclight",
+          "dolmen.sqlcontainer",
+          "ul.sql",
+          "ul.auth",
       ],
       entry_points={
          'fanstatic.libraries': [

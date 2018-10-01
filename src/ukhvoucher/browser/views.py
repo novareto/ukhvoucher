@@ -421,3 +421,30 @@ class Helper(uvclight.Page):
         query = session.query(models.Voucher).filter(models.Voucher.generation_id == models.Generation.oid, models.Generation.data == '"Manuelle Erzeugung"')
         for v in query.all():
             v.status = MANUALLY_CREATED
+
+
+class Migration(uvclight.Page):
+    uvclight.context(Interface)
+    require('manage.vouchers')
+
+    def render(self):
+        session = get_session('ukhvoucher')
+        from ukhvoucher import models
+        query = session.query(models.Address, models.Account).filter(models.Address.oid == models.Account.oid)
+        #print query.count()
+        #for adr, account in query.all():
+        #    adr.user_login = account.login
+        #    adr.user_az = account.az
+        #    adr.user_id = str(account.oid)
+        #    print adr
+        print "Migration der Gutscheine"
+        query = session.query(models.Voucher, models.Account).filter(models.Voucher.user_id == models.Account.oid)
+        print query.count()
+        for vou, account in query.all():
+            print vou.user_login
+            print vou.user_az
+            print vou.user_id
+            #vou.user_login = account.login
+            #vou.user_az = account.az
+            #import pdb; pdb.set_trace()
+

@@ -22,9 +22,6 @@ from . import resources
 
 from sqlalchemy import types
 
-schema = ''
-#schema = 'UKHINTERN.'
-
 
 def get_ukh_config():
     path = os.environ.get('UKH_CONFIGURATION')
@@ -38,6 +35,8 @@ def get_ukh_config():
 
 
 TABLENAMES = get_ukh_config()
+
+schema = TABLENAMES.get('schema', '')
 
 
 class StrippedString(types.TypeDecorator):
@@ -69,9 +68,6 @@ class Address(Base, Location):
     __label__ = _(u"Address")
     z1ext9aa = TABLENAMES['user']
 
-    if schema:
-        __table_args__ = {"schema": schema[:-1]}
-
     oid = Column('oid', Integer, primary_key=True, autoincrement=True)
     name1 = Column('iknam1', String(28))
     name2 = Column('iknam2', String(28))
@@ -93,7 +89,12 @@ class Address(Base, Location):
         {})
 
     if schema:
-        __table_args__ = {"schema": schema[:-1]}
+        __table_args__ = (
+            ForeignKeyConstraint(
+                [user_id, user_az, user_login],
+                [schema + z1ext9aa + '.oid',
+                 schema + z1ext9aa + '.az', schema + z1ext9aa + '.login']),
+                {"schema": schema[:-1]})
 
     @property
     def title(self):
@@ -291,6 +292,10 @@ class Account(Base, Location):
         fields['password'].htmlAttributes = {'maxlength': 8}
 
 
+def date_factory():
+    return datetime.datetime.now().strftime('%Y-%m-%d')
+
+
 @implementer(IModel, IIdentified, IVoucher)
 class Voucher(Base, Location):
 
@@ -307,10 +312,10 @@ class Voucher(Base, Location):
 
     oid = Column('vch_oid', Integer, primary_key=True)
     creation_date = Column('erst_dat', DateTime)
-    modification_date = Column('mod_dat', DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
+    modification_date = Column('mod_dat', DateTime, default=date_factory, onupdate=date_factory)
     status = Column('status', String)
     cat = Column('kat', String)
-    user_id = Column('user_id', Integer)
+    user_id = Column('user_id', Integer) #, ForeignKey(schema + z1ext9aa + '.oid'))
     user_az = Column('user_az', String)
     user_login = Column('user_login', String())
     invoice_id = Column(
@@ -323,9 +328,10 @@ class Voucher(Base, Location):
     __table_args__ = (ForeignKeyConstraint([user_id, user_az, user_login],
                                            [schema + z1ext9aa + '.oid', schema + z1ext9aa + '.az', schema + z1ext9aa + '.login']),
                       {})
-
     if schema:
-        __table_args__ = {"schema": schema[:-1]}
+        __table_args__ = (ForeignKeyConstraint([user_id, user_az, user_login],
+                                           [schema + z1ext9aa + '.oid', schema + z1ext9aa + '.az', schema + z1ext9aa + '.login']),
+                                           {"schema": schema[:-1]})
 
     def getInvoice(self):
         from cromlech.sqlalchemy import get_session
@@ -473,7 +479,9 @@ class Generation(Base):
                       {})
 
     if schema:
-        __table_args__ = {"schema": schema[:-1]}
+        __table_args__ = (ForeignKeyConstraint([user, user_az, user_login],
+                                           [schema + z1ext9aa + '.oid', schema + z1ext9aa + '.az', schema + z1ext9aa + '.login']),
+                                           {"schema": schema[:-1]})
 
 
 from zope.location.interfaces import ILocation

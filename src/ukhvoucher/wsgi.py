@@ -9,7 +9,6 @@ from paste.urlmap import URLMap
 from ul.auth import GenericSecurityPolicy
 from zope.i18n import config
 from zope.security.management import setSecurityPolicy
-from webob import Response
 
 from . import Base
 from os import path

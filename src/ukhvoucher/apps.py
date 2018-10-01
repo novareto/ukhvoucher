@@ -57,7 +57,6 @@ USERS = {
     }
 
 
-
 @implementer(ICredentials)
 class Access(GlobalUtility):
     name('admins')

@@ -148,7 +148,7 @@ def get_default_abrechnungszeitraum(zeitpunkt=None):
 def get_selected_abrechungszeitraum():
     from cromlech.browser import getSession
     session = getSession()
-    date_range = session.get('date_range')
+    date_range = session.get('date_range') or get_default_abrechnungszeitraum().token
     return get_abrechnungszeitraum(None).getTermByToken(date_range)
 
 
