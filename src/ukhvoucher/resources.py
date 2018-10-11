@@ -12,7 +12,7 @@ jmi = Resource(library, "jasny-bootstrap.js", depends=[jquery])
 
 chosencss = Resource(library, "select2.min.css")
 select2_de = Resource(library, "select2_de.js")
-chosenjs = Resource(library, "select2.min.js", depends=[jquery, chosencss])
+chosenjs = Resource(library, "select2.min.js", depends=[jquery, select2_de, chosencss])
 ukhvouchers = Resource(
     library, "ukh.js", depends=[chosenjs, tablesorter, masked_input, jmi]
 )
