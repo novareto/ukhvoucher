@@ -167,6 +167,19 @@ HK11 = u"""
 <p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
+RESTBUDGET = u"""
+<p>Bitte tragen Sie die Höhe des in 2017/18 nicht benötigten Budgets ein.
+   Noch vorhandenes Budget wird Ihnen auf den Folgezeitraum 2019/20 angerechnet.</p>
+<p>Bitte denken Sie daran, dass Sie ggf. noch Geld für noch nicht abgerechnete Erste-Hilfe-Lehrgämge aus dem Vorjahr benötigen.
+   Geben Sie uns deshalb hier lediglich die Höhe des nicht mehr benötigten Budgets aus dem letzten Antragszeitraum an.</p>
+<p><b>Beispiel:</b></p>
+<p>Budget im letzten Antragszeitraum: 5000 €</p>
+<p>Abgerechnete Erste-Hilfe-Lehrgänge: 3000 €</p>
+<p>Derzeitig ermitteltes Restbudget: 5000 € - 3000 € = 2000 €</p>
+<p>Noch nicht abgerechnete Erste-Hilfe-Lehrgänge: 500 €</p>
+<p><b>Höhe des nicht mehr benötigten Budgets: 2000 € - 500 € = 1500 €</b></p>
+"""
+
 
 @grok.provider(IContextSourceBinder)
 def get_oid(context):
@@ -356,6 +369,17 @@ class IJournalEntry(Interface):
     oid = schema.Int(
         title=_(u"Object id"),
         required=True,
+    )
+
+
+class IJournalEntryExt(Interface):
+
+    action = schema.Choice(
+        title=u"Betreff",
+        required=True,
+        values = ['Charge gesperrt', 'Fehleingabe', 'FFW-Budgetprfung',
+                  'Information', 'Personalfluktuation', 'zustliche Beschftigte/Gruppen/Kolonnen',
+                  'zustzliche Standorte']
     )
 
 
@@ -602,6 +626,10 @@ class IInvoice(Interface):
         required=False,
     )
 
+    creation_date = schema.Datetime(
+        title=_(u"Creation date"),
+        required=True,
+    )
 
 
 class IVoucher(Interface):
@@ -835,7 +863,8 @@ class K10(Interface):
 
     last_budget = schema.TextLine(
         title=_(u"Höhe des nicht verbrauchten Budgets in €"),
-        description=_(u'Bitte tragen Sie die Höhe des in 2017/18 nicht benötigten Budgets ein. Noch vorhandenes Budget wird Ihnen auf den Folgezeitraum 2019/20 angerechnet.'),
+        #description=_(u'Bitte tragen Sie die Höhe des in 2017/18 nicht benötigten Budgets ein. Noch vorhandenes Budget wird Ihnen auf den Folgezeitraum 2019/20 angerechnet.'),
+        description=_(RESTBUDGET),
         constraint=validatePFloat,
     )
 

@@ -430,21 +430,26 @@ class Migration(uvclight.Page):
     def render(self):
         session = get_session('ukhvoucher')
         from ukhvoucher import models
-        query = session.query(models.Address, models.Account).filter(models.Address.oid == models.Account.oid)
+        #query = session.query(models.Address, models.Account).filter(models.Address.oid == models.Account.oid)
         #print query.count()
         #for adr, account in query.all():
         #    adr.user_login = account.login
         #    adr.user_az = account.az
         #    adr.user_id = str(account.oid)
         #    print adr
-        print "Migration der Gutscheine"
-        query = session.query(models.Voucher, models.Account).filter(models.Voucher.user_id == models.Account.oid)
-        print query.count()
-        for vou, account in query.all():
-            print vou.user_login
-            print vou.user_az
-            print vou.user_id
+        #print "Migration der Gutscheine"
+        #query = session.query(models.Voucher, models.Account).filter(models.Voucher.user_id == models.Account.oid)
+        #print query.count()
+        #for vou, account in query.all():
+        #    print vou.user_login
+        #    print vou.user_az
+        #    print vou.user_id
             #vou.user_login = account.login
             #vou.user_az = account.az
             #import pdb; pdb.set_trace()
+        print "Migration FWBudget Datum"
+        query = session.query(models.FWBudget)
+        for budget in query.all():
+            dd = budget.datum
+            budget.datum = "%s-%s-%s" %(dd[6:10], dd[3:5], dd[0:2])
 

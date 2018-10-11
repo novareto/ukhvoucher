@@ -24,9 +24,10 @@ class SearchJSONVouchers(uvclight.JSON):
             else:
                 ress = session.query(models.Voucher).filter(models.Voucher.oid == void).all()
             for x in ress:
+                datum = x.zeitraum()
                 terms.append({
                     'id': int(x.oid),
-                    'text': "%s (%s) - %s %s" %(x.title, x.zeitraum().token, x.status.strip(), x.cat),
+                    'text': "[%s-%s] %s - %s %s" %(datum.von.strftime('%y'), datum.bis.strftime('%y'), x.title, x.status.strip(), x.cat),
                     'disabled': (x.invoice is not None or x.status.strip() in (DISABLED, BOOKED)),
                     #'disabled': True,
                 })

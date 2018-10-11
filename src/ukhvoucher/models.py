@@ -422,7 +422,8 @@ class Voucher(Base, Location):
 
     def zeitraum(self):
         from ukhvoucher.vocabularies import get_default_abrechnungszeitraum
-        return get_default_abrechnungszeitraum(self.creation_date)
+        d = self.creation_date
+        return get_default_abrechnungszeitraum(datetime.datetime(d.year, d.month, d.day))
 
 
 @implementer(IModel, IIdentified, IInvoice)
@@ -438,6 +439,7 @@ class Invoice(Base, Location):
     oid = Column('rech_oid', Integer, primary_key=True)
     reason = Column('grund', StrippedString)
     description = Column('text', StrippedString)
+    creation_date = Column('erst_dat', DateTime, default=date_factory)
 
     vouchers = relationship(
         Voucher, collection_class=set,
@@ -556,6 +558,10 @@ class Invoices(SQLContainer):
 
     def key_converter(self, id):
         return int(id)
+
+    def query_filters(self, query):
+        return query.order_by(self.model.oid.desc()).limit(100)
+
 
 
 @implementer(IContent, IModelContainer)

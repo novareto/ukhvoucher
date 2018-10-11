@@ -17,7 +17,7 @@ from zope.interface import Interface
 
 from ..interfaces import IVouchersCreation, IDisablingVouchers
 from ..interfaces import IModel, IModelContainer, IAdminLayer, IUserLayer
-from ..interfaces import IAccount, IJournalize, IJournalEntry
+from ..interfaces import IAccount, IJournalize, IJournalEntry, IJournalEntryExt
 from ..interfaces import IKontakt
 from ..models import Voucher, JournalEntry, Vouchers, Addresses, Invoices, Invoice, Accounts
 from .. import _, resources, DISABLED, CREATED, MANUALLY_CREATED
@@ -81,6 +81,9 @@ class CreateModel(Form):
 
         if hasattr(self.context.model, 'widget_arrangements'):
             self.context.model.widget_arrangements(fields)
+
+        if isinstance(self.context, Invoices):
+            fields = fields.omit('creation_date')
 
         return fields + journal
 
@@ -379,7 +382,7 @@ class AskForVouchers(Form):
                 date=now.strftime('%Y-%m-%d'),
                 type=data['kategorie'],
                 data=json.dumps('Manuelle Erzeugung'),
-                user=self.context.oid,
+                user=str(self.context.oid),
                 user_az=self.context.az,
                 user_login=self.context.login,
                 uoid=oid
@@ -550,7 +553,7 @@ class JournalEntryAdd(uvclight.Form):
     uvclight.context(Interface)
     require('manage.vouchers')
 
-    fields = uvclight.Fields(IJournalEntry).omit('date', 'userid', 'oid')
+    fields = uvclight.Fields(IJournalEntryExt) + uvclight.Fields(IJournalEntry).omit('date', 'userid', 'oid', 'action')
 
     @action(u'Senden')
     def handle_send(self):

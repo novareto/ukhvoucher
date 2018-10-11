@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-import uvclight
 import json
+import uvclight
 
 
 from os import path
 from uvc.api import api
 from ul.auth import require
 from ..apps import UserRoot
-from datetime import datetime
+from datetime import datetime, timedelta
 from dolmen.forms import base
 from docxtpl import DocxTemplate
 from zope import interface, schema
@@ -17,16 +17,30 @@ from cromlech.sqlalchemy import get_session
 from uvc.design.canvas import IAboveContent
 from ukhvoucher.interfaces import K10, IBankverbindung
 from time import localtime, strftime
-from ..resources import ukhvouchers, masked_input
+from ..resources import ukhvouchers
 from ukhvoucher.models import FWBudget, FWKto, JournalEntry
 
 PATH = path.dirname(__file__)
 PFAD = "%s/ehffw.docx" % PATH
 
 
-def getData(oid):
+FAKE_DATE = datetime(2019, 1, 2)
+
+
+def getData(oid, zeitpunkt=None):
     session = get_session('ukhvoucher')
-    q = session.query(FWBudget).filter(FWBudget.user_id == oid)
+    from ukhvoucher.vocabularies import get_default_abrechnungszeitraum
+    if zeitpunkt:
+        default_zeitraum = get_default_abrechnungszeitraum(zeitpunkt)
+    else:
+        default_zeitraum = get_default_abrechnungszeitraum(zeitpunkt=FAKE_DATE)
+    print default_zeitraum
+    q = session.query(FWBudget).filter(
+        FWBudget.user_id == oid,
+        FWBudget.datum >= default_zeitraum.von,
+        FWBudget.datum <= default_zeitraum.bis
+    )
+    print q.all()
     if q.count() == 1:
         return q.one()
     return None
@@ -111,7 +125,7 @@ class FFWForm(api.Form):
 
     @property
     def fields(self):
-        fields = api.Fields(K10).omit('last_budget', 'bestaetigung') + api.Fields(IBankverbindung) # + api.Fields(K10).select('bestaetigung')
+        fields = api.Fields(K10).omit('bestaetigung') + api.Fields(IBankverbindung) # + api.Fields(K10).select('bestaetigung')
         fields['einsatzkraefte'].htmlAttributes = {'maxlength': 5}
         fields['betreuer'].htmlAttributes = {'maxlength': 5}
         fields['kontoinhaber'].htmlAttributes = {'maxlength': 50}
@@ -136,12 +150,13 @@ class FFWForm(api.Form):
         datum = strftime("%d.%m.%Y", localtime())
         data['datum'] = datum
         jahr = strftime("%Y", localtime())
+        jahr = "2019" # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if jahr == "2017" or jahr == "2018":
             verw_zweck = "Erste-Hilfe-Budget 2017/18"
         if jahr == "2019" or jahr == "2020":
             verw_zweck = "Erste-Hilfe-Budget 2019/20"
         data['verw_zweck'] = verw_zweck
-        data['last_budget'] = "0,0"
+        #data['last_budget'] = "0,0"
         rep = data['last_budget'].replace(',','.')
         data['last_budget'] = rep
         betrag = (float(data['einsatzkraefte']) * 0.1 + float(data['betreuer'])) * (30.75 + 6.15)
@@ -179,6 +194,9 @@ class FFW(api.Form):
     def update(self):
         session = getSession()
         self.data = json.loads(session['ffw'])
+
+    def getOldData(self):
+        return getData(oid=self.request.principal.oid, zeitpunkt=FAKE_DATE - timedelta(days=365 * 2))
 
     @api.action(u'Absenden', identifier="send")
     def handle_save(self):

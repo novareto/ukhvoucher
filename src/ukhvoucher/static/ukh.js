@@ -12,7 +12,7 @@ $(document).ready(function() {
 
     function update_selected(id) {
         let selected = $(id).val() || [];
-        selected_vouchers.text(selected.length + ' Gutschein(e) ausgewählt');
+        selected_vouchers.text(selected.length + ' Berechtigungsschein(e) ausgewählt');
     }
 
     $("#field-form-field-vouchers").on('select2:unselect', function(evt) {
