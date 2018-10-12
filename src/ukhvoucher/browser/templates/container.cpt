@@ -1,31 +1,35 @@
-<div tal:replace="structure view.batch" />
 <div>
-  <h1 tal:content="context.__label__" />
-  <table id="journal_table" class="tablesorter table table-bordered table-striped table-condensed">
-    <theader>
-      <tr>
-	<th tal:repeat="col view.columns" tal:content="col" />
-      </tr>
-    </theader>
-    <tbody>
-      <tr tal:repeat="content view.batcher.get_elements()">
-	<td tal:repeat="value view.listing(content)">
-	<tal:relation define="lister len(value[1]) > 1">
-	<ul tal:omit-tag="not lister">
-	  <li tal:omit-tag="not lister" tal:repeat="val value[1]">
-	    <a href=""
-	       tal:omit-tag="not val['link']"
-	       tal:attributes="href val['link']">
-	      <span class="glyphicon glyphicon-link"
-		    tal:omit-tag="not val['link']">
-	      </span><span tal:content="val['value']" />
-	    </a>
-	  </li>
-	</ul>
- 	</tal:relation>
-	</td>
-      </tr>
-    </tbody>
+  <div tal:replace="structure view.batch" />
+  <div>
+    <h1 tal:content="context.__label__" />
+    <table
+        id="journal_table"
+        class="tablesorter table table-bordered table-striped table-condensed">
+      <theader>
+        <tr>
+	  <th tal:repeat="col view.columns" tal:content="col" />
+        </tr>
+      </theader>
+      <tbody>
+        <tr tal:repeat="content view.batcher.get_elements()">
+	  <td tal:repeat="value view.listing(content)">
+	    <tal:relation define="lister len(value[1]) > 1">
+	      <ul tal:omit-tag="not lister">
+	        <li tal:omit-tag="not lister" tal:repeat="val value[1]">
+	          <a href=""
+	             tal:omit-tag="not val['link']"
+	             tal:attributes="href val['link']">
+	            <span class="glyphicon glyphicon-link"
+		          tal:omit-tag="not val['link']">
+	              </span><span tal:content="val['value']" />
+	          </a>
+	        </li>
+	      </ul>
+ 	    </tal:relation>
+	  </td>
+        </tr>
+      </tbody>
   </table>
+  </div>
+  <div tal:replace="structure view.batch" />
 </div>
-<div tal:replace="structure view.batch" />

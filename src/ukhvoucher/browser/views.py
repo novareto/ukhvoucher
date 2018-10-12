@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import uvclight
-from ..apps import AdminRoot, UserRoot
-from ..components import cached
-from ..interfaces import IAdminLayer, IUserLayer, K10
-from ..interfaces import IModelContainer, get_oid
-from ..models import JournalEntry
-from ..resources import ukhcss
-from ..resources import ukhvouchers, masked_input
-from .batch import get_dichotomy_batches
+
+from math import ceil
+from urllib import urlencode
+
 from GenericCache.GenericCache import GenericCache
 from cromlech.sqlalchemy import get_session
 from dolmen.location import get_absolute_url
@@ -23,7 +19,17 @@ from zope.component.hooks import getSite
 from zope.i18n import translate
 from zope.interface import Interface
 from zope.location import ILocation, LocationProxy
+
+from ..apps import AdminRoot, UserRoot
+from ..components import cached
+from ..interfaces import IAdminLayer, IUserLayer, K10
+from ..interfaces import IModelContainer, get_oid
+from ..models import JournalEntry
+from ..resources import ukhcss
+from ..resources import ukhvouchers, masked_input
+from .batch import get_dichotomy_batches
 from .ffw import getData, getKto
+
 
 cache = GenericCache(maxsize=5000)
 
@@ -247,8 +253,7 @@ class AdminRootIndex(uvclight.Page):
         return rc
 
 
-from math import ceil
-from urllib import urlencode
+
 
 def safe_str(v):
     if isinstance(v, str):
@@ -352,7 +357,7 @@ class ContainerIndex(uvclight.Page):
 
         for col in self.context.listing_attrs:
             value = getattr(item, col.identifier, col.defaultValue)
-
+            
             if col.identifier in relations:
                 relation = self.relation(col.identifier, value)
                 yield col.identifier, [{
@@ -361,13 +366,16 @@ class ContainerIndex(uvclight.Page):
             else:
                 yield col.identifier, [{
                     'value': value,
-                    'link': col.identifier == 'oid' and itemurl or ''}]
+                    'link': (
+                        col.identifier == self.context.pkey
+                        and itemurl or '')}]
 
     def update(self):
         ukhvouchers.need()
         ukhcss.need()
         self.columns = [field.title for field in self.context.listing_attrs]
-        self.batcher = Batch(self.context, self.request, results=self.results, size=100)
+        self.batcher = Batch(
+            self.context, self.request, results=self.results, size=100)
         self.batcher.update()
         self.batch = self.batching.render(self, **{'batch': self.batcher})
 
@@ -377,20 +385,6 @@ class ContainerIndex(uvclight.Page):
             baseurl = self.url(site) + '/vouchers/'
             for voucher in value:
                 yield voucher, baseurl + str(voucher.oid)
-
-
-class JournalIndex(uvclight.Page):
-    uvclight.name('journal')
-    uvclight.layer(IAdminLayer)
-    uvclight.context(Interface)
-    require('manage.vouchers')
-
-    template = uvclight.get_template('journal.cpt', __file__)
-
-    def update(self):
-        ukhvouchers.need()
-        session = get_session('ukhvoucher')
-        self.entries = session.query(JournalEntry)
 
 
 class InvoicesView(uvclight.Page):
@@ -418,7 +412,9 @@ class Helper(uvclight.Page):
         session = get_session('ukhvoucher')
         from ukhvoucher import models
         from ukhvoucher import MANUALLY_CREATED
-        query = session.query(models.Voucher).filter(models.Voucher.generation_id == models.Generation.oid, models.Generation.data == '"Manuelle Erzeugung"')
+        query = session.query(models.Voucher).filter(
+            models.Voucher.generation_id == models.Generation.oid,
+            models.Generation.data == '"Manuelle Erzeugung"')
         for v in query.all():
             v.status = MANUALLY_CREATED
 

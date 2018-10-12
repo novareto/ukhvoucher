@@ -3,26 +3,26 @@
 import uvclight
 from uuid import uuid1
 from datetime import datetime
+
 from cromlech.sqlalchemy import get_session
+from dolmen.forms.base.components import _marker
 from dolmen.forms.base.utils import apply_data_event
 from dolmen.menu import menuentry
-
-from uvc.design.canvas.menus import AddMenu
+from ul.auth import require
 from uvc.design.canvas import IDocumentActions
+from uvc.design.canvas.menus import AddMenu
+from uvc.entities.browser import IContextualActionsMenu, IDocumentActions
 from uvclight import Form, Fields, SUCCESS, FAILURE
 from uvclight import action, layer, name, title, context, menu, order
-from ul.auth import require
-from dolmen.forms.base.components import _marker
 from zope.interface import Interface
 
 from ..interfaces import IVouchersCreation, IDisablingVouchers
 from ..interfaces import IModel, IModelContainer, IAdminLayer, IUserLayer
 from ..interfaces import IAccount, IJournalize, IJournalEntry, IJournalEntryExt
 from ..interfaces import IKontakt
-from ..models import Voucher, JournalEntry, Vouchers, Addresses, Invoices, Invoice, Accounts
+from ..models import Voucher, JournalEntry, Vouchers, Addresses, Invoices, Invoice, Accounts, Journal
 from .. import _, resources, DISABLED, CREATED, MANUALLY_CREATED
 from ..apps import UserRoot
-from uvc.entities.browser import IContextualActionsMenu, IDocumentActions
 
 
 MULTI = set()
@@ -208,7 +208,6 @@ class EditModel(Form):
     def update(self):
         resources.ukhvouchers.need()
         resources.ehcss.need()
-        resources.chosenajaxe.need()
 
     @property
     def action_url(self):
@@ -227,7 +226,7 @@ class EditModel(Form):
             data.pop('oid')
         apply_data_event(self.fields, self.getContentData(), data)
 
-        # journalize
+        # journalize
         session = get_session('ukhvoucher')
         if str(self.context.__label__) == "Kontingent":
             aktion = u"Kontingente bearbeitet"
@@ -245,13 +244,12 @@ class EditModel(Form):
             note=journal_note)
         session.add(entry)
         self.flash(_(u'Eintrag in der Historie hinzugefügt.'))
-
-        self.redirect(self.application_url())
+        self.redirect(self.url(self.context.__parent__))
         return SUCCESS
 
     @action(_(u'Abbrechen'))
     def handle_cancel(self):
-        self.redirect(self.application_url())
+        self.redirect(self.url(self.context.__parent__))
         return SUCCESS
 
 
@@ -301,7 +299,6 @@ class EditAccount(uvclight.EditForm):
     fields['email'].htmlAttributes = {'maxlength': 79}
     fields['funktion'].htmlAttributes = {'maxlength': 50}
     fields['titel'].htmlAttributes = {'maxlength': 15}
-
 
     def __init__(self, context, request, content=_marker):
         super(EditAccount, self).__init__(context, request)
@@ -402,7 +399,7 @@ class AskForVouchers(Form):
                 session.add(voucher)
             session.add(generation)
 
-            # journalize
+            # journalize
             entry = JournalEntry(
                 date=datetime.now().strftime('%Y-%m-%d'),
                 userid=self.request.principal.id,
@@ -548,12 +545,16 @@ class Kontakt(uvclight.Form):
 
 
 class JournalEntryAdd(uvclight.Form):
-    uvclight.name('add_journal_entry')
+    uvclight.name('add')
     uvclight.layer(IAdminLayer)
-    uvclight.context(Interface)
+    uvclight.context(Journal)
     require('manage.vouchers')
 
-    fields = uvclight.Fields(IJournalEntryExt) + uvclight.Fields(IJournalEntry).omit('date', 'userid', 'oid', 'action')
+    fields = (
+        uvclight.Fields(IJournalEntryExt) +
+        uvclight.Fields(IJournalEntry).omit('date', 'userid', 'oid', 'action'))
+
+    label = "Add a new journal entry"
 
     @action(u'Senden')
     def handle_send(self):
@@ -562,12 +563,31 @@ class JournalEntryAdd(uvclight.Form):
             return
 
         # journalize
-        session = get_session('ukhvoucher')
         data['date'] = datetime.now().strftime('%Y-%m-%d')
         data['userid'] = self.request.principal.id
         data['oid'] = self.request.principal.getAddress().oid
         entry = JournalEntry(**data)
-        session.add(entry)
+        self.context.add(entry)
 
         self.flash(u'Neue Notiz erfolgreich angelegt!')
-        self.redirect(self.application_url())
+        self.redirect(self.url(self.context))
+
+
+class JournalEntryDelete(uvclight.Form):
+    uvclight.name('delete')
+    uvclight.layer(IAdminLayer)
+    uvclight.context(JournalEntry)
+    require('manage.vouchers')
+
+    fields = uvclight.Fields()
+
+    @property
+    def label(self):
+        return "Delete journal entry n°%i" % self.context.jid
+    
+    @action(u'Delete')
+    def handle_send(self):
+        back = self.url(self.context.__parent__)
+        self.context.__parent__.delete(self.context)
+        self.flash(u'Deleted')
+        self.redirect(back)
