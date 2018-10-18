@@ -3,13 +3,14 @@
     <li i18n:translate="">Seiten&nbsp;&nbsp;</li>
     <li tal:repeat="info batch.dichotomy()">
       <a class="page"
-	 tal:condition="info['current'] == False"
+	 tal:condition="info['url'] and info['current'] == False"
 	 tal:attributes="href info['url']"
 	 tal:content="info['id']" />
-	
       <a class="page" name="current-page"
-	 tal:condition="info['current'] == True"
+	 tal:condition="info['url'] and info['current'] == True"
 	 tal:content="info['id']" />
+      <a class="page ellipsis" name="ellipsis"
+         tal:condition="not info['url']">...</a>
     </li>
   </ul>
 </div>
