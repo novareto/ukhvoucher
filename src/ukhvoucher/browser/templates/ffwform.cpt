@@ -1,4 +1,6 @@
 <div tal:define="data view.data"> 
+<form enctype="multipart/form-data" method="post" novalidate="novalidate"
+      action="" class="form" tal:attributes="action view.action_url">
 <h2> Vorschau </h2>
 <h2> <small> Erste Hilfe in der Freiwilligen Feuerwehr </small> </h2>
 <u> Ihre Angaben </u>
@@ -7,18 +9,40 @@
 Anzahl der aktiven Einsatzkräfte (ohne Betreuer/innen der Kindergruppen und Jugendfeuerwehren): <span><font color="blue"> <b tal:content="data['einsatzkraefte']"></b></font></span>
 </p>
 
-<span tal:content="view.getOldData()"></span>
-<span tal:content="view.getOldData().einsatzk"></span>
-<span tal:content="view.getOldData().jugendf"></span>
-
 <p>
 Anzahl der Betreuer/innen der Kindergruppen und Jugendfeuerwehren (inkl. deren Vertreter/innen): <span><font color="blue"> <b tal:content="data['betreuer']"></b></font> 
 </p>
 
+<div tal:condition="view.getOldData() == True">
+<br>
+
+<p>
+  <font color="red"><b> Achtung! </b></font>
+</p>
+<p>
+Ihre Antragsdaten für den Zeitraum 2019/2020 weichen um 10% vom vorhergehenden Budgetantrag ab.
+</p>
+<p>
+Bitte begründen Sie die Abweichung und bestätigen Sie die Richtigkeit Ihrer Daten.
+</p>
+<p>
+Falls Sie sich vertippt haben, können Sie über "Abbrechen" zu der Eingabemaske zurückkehren.
+</p>
+
+      
+    <div class="form-group" tal:define="widget view.fieldWidgets.get('form.field.begr')">
+    <label> Begründung der Abweichung </label><br>
+    <span metal:use-macro="macro['field-inline']"/> 
+</div>
+
+
+<br>
+</div>
+
 <p>
 Basierend auf den aktuell gültigen Gebühren* stehen Ihnen <font color="red"><b tal:content="data['betrag']"> </b> € </font> zur
 Durchführung von Erste-Hilfe-Lehrgängen für 10 % der aktiven Einsatzkräfte sowie für
-jede/n Betreuer/in für die Kalenderjahre 2017 und 2018 zur Verfügung.
+jede/n Betreuer/in für die Kalenderjahre 2019 und 2020 zur Verfügung.
 </p>
 
 <p>
@@ -67,8 +91,6 @@ Der Betrag <font color="red"><b tal:content="data['zahlbetrag']"> </b> € </fon
 <br>
 <br>
     
-<form enctype="multipart/form-data" method="post" novalidate="novalidate"
-      action="" class="form" tal:attributes="action view.action_url">
 
   <div class="form-group" tal:define="widget view.fieldWidgets.get('form.field.best')">
     <label> Einverständniserklärung </label><br>

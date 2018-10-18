@@ -7,6 +7,11 @@ $(document).ready(function() {
         audio.play();
     }
 
+
+    $('select#form-field-date_range').change(function() {
+     $('input#form-action-cdr').click();
+    })
+
     var selected_vouchers = $("<div id='selected_vouchers'></div>")
     $("#field-form-field-vouchers").append(selected_vouchers);
 

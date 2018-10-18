@@ -521,7 +521,7 @@ class Accounts(SQLContainer):
     listing_attrs = uvclight.Fields(Account.__schema__).select(
         'oid', 'login', 'email', 'name')
 
-    def query_filters(self, query):
+    def query_filters1(self, query):
         query = query.filter(self.model.az == "eh")
         return query
 
