@@ -336,7 +336,7 @@ class Batch(object):
             yield {
                 'current': type == 'current',
                 'id': value,
-                'url': url + self.batch_url(value),
+                'url': value and (url + self.batch_url(value)) or None,
                 }
 
 
