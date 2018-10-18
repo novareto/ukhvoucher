@@ -568,6 +568,9 @@ class Vouchers(SQLContainer):
     def key_converter(self, id):
         return int(id)
 
+#    def query_filters(self, query):
+#        return query.order_by(self.model.oid.desc()).limit(100)
+
 
 class Invoices(SQLContainer):
     __label__ = u"Zuordnungen"

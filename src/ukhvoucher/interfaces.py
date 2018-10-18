@@ -913,8 +913,8 @@ class K11(Interface):
 
 class IVoucherSearch(Interface):
 
-    oid = schema.Choice(
-        source=get_source('all_vouchers'),
+    oid = schema.TextLine(
+        #source=get_source('all_vouchers'),
         title=_(u"Vouchers"),
         required=False,
         missing_value=None,
