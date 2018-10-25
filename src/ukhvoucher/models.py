@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
 
-from . import Base
-from .interfaces import IVoucher, IInvoice, IAddress, IAccount, ICategory
-from .interfaces import IModel, IModelContainer, IIdentified
-from .interfaces import IVoucherSearch, IInvoiceSearch
-from . import _
-from zope.location import Location
-
 import os
 import uvclight
 import datetime
 import ConfigParser
-from urllib import quote, unquote
+
 from cromlech.sqlalchemy import get_session
-from dolmen.sqlcontainer import SQLContainer
+from dolmen.sqlcontainer import SQLContainer as BaseSQLContainer
 from sqlalchemy import *
+from sqlalchemy import types
 from sqlalchemy.orm import relationship, backref
+from urllib import quote, unquote
 from uvc.content.interfaces import IContent
 from zope.interface import implementer
-from . import resources
+from zope.location import Location
+from zope.location.interfaces import ILocation
 
-from sqlalchemy import types
+from . import Base, _, resources
+from .interfaces import (
+    IJournalEntry, IVoucher, IInvoice, IAddress, IAccount, ICategory,
+    IModel, IModelContainer, IIdentified, IVoucherSearch, IInvoiceSearch)
 
 
 def get_ukh_config():
@@ -119,7 +118,11 @@ class Address(Base, Location):
         fields['city'].htmlAttributes = {'maxlength': 24}
 
 
-class JournalEntry(Base):
+@implementer(IJournalEntry, IModel)
+class JournalEntry(Base, Location):
+    __schema__ = IJournalEntry
+    __label__ = "Journal Entry"
+    
     #__tablename__ = 'Z1EHRJRN_T'
     __tablename__ = TABLENAMES['journal']
     if schema:
@@ -132,7 +135,19 @@ class JournalEntry(Base):
     note = Column('text', String(500))
     oid = Column('oid', Integer)
 
+    @property
+    def title(self):
+        return "Journal entry %i" % self.jid
 
+    # search attributes
+    search_attr = "jid"
+    searchable_attrs = ("jid",)
+
+    @staticmethod
+    def widget_arrangements(fields):
+        fields['jid'].readonly = True
+
+    
 class FWBudget(Base):
     __tablename__ = TABLENAMES['budget']
     if schema:
@@ -226,7 +241,7 @@ class Category(Base, Location):
     @property
     def title(self):
         return "Kontingent %s" % self.oid
-
+    
     # search attributes
     search_attr = "oid"
     searchable_attrs = ("oid",)
@@ -247,7 +262,6 @@ class Account(Base, Location):
         __table_args__ = {"schema": schema[:-1]}
 
     model = Address
-
     oid = Column('oid', Integer, primary_key=True)
     email = Column('email', StrippedString)
     login = Column('login', String, primary_key=True)
@@ -266,8 +280,9 @@ class Account(Base, Location):
 
     @property
     def title(self):
-        return "Benutzerkennung: %s, (OID der Einrichtung: %s)" % (self.login, self.oid)
-
+        return "Benutzerkennung: %s, (OID der Einrichtung: %s)" % (
+            self.login, self.oid)
+    
     @property
     def categories(self):
         session = get_session('ukhvoucher')
@@ -312,7 +327,8 @@ class Voucher(Base, Location):
 
     oid = Column('vch_oid', Integer, primary_key=True)
     creation_date = Column('erst_dat', DateTime)
-    modification_date = Column('mod_dat', DateTime, default=date_factory, onupdate=date_factory)
+    modification_date = Column(
+        'mod_dat', DateTime, default=date_factory, onupdate=date_factory)
     status = Column('status', String)
     cat = Column('kat', String)
     user_id = Column('user_id', Integer) #, ForeignKey(schema + z1ext9aa + '.oid'))
@@ -325,9 +341,12 @@ class Voucher(Base, Location):
 
     # relations
     user = relationship('Account')
-    __table_args__ = (ForeignKeyConstraint([user_id, user_az, user_login],
-                                           [schema + z1ext9aa + '.oid', schema + z1ext9aa + '.az', schema + z1ext9aa + '.login']),
-                      {})
+    __table_args__ = (ForeignKeyConstraint(
+        [user_id, user_az, user_login],
+        [schema + z1ext9aa + '.oid',
+         schema + z1ext9aa + '.az',
+         schema + z1ext9aa + '.login']), {})
+
     if schema:
         __table_args__ = (ForeignKeyConstraint([user_id, user_az, user_login],
                                            [schema + z1ext9aa + '.oid', schema + z1ext9aa + '.az', schema + z1ext9aa + '.login']),
@@ -343,7 +362,7 @@ class Voucher(Base, Location):
     @property
     def title(self):
         return "Berechtigungsschein %s" % self.oid
-
+    
     # search attributes
     search_attr = "oid"
     searchable_attrs = ("oid", "status", 'user_id')
@@ -447,9 +466,8 @@ class Invoice(Base, Location):
 
     @property
     def title(self):
-        resources.ehcss.need()
         return "Zuordnung %s" % self.oid
-
+    
     search_attr = "oid"
     #search_attr = "field.oid"
     searchable_attrs = ("oid", "reason")
@@ -464,8 +482,6 @@ class Generation(Base):
     __tablename__ = TABLENAMES['generation']
     z1ext9aa = TABLENAMES['user']
 
-
-
     oid = Column('bgl_oid', Integer, primary_key=True)
     date = Column('vcb_dat', DateTime)
     type = Column('kat', String(20))
@@ -476,26 +492,36 @@ class Generation(Base):
     uoid = Column('oid', Integer)
     voucher = relationship("Voucher", backref=backref('generation'))
 
-    __table_args__ = (ForeignKeyConstraint([user, user_az, user_login],
-                                           [schema + z1ext9aa + '.oid', schema + z1ext9aa + '.az', schema + z1ext9aa + '.login']),
-                      {})
+    __table_args__ = (ForeignKeyConstraint(
+        [user, user_az, user_login],
+        [schema + z1ext9aa + '.oid', schema + z1ext9aa + '.az',
+         schema + z1ext9aa + '.login']), {})
 
     if schema:
-        __table_args__ = (ForeignKeyConstraint([user, user_az, user_login],
-                                           [schema + z1ext9aa + '.oid', schema + z1ext9aa + '.az', schema + z1ext9aa + '.login']),
-                                           {"schema": schema[:-1]})
+        __table_args__ = (ForeignKeyConstraint(
+            [user, user_az, user_login],
+            [schema + z1ext9aa + '.oid',
+             schema + z1ext9aa + '.az',
+             schema + z1ext9aa + '.login']), {"schema": schema[:-1]})
 
 
-from zope.location.interfaces import ILocation
-@implementer(IContent, IModelContainer, ILocation)
+@implementer(IContent, IModelContainer)
+class SQLContainer(BaseSQLContainer):
+
+    @property
+    def pkey(self):
+        raise NotImplementedError('Implement your own.')
+
+
 class Accounts(SQLContainer):
     __label__ = _(u"Accounts")
 
+    pkey = 'oid'
     model = Account
     listing_attrs = uvclight.Fields(Account.__schema__).select(
         'oid', 'login', 'email', 'name')
 
-    def query_filters(self, query):
+    def query_filters1(self, query):
         query = query.filter(self.model.az == "eh")
         return query
 
@@ -511,10 +537,10 @@ class Accounts(SQLContainer):
         return quote('%s %s %s' % (obj.oid, obj.login, obj.az))
 
 
-@implementer(IContent, IModelContainer)
 class Addresses(SQLContainer):
     __label__ = _(u"Addresses")
 
+    pkey = 'oid'
     model = Address
     listing_attrs = uvclight.Fields(Address.__schema__).select(
         'oid', 'user_id', 'name1', 'name2', 'zip_code', 'city')
@@ -526,10 +552,10 @@ class Addresses(SQLContainer):
         return int(id)
 
 
-@implementer(IContent, IModelContainer)
 class Vouchers(SQLContainer):
     __label__ = _(u"Vouchers")
 
+    pkey = 'oid'
     model = Voucher
     listing_attrs = uvclight.Fields(Voucher.__schema__).select(
         'oid', 'cat', 'status', 'user_id', 'displayData', 'displayKat')
@@ -543,10 +569,10 @@ class Vouchers(SQLContainer):
         return int(id)
 
 
-@implementer(IContent, IModelContainer)
 class Invoices(SQLContainer):
     __label__ = u"Zuordnungen"
 
+    pkey = 'oid'
     model = Invoice
     listing_attrs = uvclight.Fields(Invoice.__schema__).select(
         'oid', 'description', 'vouchers')
@@ -563,11 +589,10 @@ class Invoices(SQLContainer):
         return query.order_by(self.model.oid.desc()).limit(100)
 
 
-
-@implementer(IContent, IModelContainer)
 class Categories(SQLContainer):
     __label__ = u"Kontingentkategorien"
 
+    pkey = 'oid'
     model = Category
     listing_attrs = uvclight.Fields(Category.__schema__).select(
         'oid', 'kat1', 'kat2', 'kat3', 'kat4', 'kat5',
@@ -575,6 +600,23 @@ class Categories(SQLContainer):
 
     def key_reverse(self, obj):
         return str(obj.oid)
+
+    def key_converter(self, id):
+        return int(id)
+
+
+class Journal(SQLContainer):
+    __label__ = u"Journal"
+
+    pkey = 'jid'
+    model = JournalEntry
+    listing_attrs = uvclight.Fields(JournalEntry.__schema__).select(
+        'jid', 'date', 'userid')
+
+    search_fields = uvclight.Fields(IJournalEntry)
+    
+    def key_reverse(self, obj):
+        return str(obj.jid)
 
     def key_converter(self, id):
         return int(id)

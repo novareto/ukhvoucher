@@ -126,3 +126,7 @@ div#daterange {
  margin-right: 20px;
  margin-top: 5px;
 }
+
+div#field-form-field-came_from {
+  display: none;
+}

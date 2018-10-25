@@ -3,12 +3,8 @@
 import webob.exc
 import transaction
 
-
-from . import Site
-from .components import ExternalPrincipal, AdminPrincipal
-from .interfaces import IAdminLayer, IUserLayer
-from .models import Accounts, Addresses, Account, Vouchers, Invoices, Categories
-
+from functools import partial
+from base64 import decodestring
 from cromlech.browser import IPublicationRoot, getSession
 from cromlech.security import Interaction, unauthenticated_principal
 from cromlech.sqlalchemy import get_session, SQLAlchemySession
@@ -17,15 +13,19 @@ from ul.browser.context import ContextualRequest
 from ul.browser.decorators import sessionned
 from uvclight import GlobalUtility, name
 from uvclight.backends.sql import SQLPublication
+from uvclight.directives import traversable
+from webob import Response
 from zope.component import getGlobalSiteManager
 from zope.interface import implementer
-from zope.location import ILocation, LocationProxy, locate
-from zope.location import Location
+from zope.location import ILocation, Location, LocationProxy, locate
 from zope.security.proxy import removeSecurityProxy
-from uvclight.directives import traversable
+
+from . import Site
+from .components import ExternalPrincipal, AdminPrincipal
+from .interfaces import IAdminLayer, IUserLayer
+from .models import (
+    Accounts, Addresses, Account, Vouchers, Invoices, Categories, Journal)
 from .resources import ukhcss
-from base64 import decodestring
-from webob import Response
 
 
 def transaction_sql(engine):
@@ -41,19 +41,45 @@ def transaction_sql(engine):
 
 
 USERS = {
-    'admin': dict(login="admin", passwort="!admin!", permissions=('manage.vouchers', 'display.vouchers')),
-    'mseibert': dict(login="mseibert", passwort="susanne09", permissions=('manage.vouchers', 'display.vouchers')),
-    'mleber': dict(login="mleber", passwort="ehr17!", permissions=('manage.vouchers', 'display.vouchers')),
-    'hgabt': dict(login="hgabt", passwort="AB471!", permissions=('manage.vouchers', 'display.vouchers')),
-    'ckraft': dict(login="ckraft", passwort="QX392!", permissions=('manage.vouchers', 'display.vouchers')),
-    'aburkhard': dict(login="aburkhard", passwort="NY259!", permissions=('manage.vouchers', 'display.vouchers')),
-    'rknittel': dict(login="rknittel", passwort="XA056!", permissions=('manage.vouchers', 'display.vouchers')),
-    'evstraub': dict(login="evstraub", passwort="AH221!", permissions=('manage.vouchers', 'display.vouchers')),
-    'bsvejda': dict(login="bsvejda", passwort="ZT780!", permissions=('manage.vouchers', 'display.vouchers')),
-    'pschaeferdeluca': dict(login="pschaeferdeluca", passwort="UK926!", permissions=('manage.vouchers', 'display.vouchers')),
-    'dreichelt': dict(login="dreichelt", passwort="xq819!", permissions=('manage.vouchers', 'display.vouchers')),
-    'amehicjusic': dict(login="amehicjusic", passwort="tz851!", permissions=('manage.vouchers', 'display.vouchers')),
-    'viewer': dict(login="viewer", passwort="viewer", permissions=("display.vouchers",)),
+    'admin': dict(
+        login="admin", passwort="!admin!",
+        permissions=('manage.vouchers', 'display.vouchers')),
+    'mseibert': dict(
+        login="mseibert", passwort="susanne09",
+        permissions=('manage.vouchers', 'display.vouchers')),
+    'mleber': dict(
+        login="mleber", passwort="ehr17!",
+        permissions=('manage.vouchers', 'display.vouchers')),
+    'hgabt': dict(
+        login="hgabt", passwort="AB471!",
+        permissions=('manage.vouchers', 'display.vouchers')),
+    'ckraft': dict(
+        login="ckraft", passwort="QX392!",
+        permissions=('manage.vouchers', 'display.vouchers')),
+    'aburkhard': dict(
+        login="aburkhard", passwort="NY259!",
+        permissions=('manage.vouchers', 'display.vouchers')),
+    'rknittel': dict(
+        login="rknittel", passwort="XA056!",
+        permissions=('manage.vouchers', 'display.vouchers')),
+    'evstraub': dict(
+        login="evstraub", passwort="AH221!",
+        permissions=('manage.vouchers', 'display.vouchers')),
+    'bsvejda': dict(
+        login="bsvejda", passwort="ZT780!",
+        permissions=('manage.vouchers', 'display.vouchers')),
+    'pschaeferdeluca': dict(
+        login="pschaeferdeluca", passwort="UK926!",
+        permissions=('manage.vouchers', 'display.vouchers')),
+    'dreichelt': dict(
+        login="dreichelt", passwort="xq819!",
+        permissions=('manage.vouchers', 'display.vouchers')),
+    'amehicjusic': dict(
+        login="amehicjusic", passwort="tz851!",
+        permissions=('manage.vouchers', 'display.vouchers')),
+    'viewer': dict(
+        login="viewer", passwort="viewer",
+        permissions=("display.vouchers",)),
     }
 
 
@@ -112,13 +138,11 @@ class AccountTraverser(Location):
             raise KeyError
 
 
-from functools import partial
-from cromlech.sqlalchemy import get_session
-
-
 @implementer(IPublicationRoot)
 class AdminRoot(Location):
-    traversable('categories', 'accounts', 'addresses', 'vouchers', 'invoices', 'account')
+    traversable(
+        'categories', 'accounts', 'addresses',
+        'vouchers', 'invoices', 'account', 'journal')
 
     credentials = ('admins',)
 
@@ -127,12 +151,13 @@ class AdminRoot(Location):
 
     def __init__(self, request, session_key):
         session = partial(get_session, session_key)
+        self.account = AccountTraverser(self, 'account')
         self.accounts = Accounts(session, parent=self, name='accounts')
         self.addresses = Addresses(session, parent=self, name='addresses')
-        self.vouchers = Vouchers(session, parent=self, name='vouchers')
-        self.invoices = Invoices(session, parent=self, name='invoices')
         self.categories = Categories(session, parent=self, name='categories')
-        self.account = AccountTraverser(self, 'account')
+        self.invoices = Invoices(session, parent=self, name='invoices')
+        self.journal = Journal(session, parent=self, name='journal')
+        self.vouchers = Vouchers(session, parent=self, name='vouchers')
 
 
 class Admin(SQLPublication, SecurePublication):

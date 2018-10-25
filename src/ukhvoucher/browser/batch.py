@@ -67,7 +67,7 @@ def get_dichotomy_batches(N, n):
     for b in markers:
         if b and b > last:
             if last and b > last + 1:
-                yield 'ellipsis', '...'
+                yield 'ellipsis', None
             if b == n:
                 yield 'current', b
             elif b > n:

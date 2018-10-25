@@ -22,6 +22,7 @@ from ukhvoucher.models import FWBudget, FWKto, JournalEntry
 
 PATH = path.dirname(__file__)
 PFAD = "%s/ehffw.docx" % PATH
+PFAD2 = "%s/ehffwabw.docx" % PATH
 
 
 FAKE_DATE = datetime(2019, 1, 2)
@@ -114,14 +115,20 @@ class FFWForm(api.Form):
     ignoreContent = False
 
     def update(self):
+        data = {}
+        kto = getKto(self.request.principal.oid)
+        if kto:
+            data['iban'] = kto.iban.strip()
+            data['bank'] = kto.bank.strip()
+            data['kontoinhaber'] = kto.kto_inh.strip()
         ukhvouchers.need()
         if getData(self.request.principal.oid):
             self.redirect(self.url(self.context, 'at'))
             return
         session = getSession()
         if 'ffw' in session:
-            data = json.loads(session['ffw'])
-            self.setContentData(base.DictDataManager(data))
+            data.update(json.loads(session['ffw']))
+        self.setContentData(base.DictDataManager(data))
 
     @property
     def fields(self):
@@ -147,6 +154,15 @@ class FFWForm(api.Form):
                 error = errors.get('form.field.bank')
                 error.title = u"Bitte tragen Sie einen Kreditinstitut ein"
             return
+
+        #print "##################################################"
+        #print data
+        #daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=FAKE_DATE - timedelta(days=365 * 2))
+        #print lulu.einsatzk
+        #print "##################################################"
+        
+        
+        
         datum = strftime("%d.%m.%Y", localtime())
         data['datum'] = datum
         jahr = strftime("%Y", localtime())
@@ -178,6 +194,11 @@ class IFFW(interface.Interface):
         title=u"Bestätigung",
     )
 
+    begr = schema.TextLine(
+        title=u"Begründung",
+        required=False,
+    )
+
 
 class FFW(api.Form):
     uvclight.layer(IUserLayer)
@@ -185,7 +206,11 @@ class FFW(api.Form):
     require('users.access')
     label = u"Budgetantrag für Erste-Hilfe-Lehrgänge in der Freiwilligen Feuerwehr"
 
-    fields = uvclight.Fields(IFFW)
+    @property
+    def fields(self):
+        fields = uvclight.Fields(IFFW)
+        fields['begr'].htmlAttributes = {'maxlength': 60}
+        return fields
 
     @property
     def template(self):
@@ -196,25 +221,79 @@ class FFW(api.Form):
         self.data = json.loads(session['ffw'])
 
     def getOldData(self):
-        return getData(oid=self.request.principal.oid, zeitpunkt=FAKE_DATE - timedelta(days=365 * 2))
+        abweichung = False
+        daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=FAKE_DATE - timedelta(days=365 * 2))
+        aktuell = float(self.data['einsatzkraefte'])
+        vorjahr = float(daten_vorperiode.einsatzk)
+        differenz = ((100 * aktuell) / vorjahr) - 100
+        if differenz > 10 or differenz < -10:
+            abweichung = True
+        aktuell = float(self.data['betreuer'])
+        vorjahr = float(daten_vorperiode.jugendf)
+        differenz = ((100 * aktuell) / vorjahr) - 100
+        if differenz > 10 or differenz < -10:
+            abweichung = True
+        return abweichung
+
 
     @api.action(u'Absenden', identifier="send")
     def handle_save(self):
         data, errors = self.extractData()
         if not data.get('best'):
-            self.flash(u'Bitte bestätigen Sie Ihre Angaben.', type="error")
+            self.flash(u'Bitte bestätigen Sie Ihre Angaben.')
             return
         if errors:
             return
+        abweichung = False
+        daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=FAKE_DATE - timedelta(days=365 * 2))
+        aktuell = float(self.data['einsatzkraefte'])
+        vorjahr = float(daten_vorperiode.einsatzk)
+        differenz = ((100 * aktuell) / vorjahr) - 100
+        if differenz > 10 or differenz < -10:
+            abweichung = True
+        aktuell = float(self.data['betreuer'])
+        vorjahr = float(daten_vorperiode.jugendf)
+        differenz = ((100 * aktuell) / vorjahr) - 100
+        if differenz > 10 or differenz < -10:
+            abweichung = True
+        # ##################################################
+        # Was machen wir.... ?????
+        # ##################################################
+        if abweichung is True:
+            la = len(data['begr'])
+            if la <= 5:
+                self.flash(u'Bitte tragen Sie eine Begründung für die Abweichung zum letzten Budgetantrag ein.')
+                return
 
+
+
+        #else:
+        #    self.flash(u'Wir haben KEINE Abweichung....')
+        #    return
+            
+
+        print "#########################################"
+        print data
+        print "#########################################"
+        print self.data
+        print "#########################################"
+        print abweichung
+        print "#########################################"
+
+        print "test"
         from ukhvoucher.utils import send_mail
         adr = self.request.principal.getAddress()
         acc = self.request.principal.getAccount()
         doc = DocxTemplate(PFAD)
+        begruendung = ''
+        if abweichung is True:
+            doc = DocxTemplate(PFAD2)
+            begruendung = data['begr']
         data = self.data
         context = {
             'einsatzkraefte': unicode(data.get('einsatzkraefte')),
             'betreuer': unicode(data.get('betreuer')),
+            'begruendung': unicode(begruendung),
             'betrag': str(data.get('betrag')),
             'restbudget': str(data.get('last_budget')),
             'zahlbetrag': str(data.get('zahlbetrag')),
@@ -239,6 +318,7 @@ class FFW(api.Form):
         doc.save(filename)
         text = u"Für das Mitglied %s %s %s hat %s %s folgenden Budgetantrag gestellt." % (adr.name1.strip(), adr.name2.strip(), adr.name3.strip(), acc.vname.strip(), acc.nname.strip())
         send_mail('extranet@ukh.de', ('b.svejda@ukh.de', 'portal-erste-hilfe@ukh.de'), u"Budgetantrag Erste-Hilfe-Feuerwehr", text=text, files=(filename,))
+        #send_mail('extranet@ukh.de', ('m.seibert@ukh.de',), u"Budgetantrag Erste-Hilfe-Feuerwehr", text=text, files=(filename,))
         budget = FWBudget(
             user_id=self.request.principal.oid,
             einsatzk=data.get('einsatzkraefte'),
@@ -262,7 +342,7 @@ class FFW(api.Form):
             note='')
         session = get_session('ukhvoucher')
         session.add(budget)
-        session.add(kto)
+        #session.add(kto)   --> Achtung nur TEST
         session.add(entry)
         self.flash(u'Ihr Budgetantrag wurde an die Unfallkasse Hessen gesendet.')
         self.redirect(self.application_url())

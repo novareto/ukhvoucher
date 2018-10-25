@@ -345,6 +345,11 @@ class IDisablingVouchers(Interface):
 
 class IJournalEntry(Interface):
 
+    jid = schema.Int(
+        title=_(u"Unique journal entry id"),
+        required=True,
+    )
+
     date = schema.Datetime(
         title=_(u"Date"),
         required=True,
