@@ -374,6 +374,8 @@ class ContainerIndex(uvclight.Page):
         ukhvouchers.need()
         ukhcss.need()
         self.columns = [field.title for field in self.context.listing_attrs]
+        if self.results == []:
+            self.results = None
         self.batcher = Batch(
             self.context, self.request, results=self.results, size=100)
         self.batcher.update()

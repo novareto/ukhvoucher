@@ -8,7 +8,7 @@ import ukhvoucher
 
 from os import path
 from ..apps import UserRoot
-from ukhvoucher import CREATED
+from ukhvoucher import CREATED, MANUALLY_CREATED
 #from time import gmtime, strftime
 from ..interfaces import IUserLayer
 
@@ -65,7 +65,8 @@ class PDF(uvclight.Page):
             from ukhvoucher.apps import USERS
             if voucher.generation.user.strip() not in USERS.keys():
                 account = self.getAccount(voucher.generation.user)
-            if voucher.status.strip() == CREATED:
+            if voucher.status.strip() == CREATED or voucher.status.strip() == MANUALLY_CREATED:
+            #if voucher.status.strip() == CREATED:
                 pz = pz + 1
                 ikg = str(voucher.cat.strip())
                 # ######################################
@@ -308,7 +309,8 @@ class PDFOnlyBarcode(uvclight.Page):
         LK10 = []
         LK11 = []
         for voucher in principal.getVouchers(cat=self.request.form.get('cat')):
-            if voucher.status.strip() == CREATED:
+            #if voucher.status.strip() == CREATED:
+            if voucher.status.strip() == CREATED or voucher.status.strip() == MANUALLY_CREATED:
                 if str(voucher.cat.strip()) == "K1":
                     LK1.append(str(voucher.oid))
                 elif str(voucher.cat.strip()) == "K2":

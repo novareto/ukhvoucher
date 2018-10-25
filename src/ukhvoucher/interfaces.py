@@ -170,7 +170,7 @@ HK11 = u"""
 RESTBUDGET = u"""
 <p>Bitte tragen Sie die Höhe des in 2017/18 nicht benötigten Budgets ein.
    Noch vorhandenes Budget wird Ihnen auf den Folgezeitraum 2019/20 angerechnet.</p>
-<p>Bitte denken Sie daran, dass Sie ggf. noch Geld für noch nicht abgerechnete Erste-Hilfe-Lehrgämge aus dem Vorjahr benötigen.
+<p>Bitte denken Sie daran, dass Sie ggf. noch Geld für noch nicht abgerechnete Erste-Hilfe-Lehrgänge aus dem Vorjahr benötigen.
    Geben Sie uns deshalb hier lediglich die Höhe des nicht mehr benötigten Budgets aus dem letzten Antragszeitraum an.</p>
 <p><b>Beispiel:</b></p>
 <p>Budget im letzten Antragszeitraum: 5000 €</p>
@@ -913,8 +913,8 @@ class K11(Interface):
 
 class IVoucherSearch(Interface):
 
-    oid = schema.Choice(
-        source=get_source('all_vouchers'),
+    oid = schema.TextLine(
+        #source=get_source('all_vouchers'),
         title=_(u"Vouchers"),
         required=False,
         missing_value=None,

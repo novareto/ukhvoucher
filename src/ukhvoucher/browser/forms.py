@@ -244,12 +244,14 @@ class EditModel(Form):
             note=journal_note)
         session.add(entry)
         self.flash(_(u'Eintrag in der Historie hinzugefügt.'))
-        self.redirect(self.url(self.context.__parent__))
+        #self.redirect(self.url(self.context.__parent__))
+        self.redirect(self.application_url())
         return SUCCESS
 
     @action(_(u'Abbrechen'))
     def handle_cancel(self):
-        self.redirect(self.url(self.context.__parent__))
+        #self.redirect(self.url(self.context.__parent__))
+        self.redirect(self.application_url())
         return SUCCESS
 
 
@@ -379,7 +381,8 @@ class AskForVouchers(Form):
                 date=now.strftime('%Y-%m-%d'),
                 type=data['kategorie'],
                 data=json.dumps('Manuelle Erzeugung'),
-                user=str(self.context.oid),
+                #user=str(self.context.oid),
+                user=self.request.principal.id,
                 user_az=self.context.az,
                 user_login=self.context.login,
                 uoid=oid
