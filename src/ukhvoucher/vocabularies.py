@@ -110,13 +110,13 @@ def categories(context):
              for item in ('kat1', 'kat2', 'kat3', 'kat4')]
     return SimpleVocabulary(items)
 
+
 @provider(IContextAwareDefaultFactory)
 def getNextID(context):
     session = get_session('ukhvoucher')
     from sqlalchemy.sql.functions import max
-    oid = int(session.query(max(Account.login)).one()[0] or 0 ) + 1
+    oid = int(session.query(max(Account.login)).one()[0] or 0) + 1
     return unicode(oid)
-
 
 
 class RangeSimpleTerm(SimpleTerm):
@@ -129,8 +129,8 @@ class RangeSimpleTerm(SimpleTerm):
 
 @provider(IContextAwareDefaultFactory)
 def get_abrechnungszeitraum(context):
-    items = [RangeSimpleTerm('ez1', 'ez1', '01.01.2016 - 31.12.2018', datetime(2016, 01, 01), datetime(2018, 12, 31)),
-             RangeSimpleTerm('ez2', 'ez2', '01.01.2019 - 31.12.2020', datetime(2019, 01, 01), datetime(2020, 12, 31))
+    items = [RangeSimpleTerm('ez2', 'ez2', '01.01.2019 - 31.12.2020', datetime(2019, 01, 01), datetime(2020, 12, 31)),
+             RangeSimpleTerm('ez1', 'ez1', '01.01.2016 - 31.12.2018', datetime(2016, 01, 01), datetime(2018, 12, 31))
              ]
     return SimpleVocabulary(items)
 

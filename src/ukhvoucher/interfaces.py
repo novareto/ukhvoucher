@@ -367,7 +367,7 @@ class IJournalEntry(Interface):
     )
 
     note = schema.Text(
-        title=_(u"Note"),
+        title=_(u"Notiz"),
         required=True,
     )
 

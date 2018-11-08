@@ -213,7 +213,8 @@ class CalculateInsert(Action):
             return FAILURE
 
         def insert(form, amount):
-            now = datetime.datetime.now()
+            #now = datetime.datetime.now()
+            now = datetime.datetime(2019,02,02)
             principal = form.request.principal
             session = get_session('ukhvoucher')
             kat = form._iface.getName()
@@ -232,12 +233,19 @@ class CalculateInsert(Action):
             except:
                 p=1
             user_oid, login, az = principal.get_user_info
+            # geändert !!! es wurde die user_oid geschrieben, das hat zu fehlern im pdf geführt... 05.11.2018 mseibert
+            if az == 'eh':
+                userid = login 
+            else:
+                userid = principal.id
+            ###################################
             generation = Generation(
                 oid=p,
                 date=now.strftime('%Y-%m-%d'),
                 type=form._iface.getName(),
                 data=json.dumps(data),
-                user=user_oid,
+                #user=user_oid,
+                user=userid,  # geändert !!! es wurde die user_oid geschrieben, das hat zu fehlern im pdf geführt... 05.11.2018 mseibert
                 user_az=az,
                 user_login=login,
                 uoid=oid

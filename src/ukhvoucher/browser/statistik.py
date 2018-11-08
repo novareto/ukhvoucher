@@ -196,7 +196,8 @@ class Statistik(uvclight.Form):
                 rr[kat] = {}
             rr[kat][status] = count
         for k, v in rr.items():
-            v['manuell'] = v['manuell_erstellt']
+            if 'manuell_erstellt' in v:
+                v['manuell'] = v['manuell_erstellt']
             v['title'] = kats.getTerm(k).title
         self.statdata = rr
         rc = []

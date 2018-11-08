@@ -20,10 +20,10 @@ Anzahl der Betreuer/innen der Kindergruppen und Jugendfeuerwehren (inkl. deren V
   <font color="red"><b> Achtung! </b></font>
 </p>
 <p>
-Ihre Antragsdaten für den Zeitraum 2019/2020 weichen um 10% vom vorhergehenden Budgetantrag ab.
+Ihre Antragsdaten für den Zeitraum 2019/2020 weichen um 10 % oder mehr vom vorhergehenden Budgetantrag ab.
 </p>
 <p>
-Bitte begründen Sie die Abweichung und bestätigen Sie die Richtigkeit Ihrer Daten.
+Bitte begründen Sie die Abweichung und bestätigen Sie die Richtigkeit Ihrer Angaben.
 </p>
 <p>
 Falls Sie sich vertippt haben, können Sie über "Abbrechen" zu der Eingabemaske zurückkehren.
@@ -40,9 +40,9 @@ Falls Sie sich vertippt haben, können Sie über "Abbrechen" zu der Eingabemaske
 </div>
 
 <p>
-Basierend auf den aktuell gültigen Gebühren* stehen Ihnen <font color="red"><b tal:content="data['betrag']"> </b> € </font> zur
+Basierend auf den aktuell gültigen Gebühren* ergibt sich ein Betrag in höhe von <font color="red"><b tal:content="data['betrag']"> </b> € </font> zur
 Durchführung von Erste-Hilfe-Lehrgängen für 10 % der aktiven Einsatzkräfte sowie für
-jede/n Betreuer/in für die Kalenderjahre 2019 und 2020 zur Verfügung.
+jede/n Betreuer/in für die Kalenderjahre 2019 und 2020.
 </p>
 
 <p>

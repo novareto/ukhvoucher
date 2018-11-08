@@ -2,7 +2,6 @@
 import json
 import uvclight
 
-
 from os import path
 from uvc.api import api
 from ul.auth import require
@@ -25,30 +24,28 @@ PFAD = "%s/ehffw.docx" % PATH
 PFAD2 = "%s/ehffwabw.docx" % PATH
 
 
-FAKE_DATE = datetime(2019, 1, 2)
-
-
 def getData(oid, zeitpunkt=None):
     session = get_session('ukhvoucher')
+    import datetime
     from ukhvoucher.vocabularies import get_default_abrechnungszeitraum
     if zeitpunkt:
         default_zeitraum = get_default_abrechnungszeitraum(zeitpunkt)
     else:
-        default_zeitraum = get_default_abrechnungszeitraum(zeitpunkt=FAKE_DATE)
-    print default_zeitraum
+        default_zeitraum = get_default_abrechnungszeitraum(zeitpunkt=datetime.datetime(2019, 1, 1))
+    print "default zeitraum:", default_zeitraum
     q = session.query(FWBudget).filter(
         FWBudget.user_id == oid,
         FWBudget.datum >= default_zeitraum.von,
         FWBudget.datum <= default_zeitraum.bis
     )
-    print q.all()
     if q.count() == 1:
         return q.one()
     return None
 
 
-def getKto(oid):
-    session = get_session('ukhvoucher')
+def getKto(oid, session=None):
+    if not session:
+        session = get_session('ukhvoucher')
     q = session.query(FWKto).filter(FWKto.user_id == oid)
     if q.count() == 1:
         return q.one()
@@ -73,6 +70,8 @@ class AT(api.Page):
         betrag = "%0.2f" % float(betrag)
         restbudget = "%0.2f" % float(restbudget)
         zahlbetrag = "%0.2f" % float(zahlbetrag)
+        #dd = budget.datum
+        #budget.datum = "%s.%s.%s" % (dd[8:10], dd[5:7], dd[0:4])
         dat = {
             'zahlbetrag': zahlbetrag,
             'kontoinhaber': kto.kto_inh,
@@ -144,15 +143,21 @@ class FFWForm(api.Form):
     def handle_preview(self):
         data, errors = self.extractData()
         if errors:
+            for x in errors:
+                if x.title == "There were errors.":
+                    x.title = u"Ihre Angaben sind unvollständig."
+                if x.title == "Missing required value.":
+                    x.title = "Bitte geben sie eine Zahl ein."
+            self.submissionError = errors
             if 'form.field.iban' in errors.keys():
                 error = errors.get('form.field.iban')
-                error.title = u"Bitte geben Sie eine gültige IBAN ein"
+                error.title = u"Bitte geben Sie eine gültige IBAN ein."
             if 'form.field.kontoinhaber' in errors.keys():
                 error = errors.get('form.field.kontoinhaber')
-                error.title = u"Bitte tragen Sie einen Kontoinhaber ein"
+                error.title = u"Bitte tragen Sie einen Kontoinhaber ein."
             if 'form.field.bank' in errors.keys():
                 error = errors.get('form.field.bank')
-                error.title = u"Bitte tragen Sie einen Kreditinstitut ein"
+                error.title = u"Bitte tragen Sie einen Kreditinstitut ein."
             return
 
         #print "##################################################"
@@ -221,8 +226,11 @@ class FFW(api.Form):
         self.data = json.loads(session['ffw'])
 
     def getOldData(self):
+
         abweichung = False
-        daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=FAKE_DATE - timedelta(days=365 * 2))
+        #daten_vorperiode = getData(oid=self.request.principal.oid)
+        #daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=FAKE_DATE - timedelta(days=365 * 2))
+        daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=datetime(2019, 1, 1) - timedelta(days=365 * 2))
         aktuell = float(self.data['einsatzkraefte'])
         vorjahr = float(daten_vorperiode.einsatzk)
         differenz = ((100 * aktuell) / vorjahr) - 100
@@ -245,7 +253,8 @@ class FFW(api.Form):
         if errors:
             return
         abweichung = False
-        daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=FAKE_DATE - timedelta(days=365 * 2))
+        #daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=FAKE_DATE - timedelta(days=365 * 2))
+        daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=datetime(2019, 1, 1) - timedelta(days=365 * 2))
         aktuell = float(self.data['einsatzkraefte'])
         vorjahr = float(daten_vorperiode.einsatzk)
         differenz = ((100 * aktuell) / vorjahr) - 100
@@ -312,6 +321,7 @@ class FFW(api.Form):
             'plz': adr.zip_code,
             'ort': adr.city.strip(),
             'datum': data.get('datum'),
+            #'datum': '03.03.2019',  # ------>  NUR TEST
         }
         doc.render(context)
         filename = '/tmp/Budgetantrag_FFW_' + adr.name1.encode('utf-8').strip() + ' ' + adr.name2.encode('utf-8').strip() + ' ' + adr.name3.encode('utf-8').strip() + '.docx'
@@ -326,7 +336,20 @@ class FFW(api.Form):
             budget=data.get('betrag'),
             budget_vj=data.get('last_budget'),
             datum=data.get('datum'),
+            #datum=datetime.now().strftime('%Y-%m-%d'),
+            #datum='2019-03-03',  # ------>  NUR TEST
         )
+        session = get_session('ukhvoucher')
+        kto_alt = getKto(self.request.principal.oid, session=session) 
+        if kto_alt:
+            #kto_alt.iban = data.get('iban').replace(' ', ''),
+            #kto_alt.bank = data.get('bank'),
+            #kto_alt.verw_zweck = data.get('verw_zweck'),
+            #kto_alt.kto_inh = data.get('kontoinhaber')
+            session.delete(kto_alt)
+            session.flush()
+            #kto_alt.user_id=self.request.principal.oid,
+        
         kto = FWKto(
             user_id=self.request.principal.oid,
             iban=data.get('iban').replace(' ', ''),
@@ -334,15 +357,15 @@ class FFW(api.Form):
             verw_zweck=data.get('verw_zweck'),
             kto_inh=data.get('kontoinhaber')
         )
+        session.add(kto)
         entry = JournalEntry(
             date=datetime.now().strftime('%Y-%m-%d'),
+            #date='2019-03-03',  # ------>  NUR TEST
             userid=self.request.principal.id,
             action=u"Feuerwehrbudget angelegt.",
             oid=self.request.principal.oid,
             note='')
-        session = get_session('ukhvoucher')
         session.add(budget)
-        #session.add(kto)   --> Achtung nur TEST
         session.add(entry)
         self.flash(u'Ihr Budgetantrag wurde an die Unfallkasse Hessen gesendet.')
         self.redirect(self.application_url())

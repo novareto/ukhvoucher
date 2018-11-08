@@ -359,7 +359,11 @@ class AskForVouchers(Form):
         data, errors = self.extractData()
         journal_note = data.pop('note')
         now = datetime.now()
+        now = datetime(2019,02,02)  # TEST 05.11.2018 Mseibert
 
+        print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
+        print now
+        print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
         if errors:
             self.flash(_(u'Es ist ein Fehler aufgetreten!'))
             return FAILURE
@@ -390,7 +394,8 @@ class AskForVouchers(Form):
 
             for idx in range(number):
                 voucher = Voucher(
-                    creation_date=datetime.now().strftime('%Y-%m-%d'),
+                    #creation_date=datetime.now().strftime('%Y-%m-%d'),
+                    creation_date=now.strftime('%Y-%m-%d'),  # TEST 05.11.2018 Mseibert 
                     status=MANUALLY_CREATED,
                     cat = data['kategorie'],
                     user_id=self.context.oid,
@@ -555,9 +560,9 @@ class JournalEntryAdd(uvclight.Form):
 
     fields = (
         uvclight.Fields(IJournalEntryExt) +
-        uvclight.Fields(IJournalEntry).omit('date', 'userid', 'oid', 'action'))
+        uvclight.Fields(IJournalEntry).omit('jid', 'date', 'userid', 'oid', 'action'))
 
-    label = "Add a new journal entry"
+    label = "Eine Notiz in der Historie anlegen"
 
     @action(u'Senden')
     def handle_send(self):
@@ -573,7 +578,8 @@ class JournalEntryAdd(uvclight.Form):
         self.context.add(entry)
 
         self.flash(u'Neue Notiz erfolgreich angelegt!')
-        self.redirect(self.url(self.context))
+        self.redirect(self.application_url())
+        #self.redirect(self.url(self.context))
 
 
 class JournalEntryDelete(uvclight.Form):

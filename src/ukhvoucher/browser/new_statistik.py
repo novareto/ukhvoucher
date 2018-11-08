@@ -211,23 +211,29 @@ class StatistikNeu(uvclight.Form):
         q = session.query(models.Voucher)
         queryNew = self.filterCreation(q, data)
         ret = {}
+        
         for voucher in queryNew.all():
-            if voucher.cat not in ret:
-                title = kats.getTerm(voucher.cat).title
-                ret[voucher.cat] = {'title': title, 'total': 0, 'manuell': 0, 'erstellt': 0, 'gebucht': 0, u'ung\xfcltig': 0 }
-            ret[voucher.cat]['total'] += 1
-            if voucher.generation.data == '"Manuelle Erzeugung"':
-                ret[voucher.cat]['manuell'] += 1
+            vcat = voucher.cat.strip()
+            if vcat not in ret:
+                try:
+                    title = kats.getTerm(vcat).title
+                except:
+                    title = vcat
+                    print vcat
+                ret[vcat] = {'title': title, 'total': 0, 'manuell': 0, 'erstellt': 0, 'gebucht': 0, u'ung\xfcltig': 0 }
+            ret[vcat]['total'] += 1
+            if voucher.generation.data.strip() == '"Manuelle Erzeugung"':
+                ret[vcat]['manuell'] += 1
             else:
-                ret[voucher.cat]['user'] += 1
+                ret[vcat]['erstellt'] += 1
         for voucher in self.filterModification(q, data).all():
-            if voucher.status == 'gebucht':
-                ret[voucher.cat]['gebucht'] += 1
-            elif voucher.status == u'ungültig':
-                ret[voucher.cat][u'ung\xfcltig'] += 1
-            if voucher.status in ['gebucht', u'ungültig']:
+            if voucher.status.strip() == 'gebucht':
+                ret[vcat]['gebucht'] += 1
+            elif voucher.status.strip() == u'ungültig':
+                ret[vcat][u'ung\xfcltig'] += 1
+            if voucher.status.strip() in ['gebucht', u'ungültig']:
                 if voucher.generation.data == '"Manuelle Erzeugung"':
-                    ret[voucher.cat]['manuell'] -= 1
+                    ret[vcat]['manuell'] -= 1
                 else:
-                    ret[voucher.cat]['user'] -= 1
+                    ret[vcat]['erstellt'] -= 1
         self.statdata = ret

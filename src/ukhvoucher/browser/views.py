@@ -136,7 +136,9 @@ class AdminRootIndex(uvclight.Page):
     def getFFWData(self):
         oid = self.request.principal.oid
         data = None
-        budget = getData(oid)
+        from ukhvoucher.vocabularies import get_selected_abrechungszeitraum
+        zeitraum = get_selected_abrechungszeitraum()
+        budget = getData(oid, zeitraum.von)
         if budget:
             kto = getKto(oid)
             betrag = budget.budget

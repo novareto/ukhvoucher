@@ -93,7 +93,7 @@
         </button>
         <ul class="dropdown-menu">
             <li>
-              <a tal:attributes="href string:${view.application_url()}/add_journal_entry"> Neue Notiz anlegen </a>
+              <a tal:attributes="href string:${view.application_url()}/journal/add"> Neue Notiz anlegen </a>
             </li>
         </ul>
     </div>

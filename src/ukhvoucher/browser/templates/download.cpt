@@ -1,5 +1,5 @@
 <div tal:define="data view.data"> 
-<h2> Sie haben für den Berechnungszeitraum bereits einen Budgetantrag gestellt. </h2>
+<h2> Sie haben für den Berechnungszeitraum einen Budgetantrag gestellt. </h2>
 <h2> <small> Erste Hilfe in der Freiwilligen Feuerwehr </small> </h2>
 <u> Ihre Angaben </u>
 
@@ -14,14 +14,14 @@
 <p>
 Basierend auf den aktuell gültigen Gebühren* stehen Ihnen <font color="red"><b tal:content="data['betrag']"> </b> € </font> zur
 Durchführung von Erste-Hilfe-Lehrgängen für 10 % der aktiven Einsatzkräfte sowie für
-jede/n Betreuer/in für die Kalenderjahre 2017 und 2018 zur Verfügung.
+jede/n Betreuer/in für die Kalenderjahre 2019 und 2020 zur Verfügung.
 </p>
-<!--
+
 <p>
 Sie haben letztes Jahr <b tal:content="data['last_budget']"/> € von Ihrem Budget nicht ausgeschöpft. Diesen Betrag verrechnen wir mit
 Ihrem aktuellen Budget.
-<p>
--->
+</p>
+
 <p>
 Der Betrag <font color="red"><b tal:content="data['zahlbetrag']"> </b> € </font> soll auf folgendes Konto überwiesen werden:
 </p>
@@ -33,7 +33,6 @@ Der Betrag <font color="red"><b tal:content="data['zahlbetrag']"> </b> € </fon
 <table>
  <tr>
    <th width=120px></th>
-   <th width=200px></th>
  </tr>
  <tr>
    <td>Kreditinstitut:</td>
