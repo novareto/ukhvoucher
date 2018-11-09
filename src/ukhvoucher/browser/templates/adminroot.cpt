@@ -84,42 +84,6 @@
     </table>
 </fieldset>
 
-<!-- Tabelle mit Sortierfunktion -->
-<fieldset>
-  <legend> Historie </legend>
-    <div class="btn-group pull-right" tal:condition="request.principal.canEdit">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Aktion <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-            <li>
-              <a tal:attributes="href string:${view.application_url()}/journal/add"> Neue Notiz anlegen </a>
-            </li>
-        </ul>
-    </div>
-   <table id="journal_table" class="tablesorter table table-bordered table-striped table-condensed" tal:define="entries request.principal.getJournalEntries()" tal:condition="entries">
-     <thead>
-       <tr>
-         <th width="80"> Datum </th>
-            <th> Aktion </th>
-            <th> Notiz </th>
-            <th> Autor </th>
-       </tr>
-     </thead>
-     <tbody>
-       <tr tal:repeat="result entries" tal:attributes="class repeat['result']">
-         <td tal:content="result.date.strftime('%Y-%m-%d')"> </td>
-         <td> 
-           <a href="" tal:attributes="href view.url(context, 'journal/' + str(result.jid) + '/edit')"> 
-             <span tal:content="result.action"> </span>
-           </a>
-         </td>
-         <td tal:content="result.note.strip()"> </td>
-         <td tal:content="result.userid"> </td>
-       </tr>
-     </tbody>
-   </table>
-</fieldset>
 
 <span tal:define="global FFWK10 request.principal.isFFW"></span>
 
@@ -283,6 +247,43 @@
 </fieldset>
 </span>
 
+
+<!-- Tabelle mit Sortierfunktion -->
+<fieldset>
+  <legend> Historie </legend>
+    <div class="btn-group pull-right" tal:condition="request.principal.canEdit">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Aktion <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+              <a tal:attributes="href string:${view.application_url()}/journal/add"> Neue Notiz anlegen </a>
+            </li>
+        </ul>
+    </div>
+   <table id="journal_table" class="tablesorter table table-bordered table-striped table-condensed" tal:define="entries request.principal.getJournalEntries()" tal:condition="entries">
+     <thead>
+       <tr>
+         <th width="80"> Datum </th>
+            <th> Aktion </th>
+            <th> Notiz </th>
+            <th> Autor </th>
+       </tr>
+     </thead>
+     <tbody>
+       <tr tal:repeat="result entries" tal:attributes="class repeat['result']">
+         <td tal:content="result.date.strftime('%Y-%m-%d')"> </td>
+         <td> 
+           <a href="" tal:attributes="href view.url(context, 'journal/' + str(result.jid) + '/edit')"> 
+             <span tal:content="result.action"> </span>
+           </a>
+         </td>
+         <td tal:content="result.note.strip()"> </td>
+         <td tal:content="result.userid"> </td>
+       </tr>
+     </tbody>
+   </table>
+</fieldset>
 
 
 </div>

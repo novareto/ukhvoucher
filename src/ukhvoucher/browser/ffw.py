@@ -70,8 +70,6 @@ class AT(api.Page):
         betrag = "%0.2f" % float(betrag)
         restbudget = "%0.2f" % float(restbudget)
         zahlbetrag = "%0.2f" % float(zahlbetrag)
-        #dd = budget.datum
-        #budget.datum = "%s.%s.%s" % (dd[8:10], dd[5:7], dd[0:4])
         dat = {
             'zahlbetrag': zahlbetrag,
             'kontoinhaber': kto.kto_inh,
@@ -335,9 +333,9 @@ class FFW(api.Form):
             jugendf=data.get('betreuer'),
             budget=data.get('betrag'),
             budget_vj=data.get('last_budget'),
-            datum=data.get('datum'),
+            #datum=data.get('datum'),
             #datum=datetime.now().strftime('%Y-%m-%d'),
-            #datum='2019-03-03',  # ------>  NUR TEST
+            datum='2019-03-03',  # ------>  NUR TEST
         )
         session = get_session('ukhvoucher')
         kto_alt = getKto(self.request.principal.oid, session=session) 
@@ -359,8 +357,8 @@ class FFW(api.Form):
         )
         session.add(kto)
         entry = JournalEntry(
-            date=datetime.now().strftime('%Y-%m-%d'),
-            #date='2019-03-03',  # ------>  NUR TEST
+            #date=datetime.now().strftime('%Y-%m-%d'),
+            date='2019-03-03',  # ------>  NUR TEST
             userid=self.request.principal.id,
             action=u"Feuerwehrbudget angelegt.",
             oid=self.request.principal.oid,

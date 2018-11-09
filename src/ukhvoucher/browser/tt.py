@@ -36,7 +36,7 @@ from zope import interface
 from cromlech.sqlalchemy import get_session
 from ukhvoucher import models
 from ..interfaces import IAdminLayer
-from ukhvoucher import DISABLED, CREATED
+from ukhvoucher import DISABLED, CREATED, MANUALLY_CREATED
 from datetime import datetime
 
 class GenerationView(uvclight.Page):
@@ -57,6 +57,9 @@ class GenerationView(uvclight.Page):
                 if voucher.status.strip() == CREATED:
                     if generation not in rc:
                         rc.append(generation)
+                if voucher.status.strip() == MANUALLY_CREATED:
+                    if generation not in rc:
+                        rc.append(generation)
         return rc
 
 
@@ -72,6 +75,9 @@ class DCharge(uvclight.View):
             generation = session.query(models.Generation).get(gen_id)
             for x in generation.voucher:
                 if x.status.strip() == CREATED:
+                    x.status = DISABLED
+            for x in generation.voucher:
+                if x.status.strip() == MANUALLY_CREATED:
                     x.status = DISABLED
 
             entry = models.JournalEntry(
