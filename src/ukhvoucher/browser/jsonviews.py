@@ -24,6 +24,9 @@ class SearchJSONVouchers(uvclight.JSON):
             else:
                 ress = session.query(models.Voucher).filter(models.Voucher.oid == void).all()
             for x in ress:
+                if len(void) == 6 and x.status.strip() in (DISABLED, BOOKED):
+                    print "REMOVE THE DISABLED ONE"
+                    continue
                 datum = x.zeitraum()
                 terms.append({
                     'id': int(x.oid),

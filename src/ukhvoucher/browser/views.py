@@ -400,12 +400,11 @@ class InvoicesView(uvclight.Page):
 
     def getInvoices(self):
         invoices = [x for x in self.context]
-        invoices.reverse()
         return invoices
 
     def reverseVouchers(self, vouchers):
         vl = [x for x in vouchers]
-        return sorted(vl, key=lambda k: k.oid)
+        return sorted(vl, key=lambda k: k.oid, reverse=True)
 
 
 class Helper(uvclight.Page):

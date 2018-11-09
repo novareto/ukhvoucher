@@ -118,6 +118,7 @@ class CreateModel(Form):
         if isinstance(self.context, Accounts):
             data['rollen'] = ''
             data['merkmal'] = 'E'
+            data['oid'] = 3
         item = self.context.model(**data)
         self.context.add(item)
         if 'oid' in data and data['oid'] != '':
@@ -329,6 +330,37 @@ class ChangePW(EditAccount):
 
     fields = Fields(IAccount).select('password')
 
+
+class EditJournal(EditModel):
+    uvclight.name('edit')
+    uvclight.context(IJournalEntry)
+    layer(IAdminLayer)
+    require('manage.vouchers')
+
+    fields = uvclight.Fields(IJournalEntryExt).select('action') + uvclight.Fields(IJournalEntry).select('date', 'note')
+
+    @action(_(u'Änderung übernehmen'))
+    def handle_save(self):
+        data, errors = self.extractData()
+        if errors:
+            self.flash(_(u'Es ist ein Fehler aufgetreten!'))
+            return FAILURE
+        apply_data_event(self.fields, self.getContentData(), data)
+        self.redirect(self.application_url())
+        return SUCCESS
+
+    @action(u'Delete')
+    def handle_send(self):
+        back = self.url(self.context.__parent__)
+        self.context.__parent__.delete(self.context)
+        self.flash(u'Deleted')
+        self.redirect(self.application_url())
+
+    @action(_(u'Abbrechen'))
+    def handle_cancel(self):
+        #self.redirect(self.url(self.context.__parent__))
+        self.redirect(self.application_url())
+        return SUCCESS
 
 #@menuentry(IDocumentActions, order=10)
 class AskForVouchers(Form):
