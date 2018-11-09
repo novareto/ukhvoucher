@@ -1,5 +1,12 @@
 $(document).ready(function() {
 
+    $('form#DisableVouchers select').select2({
+        tags: false,
+        multiple: true,
+        language: "de",
+        tokenSeparators: [',', ' '],
+    })
+
     $('table.tablesorter').tablesorter();
 
     function play(id) {
@@ -27,6 +34,7 @@ $(document).ready(function() {
     });
 
     $("#field-form-field-vouchers").on('select2:select', function(evt) {
+        console.log(evt)
         update_selected('select#form_field_vouchers')
         play("success");
     });

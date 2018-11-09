@@ -13,6 +13,7 @@ $("select#form_field_vouchers").select2({
     tags: false,
     delay: 250,
     multiple: true,
+    language: 'de',
     selectOnBlur: true,
     tokenSeparators: [',', ' '],
     minimumInputLength: 5,
@@ -44,7 +45,8 @@ $("select#form_field_vouchers").select2({
 		    if (current.indexOf(item.id.toString()) == -1) {
 			return {
 			    text: item.text,
-			    id: item.id.toString()
+			    id: item.id.toString(),
+          disabled: item.disabled
 			}
 		    }
                 })

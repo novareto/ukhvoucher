@@ -458,7 +458,7 @@ class Invoice(Base, Location):
     oid = Column('rech_oid', Integer, primary_key=True)
     reason = Column('grund', StrippedString)
     description = Column('text', StrippedString)
-    creation_date = Column('erst_dat', DateTime, default=date_factory)
+#    creation_date = Column('erst_dat', DateTime, default=date_factory)
 
     vouchers = relationship(
         Voucher, collection_class=set,

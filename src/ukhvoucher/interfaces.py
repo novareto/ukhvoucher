@@ -377,14 +377,27 @@ class IJournalEntry(Interface):
     )
 
 
+
+@grok.provider(IContextSourceBinder)
+def reason(context):
+    rc=[
+       SimpleTerm('Charge gesperrt', 'Charge gesperrt', u'Charge gesperrt'),
+       SimpleTerm('Fehleingabe', 'Fehleingabe', u'Fehleingabe'),
+       SimpleTerm('FFW-Budgetprfung', 'FFW-Budgetprfung', u'FFW-Budgetprüfung'),
+       SimpleTerm('Information', 'Information', u'Information'),
+       SimpleTerm('Personalfluktuation', 'Personalfluktuation', u'Personalfluktuation'),
+       SimpleTerm('zustliche Beschäftigte/Gruppen/Kolonnen', 'zustliche Beschftigte/Gruppen/Kolonnen', u'zusätliche Beschäftigte/Gruppen/Kolonnen'),
+       SimpleTerm('zustzliche Standorte', 'zustzliche Standorte', u'zusätzliche Standorte'),
+    ]
+    return SimpleVocabulary(rc)
+
+
 class IJournalEntryExt(Interface):
 
     action = schema.Choice(
         title=u"Betreff",
         required=True,
-        values = ['Charge gesperrt', 'Fehleingabe', 'FFW-Budgetprfung',
-                  'Information', 'Personalfluktuation', 'zustliche Beschftigte/Gruppen/Kolonnen',
-                  'zustzliche Standorte']
+        source=reason,
     )
 
 
@@ -646,6 +659,11 @@ class IVoucher(Interface):
     )
 
     creation_date = schema.Datetime(
+        title=_(u"Creation date"),
+        required=True,
+    )
+
+    modification_date = schema.Datetime(
         title=_(u"Creation date"),
         required=True,
     )
