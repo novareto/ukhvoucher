@@ -664,7 +664,7 @@ class IVoucher(Interface):
     )
 
     modification_date = schema.Datetime(
-        title=_(u"Creation date"),
+        title=_(u"Modifikationsdatum"),
         required=True,
     )
 

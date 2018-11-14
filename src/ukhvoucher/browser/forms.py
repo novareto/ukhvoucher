@@ -349,11 +349,11 @@ class EditJournal(EditModel):
         self.redirect(self.application_url())
         return SUCCESS
 
-    @action(u'Delete')
+    @action(u'Eintrag löschen')
     def handle_send(self):
         back = self.url(self.context.__parent__)
         self.context.__parent__.delete(self.context)
-        self.flash(u'Deleted')
+        self.flash(u'Der Eintrag wurde gelöscht.')
         self.redirect(self.application_url())
 
     @action(_(u'Abbrechen'))
@@ -600,8 +600,13 @@ class JournalEntryAdd(uvclight.Form):
     def handle_send(self):
         data, errors = self.extractData()
         if errors:
-            return
-
+            for x in errors:
+                if x.title == "There were errors.":
+                    x.title = u"Ihre Angaben sind unvollständig."
+                if x.title == "Missing required value.":
+                    x.title = "Bitte tragen Sie eine Notiz ein."
+            self.submissionError = errors
+            return FAILURE
         # journalize
         data['date'] = datetime.now().strftime('%Y-%m-%d')
         data['userid'] = self.request.principal.id
@@ -625,10 +630,10 @@ class JournalEntryDelete(uvclight.Form):
     @property
     def label(self):
         return "Delete journal entry n°%i" % self.context.jid
-    
-    @action(u'Delete')
+
+    @action(u'Eintrag löschen')
     def handle_send(self):
         back = self.url(self.context.__parent__)
         self.context.__parent__.delete(self.context)
-        self.flash(u'Deleted')
+        self.flash(u'Der Eintrag wurde gelöscht.')
         self.redirect(back)

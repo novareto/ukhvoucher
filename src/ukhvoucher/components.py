@@ -361,5 +361,5 @@ class AdminPrincipal(ExternalPrincipal):
         session = get_session("ukhvoucher")
         query = session.query(models.JournalEntry).filter(
             models.JournalEntry.oid == self.oid
-        )
+        ).order_by(models.JournalEntry.date.desc())
         return query.all()

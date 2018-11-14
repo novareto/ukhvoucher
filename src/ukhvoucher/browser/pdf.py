@@ -181,7 +181,10 @@ class PDF(uvclight.Page):
                 erstelldatum = tag + '.' + monat + '.' + jahr
                 c.drawString(2.5 * cm, y * cm, u'Ausstellungsdatum: ' + erstelldatum)
                 y = y - 0.6
-                c.drawString(2.5 * cm, y * cm, u'Gültigkeit für einen Lehrgang zwischen 01.01.2017 und 31.12.2018')
+                if jahr <= '2018':
+                    c.drawString(2.5 * cm, y * cm, u'Gültigkeit für einen Lehrgang zwischen 01.01.2017 und 31.12.2018')
+                if jahr >= '2019':
+                    c.drawString(2.5 * cm, y * cm, u'Gültigkeit für einen Lehrgang zwischen 01.01.2019 und 31.12.2020')
                 y = y - 0.6
                 c.drawString(2.5 * cm, y * cm, u'Der Berechtigungsschein ist spätestens bei Lehrgangsteilnahme der ermächtigten Stelle')
                 y = y - 0.6
