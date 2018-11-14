@@ -392,6 +392,14 @@ def reason(context):
     return SimpleVocabulary(rc)
 
 
+def get_journal_entry_title(entry):
+    source = reason(None)
+    try:
+        return source.getTerm(entry).title
+    except:
+        return entry
+
+
 class IJournalEntryExt(Interface):
 
     action = schema.Choice(

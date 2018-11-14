@@ -111,7 +111,7 @@
          <td tal:content="result.date.strftime('%Y-%m-%d')"> </td>
          <td> 
            <a href="" tal:attributes="href view.url(context, 'journal/' + str(result.jid) + '/edit')"> 
-             <span tal:content="result.action"> </span>
+             <span tal:content="view.getJournalEntryTitle(result.action.strip())"> </span>
            </a>
          </td>
          <td tal:content="result.note.strip()"> </td>
