@@ -40,6 +40,14 @@ MULTI_DISABLED = set((
 #    order(50)
 
 
+def getNextAccount():
+    session = get_session('ukhvoucher')
+    from sqlalchemy.sql.functions import max
+    oid = int(session.query(max(Account.oid)).one()[0]) + 1
+    print "GET NEXT ACCOUNT ID"
+    return oid
+
+
 #@menuentry(AddMenu, order=10)
 class CreateModel(Form):
     name('add')
@@ -118,7 +126,7 @@ class CreateModel(Form):
         if isinstance(self.context, Accounts):
             data['rollen'] = ''
             data['merkmal'] = 'E'
-            data['oid'] = 3
+            data['oid'] = getNextAccount() 
         item = self.context.model(**data)
         self.context.add(item)
         if 'oid' in data and data['oid'] != '':

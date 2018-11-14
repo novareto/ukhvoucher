@@ -23,7 +23,7 @@ from zope.location import ILocation, LocationProxy
 from ..apps import AdminRoot, UserRoot
 from ..components import cached
 from ..interfaces import IAdminLayer, IUserLayer, K10
-from ..interfaces import IModelContainer, get_oid
+from ..interfaces import IModelContainer, get_oid, get_journal_entry_title
 from ..models import JournalEntry
 from ..resources import ukhcss
 from ..resources import ukhvouchers, masked_input
@@ -201,13 +201,6 @@ class AdminRootIndex(uvclight.Page):
                     href="%s/accounts/add?form.field.oid=%s" % (self.application_url(), oid),
                     c="Neuen Benutzer anlegen",)
                 )
-        #if not account:
-        #    rc.append(
-        #            HTML.tag(
-        #                'a',
-        #                href="%s/accounts/add" % self.application_url(),
-        #                c="Neuen Benutzer anlegen",)
-        #            )
         return rc
 
     def getCatActions(self):
@@ -254,6 +247,8 @@ class AdminRootIndex(uvclight.Page):
         )
         return rc
 
+    def getJournalEntryTitle(self, entry):
+        return get_journal_entry_title(entry)
 
 
 

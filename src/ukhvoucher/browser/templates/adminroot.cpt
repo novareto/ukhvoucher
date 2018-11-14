@@ -278,7 +278,7 @@
              <span tal:content="result.action"> </span>
            </a>
          </td>
-         <td tal:content="result.note.strip()"> </td>
+         <td tal:content="view.getJournalEntryTitle(result.action.strip())"> </td>
          <td tal:content="result.userid"> </td>
        </tr>
      </tbody>
