@@ -652,10 +652,10 @@ class IInvoice(Interface):
         required=False,
     )
 
-    creation_date = schema.Datetime(
-        title=_(u"Creation date"),
-        required=True,
-    )
+#    creation_date = schema.Datetime(
+#        title=_(u"Creation date"),
+#        required=True,
+#    )
 
 
 class IVoucher(Interface):
