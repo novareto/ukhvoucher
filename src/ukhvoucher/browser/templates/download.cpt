@@ -6,15 +6,31 @@
 <p>
   Anzahl der aktiven Einsatzkräfte (ohne Betreuer/innen der Kindergruppen und Jugendfeuerwehren): <span><font color="blue"> <b tal:content="data['einsatzkraefte']"></b></font></span>
 </p>
- 
+
 <p>
   Anzahl der Betreuer/innen der Kindergruppen und Jugendfeuerwehren (inkl. deren Vertreter/innen): <span><font color="blue"> <b tal:content="data['betreuer']"></b></font>
 </p>
 
+<div tal:condition ="data['grund'].strip() != ''">
+  <br>
+  <p>
+    Die Antragsdaten für den Zeitraum 2019/2020 weichen um 10 % oder mehr vom vorhergehenden Budgetantrag ab.
+  </p>
+
+  <p>
+    Begründung der Aweichung:
+  </p>
+
+  <p>
+    <b tal:content="data['grund']"/>
+  </p>
+  <br>
+</div>
+
 <p>
-Basierend auf den aktuell gültigen Gebühren* stehen Ihnen <font color="red"><b tal:content="data['betrag']"> </b> € </font> zur
+Basierend auf den aktuell gültigen Gebühren* ergibt sich ein Betrag von <font color="red"><b tal:content="data['betrag']"> </b> € </font> zur
 Durchführung von Erste-Hilfe-Lehrgängen für 10 % der aktiven Einsatzkräfte sowie für
-jede/n Betreuer/in für die Kalenderjahre 2019 und 2020 zur Verfügung.
+jede/n Betreuer/in für die Kalenderjahre 2019 und 2020.
 </p>
 
 <p>
@@ -23,7 +39,7 @@ Ihrem aktuellen Budget.
 </p>
 
 <p>
-Der Betrag <font color="red"><b tal:content="data['zahlbetrag']"> </b> € </font> soll auf folgendes Konto überwiesen werden:
+Der Betrag in Höhe von <font color="red"><b tal:content="data['zahlbetrag']"> </b> € </font> soll auf folgendes Konto überwiesen werden:
 </p>
 
 <br>

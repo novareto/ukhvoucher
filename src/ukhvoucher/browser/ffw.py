@@ -65,6 +65,7 @@ class AT(api.Page):
         budget = getData(self.request.principal.oid)
         kto = getKto(self.request.principal.oid)
         betrag = budget.budget
+        grund = budget.grund
         restbudget = budget.budget_vj
         zahlbetrag = betrag - restbudget
         betrag = "%0.2f" % float(betrag)
@@ -77,6 +78,7 @@ class AT(api.Page):
             'einsatzkraefte': budget.einsatzk,
             'datum': budget.datum,
             'betrag': betrag,
+            'grund': budget.grund,
             'iban': kto.iban,
             'verw_zweck': kto.verw_zweck,
             'betreuer': budget.jugendf,
@@ -155,30 +157,24 @@ class FFWForm(api.Form):
                 error.title = u"Bitte tragen Sie einen Kontoinhaber ein."
             if 'form.field.bank' in errors.keys():
                 error = errors.get('form.field.bank')
-                error.title = u"Bitte tragen Sie einen Kreditinstitut ein."
+                error.title = u"Bitte tragen Sie ein Kreditinstitut ein."
             return
-
-        #print "##################################################"
-        #print data
-        #daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=FAKE_DATE - timedelta(days=365 * 2))
-        #print lulu.einsatzk
-        #print "##################################################"
-        
-        
-        
         datum = strftime("%d.%m.%Y", localtime())
         data['datum'] = datum
         jahr = strftime("%Y", localtime())
         jahr = "2019" # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if jahr == "2017" or jahr == "2018":
-            verw_zweck = "Erste-Hilfe-Budget 2017/18"
+            verw_zweck = "Erste-Hilfe-Budget 2017/2018"
         if jahr == "2019" or jahr == "2020":
-            verw_zweck = "Erste-Hilfe-Budget 2019/20"
+            verw_zweck = "Erste-Hilfe-Budget 2019/2020"
         data['verw_zweck'] = verw_zweck
         #data['last_budget'] = "0,0"
         rep = data['last_budget'].replace(',','.')
         data['last_budget'] = rep
-        betrag = (float(data['einsatzkraefte']) * 0.1 + float(data['betreuer'])) * (30.75 + 6.15)
+        # Beträge 2017/2018
+        #betrag = (float(data['einsatzkraefte']) * 0.1 + float(data['betreuer'])) * (30.75 + 6.15)
+        # Beträge 2019/2020
+        betrag = (float(data['einsatzkraefte']) * 0.1 + float(data['betreuer'])) * (32.80 + 6.55)
         zahlbetrag = betrag - float(data['last_budget'])
         if float(data['last_budget']) > float(betrag):
             self.flash(u'Achtung! Stimmen die Angaben zum Restbudget?', type="error")
@@ -212,7 +208,7 @@ class FFW(api.Form):
     @property
     def fields(self):
         fields = uvclight.Fields(IFFW)
-        fields['begr'].htmlAttributes = {'maxlength': 60}
+        fields['begr'].htmlAttributes = {'maxlength': 250}
         return fields
 
     @property
@@ -333,6 +329,7 @@ class FFW(api.Form):
             jugendf=data.get('betreuer'),
             budget=data.get('betrag'),
             budget_vj=data.get('last_budget'),
+            grund=begruendung,
             #datum=data.get('datum'),
             #datum=datetime.now().strftime('%Y-%m-%d'),
             datum='2019-03-03',  # ------>  NUR TEST

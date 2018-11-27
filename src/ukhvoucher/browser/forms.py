@@ -20,7 +20,7 @@ from ..interfaces import IVouchersCreation, IDisablingVouchers
 from ..interfaces import IModel, IModelContainer, IAdminLayer, IUserLayer
 from ..interfaces import IAccount, IJournalize, IJournalEntry, IJournalEntryExt
 from ..interfaces import IKontakt
-from ..models import Voucher, JournalEntry, Vouchers, Addresses, Invoices, Invoice, Accounts, Journal
+from ..models import Address, Voucher, JournalEntry, Vouchers, Addresses, Invoices, Invoice, Accounts, Journal
 from .. import _, resources, DISABLED, CREATED, MANUALLY_CREATED
 from ..apps import UserRoot
 
@@ -43,7 +43,7 @@ MULTI_DISABLED = set((
 def getNextAccount():
     session = get_session('ukhvoucher')
     from sqlalchemy.sql.functions import max
-    oid = int(session.query(max(Account.oid)).one()[0]) + 1
+    oid = int(session.query(max(Address.oid)).one()[0]) + 1
     print "GET NEXT ACCOUNT ID"
     return oid
 
@@ -120,13 +120,13 @@ class CreateModel(Form):
         if isinstance(self.context, Addresses):
             if data.get('oid') == '':
                 data.pop('oid')
+            data['oid'] = getNextAccount() 
         if isinstance(self.context, Invoices):
             if data.get('oid') == '':
                 data.pop('oid')
         if isinstance(self.context, Accounts):
             data['rollen'] = ''
             data['merkmal'] = 'E'
-            data['oid'] = getNextAccount() 
         item = self.context.model(**data)
         self.context.add(item)
         if 'oid' in data and data['oid'] != '':

@@ -204,6 +204,12 @@
           <td>Zustehendes Budget:</td>
           <td><span tal:content="ffwdata['betrag']"/></td>
         </tr>
+        <div tal:condition="ffwdata['datum'][0:4] >= '2019'">
+          <tr>
+            <td>Nicht ausgeschöpftes Budget:</td>
+            <td><span tal:content="ffwdata['last_budget']"/></td>
+          </tr>
+        </div>
         <!--
         <tr>
           <td>Nicht ausgeschöpftes Budget:</td>
@@ -214,6 +220,12 @@
           <td>Auszahlungsbetrag:</td>
           <td><span tal:content="ffwdata['zahlbetrag']"/></td>
         </tr>
+        <div tal:condition="ffwdata['grund'].strip() != ''">
+          <tr>
+            <td>Es besteht eine Abweichung der Daten von 10 % oder mehr:</td>
+            <td><span tal:content="ffwdata['grund']"/></td>
+          </tr>
+        </div>
       </table>
       <br>    
       <br>    
@@ -275,10 +287,10 @@
          <td tal:content="result.date.strftime('%Y-%m-%d')"> </td>
          <td> 
            <a href="" tal:attributes="href view.url(context, 'journal/' + str(result.jid) + '/edit')"> 
-             <span tal:content="result.action"> </span>
+             <span tal:content="view.getJournalEntryTitle(result.action.strip())"> </span>
            </a>
          </td>
-         <td tal:content="view.getJournalEntryTitle(result.action.strip())"> </td>
+         <td tal:content="result.note"> </td>
          <td tal:content="result.userid"> </td>
        </tr>
      </tbody>

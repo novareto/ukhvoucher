@@ -157,6 +157,7 @@ class AdminRootIndex(uvclight.Page):
                 'iban': kto.iban,
                 'verw_zweck': kto.verw_zweck,
                 'betreuer': budget.jugendf,
+                'grund': budget.grund,
                 'bank': kto.bank}
         return data
 

@@ -160,6 +160,7 @@ class FWBudget(Base):
     budget= Column('budget', Float)
     budget_vj= Column('budget_vj', Float)
     user_id = Column('user_id', String(30))
+    grund = Column('grund', String(250))
 
 
 class FWKto(Base):

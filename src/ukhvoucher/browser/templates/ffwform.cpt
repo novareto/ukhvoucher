@@ -40,7 +40,7 @@ Falls Sie sich vertippt haben, können Sie über "Abbrechen" zu der Eingabemaske
 </div>
 
 <p>
-Basierend auf den aktuell gültigen Gebühren* ergibt sich ein Betrag in höhe von <font color="red"><b tal:content="data['betrag']"> </b> € </font> zur
+Basierend auf den aktuell gültigen Gebühren* ergibt sich ein Betrag in Höhe von <font color="red"><b tal:content="data['betrag']"> </b> € </font> zur
 Durchführung von Erste-Hilfe-Lehrgängen für 10 % der aktiven Einsatzkräfte sowie für
 jede/n Betreuer/in für die Kalenderjahre 2019 und 2020.
 </p>
@@ -51,7 +51,7 @@ Ihrem aktuellen Budget.
 <p>
 
 <p>
-Der Betrag <font color="red"><b tal:content="data['zahlbetrag']"> </b> € </font> soll auf folgendes Konto überwiesen werden:
+Der Betrag in Höhe von <font color="red"><b tal:content="data['zahlbetrag']"> </b> € </font> soll auf folgendes Konto überwiesen werden:
 </p>
 
 <br>
