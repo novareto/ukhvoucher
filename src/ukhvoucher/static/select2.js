@@ -1919,7 +1919,6 @@ S2.define('select2/selection/search',[
       self._keyUpPrevented = evt.isDefaultPrevented();
 
       var key = evt.which;
-
       if (key === KEYS.BACKSPACE && self.$search.val() === '') {
         var $previousChoice = self.$searchContainer
           .prev('.select2-selection__choice');
@@ -1931,8 +1930,7 @@ S2.define('select2/selection/search',[
 
           evt.preventDefault();
         }
-      }
-    });
+    } });
 
     // Try to detect the IE version should the `documentMode` property that
     // is stored on the document. This is only implemented in IE and is
@@ -2042,7 +2040,7 @@ S2.define('select2/selection/search',[
       data: item
     });
 
-    this.$search.val(item.text);
+      // this.$search.val(item.text);
     this.handleSearch();
   };
 

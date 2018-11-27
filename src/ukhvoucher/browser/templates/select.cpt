@@ -9,6 +9,11 @@
 
 <Script language="Javascript">
 
+function play(id) {
+    var audio = document.getElementById(id);
+    audio.play();
+}
+
 $("select#form_field_vouchers").select2({
     tags: false,
     delay: 250,
@@ -31,6 +36,9 @@ $("select#form_field_vouchers").select2({
             return queryParameters;
         },
         processResults: function (data) {
+            if (data.results.length == 0) {
+                play('failure');
+            }
 	    let current = $("select#form_field_vouchers").val() || [];
 	    if (data.results.length == 1) {
 		let v = data.results[0];
@@ -46,7 +54,7 @@ $("select#form_field_vouchers").select2({
 			return {
 			    text: item.text,
 			    id: item.id.toString(),
-          disabled: item.disabled
+                            disabled: item.disabled
 			}
 		    }
                 })
@@ -54,5 +62,9 @@ $("select#form_field_vouchers").select2({
         }
     }
 });
+
+$("select#form_field_vouchers").on('results:message', function(params) {
+  console.log(params);
+})
 
 </Script>
