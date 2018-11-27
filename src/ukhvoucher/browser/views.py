@@ -402,6 +402,18 @@ class InvoicesView(uvclight.Page):
         return sorted(vl, key=lambda k: k.oid, reverse=True)
 
 
+class JournalView(uvclight.Page):
+    uvclight.name('index')
+    uvclight.context(models.Journal)
+    uvclight.layer(IAdminLayer)
+    require('manage.vouchers')
+    template = uvclight.get_template('journal.cpt', __file__)
+
+    @property
+    def entries(self):
+        return [x for x in self.context]
+
+
 class Helper(uvclight.Page):
     uvclight.context(Interface)
     require('manage.vouchers')
