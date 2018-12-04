@@ -454,9 +454,13 @@ class Migration(uvclight.Page):
             #vou.user_login = account.login
             #vou.user_az = account.az
             #import pdb; pdb.set_trace()
-        print "Migration FWBudget Datum"
-        query = session.query(models.FWBudget)
-        for budget in query.all():
-            dd = budget.datum
-            budget.datum = "%s-%s-%s" %(dd[6:10], dd[3:5], dd[0:2])
-
+        #print "Migration FWBudget Datum"
+        #query = session.query(models.FWBudget)
+        #for budget in query.all():
+        #    dd = budget.datum
+        #    budget.datum = "%s-%s-%s" %(dd[6:10], dd[3:5], dd[0:2])
+        query = session.query(models.Voucher)
+        i = 1
+        for vou in query.all():
+            print i, vou.creation_date, vou.modification_date, vou.status
+            i += 1

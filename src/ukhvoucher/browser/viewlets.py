@@ -224,6 +224,12 @@ class MenuStat(BaseNavMenu):
     title = "Statistik"
 
 
+class MenuStatNew(BaseNavMenu):
+    uvclight.order(5)
+    attribute = "statistikneu"
+    title = "Statistik Neu"
+
+
 class Journal(BaseNavMenu):
     uvclight.order(6)
     attribute = "journal"
