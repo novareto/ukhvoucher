@@ -399,11 +399,6 @@ class AskForVouchers(Form):
         data, errors = self.extractData()
         journal_note = data.pop('note')
         now = datetime.now()
-        now = datetime(2019,02,02)  # TEST 05.11.2018 Mseibert
-
-        print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
-        print now
-        print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
         if errors:
             self.flash(_(u'Es ist ein Fehler aufgetreten!'))
             return FAILURE
@@ -419,14 +414,12 @@ class AskForVouchers(Form):
             import json
 
             p = int(session.query(max(Generation.oid)).one()[0] or 0) + 1
-
             generation = Generation(
                 oid=p,
                 date=now.strftime('%Y-%m-%d'),
                 type=data['kategorie'],
                 data=json.dumps('Manuelle Erzeugung'),
-                #user=str(self.context.oid),
-                user=self.request.principal.id,
+                user=str(self.context.oid),
                 user_az=self.context.az,
                 user_login=self.context.login,
                 uoid=oid

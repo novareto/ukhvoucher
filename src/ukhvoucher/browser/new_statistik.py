@@ -204,14 +204,14 @@ class StatistikNeu(uvclight.Form):
         self.statdata1 = rc
 
 
-        print
-        print "#" * 44
-        print
-
         q = session.query(models.Voucher)
         queryNew = self.filterCreation(q, data)
+        #DEFAULT = {'title': '', 'total': 0, 'manuell': 0, 'erstellt': 0, 'gebucht': 0, u'ung\xfcltig': 0 }
+        #ret = {'K1': DEFAULT, 'K2': DEFAULT, 'K3': DEFAULT, 'K4': DEFAULT, 'K5': DEFAULT,
+        #        'K6': DEFAULT, 'K7': DEFAULT, 'K8': DEFAULT, 'K9': DEFAULT, 'K11': DEFAULT
+        #        }
         ret = {}
-        
+        import pprint
         for voucher in queryNew.all():
             vcat = voucher.cat.strip()
             if vcat not in ret:
@@ -219,21 +219,37 @@ class StatistikNeu(uvclight.Form):
                     title = kats.getTerm(vcat).title
                 except:
                     title = vcat
-                    print vcat
                 ret[vcat] = {'title': title, 'total': 0, 'manuell': 0, 'erstellt': 0, 'gebucht': 0, u'ung\xfcltig': 0 }
             ret[vcat]['total'] += 1
             if voucher.generation.data.strip() == '"Manuelle Erzeugung"':
                 ret[vcat]['manuell'] += 1
             else:
                 ret[vcat]['erstellt'] += 1
+
+        print "Erstellte Gutscheine"
+        pprint.pprint(ret)
+
         for voucher in self.filterModification(q, data).all():
+            vcat = voucher.cat.strip()
+            if vcat not in ret:
+                try:
+                    title = kats.getTerm(vcat).title
+                except:
+                    title = vcat
+                ret[vcat] = {'title': title, 'total': 0, 'manuell': 0, 'erstellt': 0, 'gebucht': 0, u'ung\xfcltig': 0 }
             if voucher.status.strip() == 'gebucht':
                 ret[vcat]['gebucht'] += 1
             elif voucher.status.strip() == u'ungültig':
                 ret[vcat][u'ung\xfcltig'] += 1
             if voucher.status.strip() in ['gebucht', u'ungültig']:
                 if voucher.generation.data == '"Manuelle Erzeugung"':
-                    ret[vcat]['manuell'] -= 1
+                    if ret[vcat]['manuell'] > 0:
+                        ret[vcat]['manuell'] -= 1
                 else:
-                    ret[vcat]['erstellt'] -= 1
+                    if ret[vcat]['erstellt'] > 0:
+                        ret[vcat]['erstellt'] -= 1
         self.statdata = ret
+
+        print "Modifizierte Gutscheine"
+        pprint.pprint(ret)
+
