@@ -175,6 +175,13 @@ class StatistikNeu(uvclight.Form):
             )
         return query
 
+    def filterCreationTo(self, query, data):
+        if data['bis'] and data['bis'] is not NO_VALUE:
+            query = query.filter(
+                models.Voucher.creation_date <= datetime.strptime(data['bis'], '%d.%m.%Y')
+            )
+        return query
+
     def filterModification(self, query, data):
         if data['von'] and data['von'] is not NO_VALUE:
             query = query.filter(
@@ -204,8 +211,11 @@ class StatistikNeu(uvclight.Form):
         self.statdata1 = rc
 
 
+     
+
         q = session.query(models.Voucher)
         queryNew = self.filterCreation(q, data)
+
         #DEFAULT = {'title': '', 'total': 0, 'manuell': 0, 'erstellt': 0, 'gebucht': 0, u'ung\xfcltig': 0 }
         #ret = {'K1': DEFAULT, 'K2': DEFAULT, 'K3': DEFAULT, 'K4': DEFAULT, 'K5': DEFAULT,
         #        'K6': DEFAULT, 'K7': DEFAULT, 'K8': DEFAULT, 'K9': DEFAULT, 'K11': DEFAULT
@@ -219,7 +229,7 @@ class StatistikNeu(uvclight.Form):
                     title = kats.getTerm(vcat).title
                 except:
                     title = vcat
-                ret[vcat] = {'title': title, 'total': 0, 'manuell': 0, 'erstellt': 0, 'gebucht': 0, u'ung\xfcltig': 0 }
+                ret[vcat] = {'title': title, 'total': 0, 'manuell': 0, 'erstellt': 0, 'gebucht': 0, u'ung\xfcltig': 0, 'erstellt_all': 0 }
             ret[vcat]['total'] += 1
             if voucher.generation.data.strip() == '"Manuelle Erzeugung"':
                 ret[vcat]['manuell'] += 1
@@ -236,7 +246,7 @@ class StatistikNeu(uvclight.Form):
                     title = kats.getTerm(vcat).title
                 except:
                     title = vcat
-                ret[vcat] = {'title': title, 'total': 0, 'manuell': 0, 'erstellt': 0, 'gebucht': 0, u'ung\xfcltig': 0 }
+                ret[vcat] = {'title': title, 'total': 0, 'manuell': 0, 'erstellt': 0, 'gebucht': 0, u'ung\xfcltig': 0, 'erstellt_all': 0 }
             if voucher.status.strip() == 'gebucht':
                 ret[vcat]['gebucht'] += 1
             elif voucher.status.strip() == u'ungültig':
@@ -248,6 +258,20 @@ class StatistikNeu(uvclight.Form):
                 else:
                     if ret[vcat]['erstellt'] > 0:
                         ret[vcat]['erstellt'] -= 1
+
+#        if 'bis' in data.keys():
+#            queryTo = self.filterCreationTo(q, data)
+#            print queryTo
+#            for voucher in queryTo.all():
+#                vcat = voucher.cat.strip()
+#                if vcat not in ret:
+#                    try:
+#                        title = kats.getTerm(vcat).title
+#                    except:
+#                        title = vcat
+#                    ret[vcat] = {'title': title, 'total': 0, 'manuell': 0, 'erstellt': 0, 'gebucht': 0, u'ung\xfcltig': 0, 'erstellt_all': 0 }
+#                ret[vcat]['erstellt_all'] += 1
+
         self.statdata = ret
 
         print "Modifizierte Gutscheine"
