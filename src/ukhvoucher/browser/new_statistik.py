@@ -104,25 +104,26 @@ class StatistikNeu(uvclight.Form):
         sheet = workbook.add_worksheet(u'Berechtigungsscheine')
         sheet.set_landscape()
         sheet.set_column(1, 1, 55)
-        sheet.set_column(2, 9, 14)
+        sheet.set_column(2, 10, 14)
         sheet.write('A1', 'Datum der Abfrage: %s' % datetime.now().strftime('%d.%m.%Y'), bold)
         sheet.merge_range('A2:B2', 'Abfragezeitraum: %s - %s' %(self.data.get('von', ''), self.data.get('bis', '')), bold)
         sheet.merge_range('A3:B3', 'Kontingente', merge_format)
         sheet.merge_range('A15:B15', 'Summe', merge_format)
         sheet.merge_range('C3:F3', 'Zahl der Berechtigungsscheine', merge_format)
-        sheet.merge_range('G3:H3', 'Gesamtzahl der \n Berechtigungsscheine', merge_format_w)
-        sheet.merge_range('I3:J3', 'Ausgaben', merge_format)
+        sheet.merge_range('G3:I3', 'Gesamtzahl der \n Berechtigungsscheine', merge_format_w)
+        sheet.merge_range('J3:K3', 'Ausgaben', merge_format)
         sheet.write('A4', 'Gruppe', border_f)
         sheet.write('B4', u'Bezeichnung', border_f)
         sheet.write('C4', 'erstellt', border_f)
         sheet.write('D4', 'manuell \n erstellt', wrap)
         sheet.write('E4', 'gebucht', border_f)
         sheet.write('F4', u'ungültig', border_f)
-        sheet.write('G4', u'ohne ungültig', border_f)
-        sheet.write('H4', 'erstellt + \n manuell erstellt', wrap)
-        sheet.write('I4', 'gebucht', border_f)
-        sheet.write('J4', 'erstellt + \n manuell erstellt', wrap)
-        sheet.write('I2', u'Lehrgangsgebühren', bold)
+        sheet.write('G4', u'beantragte BS', border_f)
+        sheet.write('H4', u'ohne ungültig', border_f)
+        sheet.write('I4', 'erstellt + \n manuell erstellt', wrap)
+        sheet.write('J4', 'gebucht', border_f)
+        sheet.write('K4', 'erstellt + \n manuell erstellt', wrap)
+        sheet.write('L2', u'Lehrgangsgebühren', bold)
         sheet.merge_range('A18:B18', u'Kontingente für Beschäftigte', gray)
         sheet.merge_range('A19:B19', u'Kontingente für Kinderbetreuung', green)
         #import pdb; pdb.set_trace()
@@ -134,11 +135,11 @@ class StatistikNeu(uvclight.Form):
             sheet.write(4+i, 3, v.get('manuell', 0), border)
             sheet.write(4+i, 4, v.get('gebucht', 0), border)
             sheet.write(4+i, 5, v.get(u'ung\xfcltig', 0), border)
-            #sheet.write_formula(4+i, 6, '=C%s+D%s+E%s-F%s' % (5+i, 5+i, 5+i, 5+i), border ) #=C5+D5+E5-F5
-            sheet.write_formula(4+i, 6, '=C%s+D%s+E%s' % (5+i, 5+i, 5+i), border ) #=C5+D5+E5 ### am 11.05.2017 geaendert -F entfernt
-            sheet.write_formula(4+i, 7, '=C%s+D%s' % (5+i, 5+i), border ) #=C5+D5
-            sheet.write_formula(4+i, 8, '=E%s*J2' % (5+i), border) # =E5*J2
-            sheet.write_formula(4+i, 9, '=H%s*J2' % (5+i), border) # =E5*J2
+            sheet.write(4+i, 6, v.get(u'total', 0), border)
+            sheet.write_formula(4+i, 7, '=C%s+D%s+E%s' % (5+i, 5+i, 5+i), border ) #=C5+D5+E5 ### am 11.05.2017 geaendert -F entfernt
+            sheet.write_formula(4+i, 8, '=C%s+D%s' % (5+i, 5+i), border ) #=C5+D5
+            sheet.write_formula(4+i, 9, '=E%s*J2' % (5+i), border) # =E5*J2
+            sheet.write_formula(4+i, 10, '=H%s*J2' % (5+i), border) # =E5*J2
             i += 1
         sheet.write_formula(14, 2, '=sum(C5:C14)', sum_f)
         sheet.write_formula(14, 3, '=sum(D5:D14)', sum_f)
@@ -148,11 +149,12 @@ class StatistikNeu(uvclight.Form):
         sheet.write_formula(14, 7, '=sum(H5:H14)', sum_f)
         sheet.write_formula(14, 8, '=sum(I5:I14)', sum_f)
         sheet.write_formula(14, 9, '=sum(J5:J14)', sum_f)
-        sheet.conditional_format('A5:J6', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
-        sheet.conditional_format('A8:J10', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
-        sheet.conditional_format('A14:J14', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
-        sheet.conditional_format('A7:J7', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': green})
-        sheet.conditional_format('A11:J13', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': green})
+        sheet.write_formula(14, 10, '=sum(K5:K14)', sum_f)
+        sheet.conditional_format('A5:K6', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
+        sheet.conditional_format('A8:K10', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
+        sheet.conditional_format('A14:K14', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
+        sheet.conditional_format('A7:K7', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': green})
+        sheet.conditional_format('A11:K13', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': green})
         sheet.set_row(2, 30)
         workbook.close()
         return f
@@ -169,6 +171,13 @@ class StatistikNeu(uvclight.Form):
             query = query.filter(
                 models.Voucher.creation_date >= datetime.strptime(data['von'], '%d.%m.%Y')
             )
+        if data['bis'] and data['bis'] is not NO_VALUE:
+            query = query.filter(
+                models.Voucher.creation_date <= datetime.strptime(data['bis'], '%d.%m.%Y')
+            )
+        return query
+
+    def filterCreationTo(self, query, data):
         if data['bis'] and data['bis'] is not NO_VALUE:
             query = query.filter(
                 models.Voucher.creation_date <= datetime.strptime(data['bis'], '%d.%m.%Y')
@@ -203,15 +212,11 @@ class StatistikNeu(uvclight.Form):
             rc.append((kats.getTerm(cat.strip()).title, str(count)))
         self.statdata1 = rc
 
-
-        print
-        print "#" * 44
-        print
-
         q = session.query(models.Voucher)
         queryNew = self.filterCreation(q, data)
+
         ret = {}
-        
+        import pprint
         for voucher in queryNew.all():
             vcat = voucher.cat.strip()
             if vcat not in ret:
@@ -219,21 +224,35 @@ class StatistikNeu(uvclight.Form):
                     title = kats.getTerm(vcat).title
                 except:
                     title = vcat
-                    print vcat
-                ret[vcat] = {'title': title, 'total': 0, 'manuell': 0, 'erstellt': 0, 'gebucht': 0, u'ung\xfcltig': 0 }
+                ret[vcat] = {'title': title, 'total': 0, 'manuell': 0, 'erstellt': 0, 'gebucht': 0, u'ung\xfcltig': 0, 'erstellt_all': 0 }
             ret[vcat]['total'] += 1
             if voucher.generation.data.strip() == '"Manuelle Erzeugung"':
                 ret[vcat]['manuell'] += 1
             else:
                 ret[vcat]['erstellt'] += 1
+
+
         for voucher in self.filterModification(q, data).all():
+            vcat = voucher.cat.strip()
+            if vcat not in ret:
+                try:
+                    title = kats.getTerm(vcat).title
+                except:
+                    title = vcat
+                ret[vcat] = {'title': title, 'total': 0, 'manuell': 0, 'erstellt': 0, 'gebucht': 0, u'ung\xfcltig': 0, 'erstellt_all': 0 }
             if voucher.status.strip() == 'gebucht':
                 ret[vcat]['gebucht'] += 1
             elif voucher.status.strip() == u'ungültig':
                 ret[vcat][u'ung\xfcltig'] += 1
-            if voucher.status.strip() in ['gebucht', u'ungültig']:
-                if voucher.generation.data == '"Manuelle Erzeugung"':
-                    ret[vcat]['manuell'] -= 1
-                else:
-                    ret[vcat]['erstellt'] -= 1
+            if True:
+                if voucher.status.strip() in ['gebucht', u'ungültig']:
+                    if data['bis'] is not NO_VALUE and data['von'] is not NO_VALUE: 
+                        if voucher.creation_date >= datetime.strptime(data['von'], '%d.%m.%Y') and voucher.creation_date <= datetime.strptime(data['bis'], '%d.%m.%Y'):
+                            if voucher.generation.data == '"Manuelle Erzeugung"':
+                                if ret[vcat]['manuell'] > 0:
+                                    ret[vcat]['manuell'] -= 1
+                            else:
+                                if ret[vcat]['erstellt'] > 0:
+                                    ret[vcat]['erstellt'] -= 1
+
         self.statdata = ret
