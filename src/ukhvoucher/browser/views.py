@@ -461,6 +461,9 @@ class Migration(uvclight.Page):
         #    budget.datum = "%s-%s-%s" %(dd[6:10], dd[3:5], dd[0:2])
         query = session.query(models.Voucher)
         i = 1
+        a = open('/tmp/test.csv', 'w')
         for vou in query.all():
-            print i, vou.creation_date, vou.modification_date, vou.status
+            dd = u"%s,%s,%s,%s,%s\n" %(i, vou.creation_date, vou.modification_date, vou.status[0:3], vou.generation.date)
+            a.write(dd)
             i += 1
+        a.close()
