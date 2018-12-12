@@ -30,6 +30,7 @@ CSVEXPORT = ExportMarker('CSV', True, content_type="text/csv")
 
 
 class IStatForm(interface.Interface):
+
     von = schema.TextLine(
         title=u"Von",
         required=False,
@@ -39,6 +40,11 @@ class IStatForm(interface.Interface):
         title=u"Bis",
         required=False,
      )
+
+    oid = schema.TextLine(
+        title=u"oid",
+        required=False,
+    )
 
 
 def make_csv(form, result, *args, **kwargs):
@@ -177,12 +183,12 @@ class StatistikNeu(uvclight.Form):
             )
         return query
 
-    def filterCreationTo(self, query, data):
-        if data['bis'] and data['bis'] is not NO_VALUE:
-            query = query.filter(
-                models.Voucher.creation_date <= datetime.strptime(data['bis'], '%d.%m.%Y')
-            )
-        return query
+#    def filterCreationTo(self, query, data):
+#        if data['bis'] and data['bis'] is not NO_VALUE:
+#            query = query.filter(
+#                models.Voucher.creation_date <= datetime.strptime(data['bis'], '%d.%m.%Y')
+#            )
+#        return query
 
     def filterModification(self, query, data):
         if data['von'] and data['von'] is not NO_VALUE:
@@ -213,10 +219,11 @@ class StatistikNeu(uvclight.Form):
         self.statdata1 = rc
 
         q = session.query(models.Voucher)
+        if data['oid'] and data['oid'] is not NO_VALUE:
+            q = q.filter(models.Voucher.user_id == data['oid'])
         queryNew = self.filterCreation(q, data)
 
         ret = {}
-        import pprint
         for voucher in queryNew.all():
             vcat = voucher.cat.strip()
             if vcat not in ret:
@@ -230,7 +237,6 @@ class StatistikNeu(uvclight.Form):
                 ret[vcat]['manuell'] += 1
             else:
                 ret[vcat]['erstellt'] += 1
-
 
         for voucher in self.filterModification(q, data).all():
             vcat = voucher.cat.strip()
@@ -247,12 +253,17 @@ class StatistikNeu(uvclight.Form):
             if True:
                 if voucher.status.strip() in ['gebucht', u'ungültig']:
                     if data['bis'] is not NO_VALUE and data['von'] is not NO_VALUE: 
-                        if voucher.creation_date >= datetime.strptime(data['von'], '%d.%m.%Y') and voucher.creation_date <= datetime.strptime(data['bis'], '%d.%m.%Y'):
+                        bis = data['bis']
+                        if not bis:
+                            bis = '01.01.2016'
+                        von = data['von']
+                        if not von:
+                            von = '31.12.2027'
+                        if voucher.creation_date >= datetime.strptime(von, '%d.%m.%Y') and voucher.creation_date <= datetime.strptime(bis, '%d.%m.%Y'):
                             if voucher.generation.data == '"Manuelle Erzeugung"':
                                 if ret[vcat]['manuell'] > 0:
                                     ret[vcat]['manuell'] -= 1
                             else:
                                 if ret[vcat]['erstellt'] > 0:
                                     ret[vcat]['erstellt'] -= 1
-
         self.statdata = ret
