@@ -309,8 +309,6 @@ class Account(Base, Location):
 
 
 def date_factory():
-    print "DATEFactory"
-    print datetime.datetime.now()
     return datetime.datetime.now().strftime('%Y-%m-%d')
 
 

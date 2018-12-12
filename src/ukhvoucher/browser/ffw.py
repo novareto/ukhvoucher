@@ -26,12 +26,11 @@ PFAD2 = "%s/ehffwabw.docx" % PATH
 
 def getData(oid, zeitpunkt=None):
     session = get_session('ukhvoucher')
-    import datetime
     from ukhvoucher.vocabularies import get_default_abrechnungszeitraum
     if zeitpunkt:
         default_zeitraum = get_default_abrechnungszeitraum(zeitpunkt)
     else:
-        default_zeitraum = get_default_abrechnungszeitraum(zeitpunkt=datetime.datetime(2019, 1, 1))
+        default_zeitraum = get_default_abrechnungszeitraum()
     print "default zeitraum:", default_zeitraum
     q = session.query(FWBudget).filter(
         FWBudget.user_id == oid,
@@ -65,7 +64,6 @@ class AT(api.Page):
         budget = getData(self.request.principal.oid)
         kto = getKto(self.request.principal.oid)
         betrag = budget.budget
-        grund = budget.grund
         restbudget = budget.budget_vj
         zahlbetrag = betrag - restbudget
         betrag = "%0.2f" % float(betrag)
@@ -131,7 +129,7 @@ class FFWForm(api.Form):
 
     @property
     def fields(self):
-        fields = api.Fields(K10).omit('bestaetigung') + api.Fields(IBankverbindung) # + api.Fields(K10).select('bestaetigung')
+        fields = api.Fields(K10).omit('bestaetigung') + api.Fields(IBankverbindung)
         fields['einsatzkraefte'].htmlAttributes = {'maxlength': 5}
         fields['betreuer'].htmlAttributes = {'maxlength': 5}
         fields['kontoinhaber'].htmlAttributes = {'maxlength': 50}
@@ -162,14 +160,13 @@ class FFWForm(api.Form):
         datum = strftime("%d.%m.%Y", localtime())
         data['datum'] = datum
         jahr = strftime("%Y", localtime())
-        jahr = "2019" # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if jahr == "2017" or jahr == "2018":
             verw_zweck = "Erste-Hilfe-Budget 2017/2018"
         if jahr == "2019" or jahr == "2020":
             verw_zweck = "Erste-Hilfe-Budget 2019/2020"
         data['verw_zweck'] = verw_zweck
         #data['last_budget'] = "0,0"
-        rep = data['last_budget'].replace(',','.')
+        rep = data['last_budget'].replace(',', '.')
         data['last_budget'] = rep
         # Beträge 2017/2018
         #betrag = (float(data['einsatzkraefte']) * 0.1 + float(data['betreuer'])) * (30.75 + 6.15)
@@ -224,7 +221,7 @@ class FFW(api.Form):
         abweichung = False
         #daten_vorperiode = getData(oid=self.request.principal.oid)
         #daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=FAKE_DATE - timedelta(days=365 * 2))
-        daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=datetime(2019, 1, 1) - timedelta(days=365 * 2))
+        daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=datetime.now() - timedelta(days=365 * 2))
         aktuell = float(self.data['einsatzkraefte'])
         vorjahr = float(daten_vorperiode.einsatzk)
         differenz = ((100 * aktuell) / vorjahr) - 100
@@ -237,7 +234,6 @@ class FFW(api.Form):
             abweichung = True
         return abweichung
 
-
     @api.action(u'Absenden', identifier="send")
     def handle_save(self):
         data, errors = self.extractData()
@@ -247,8 +243,7 @@ class FFW(api.Form):
         if errors:
             return
         abweichung = False
-        #daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=FAKE_DATE - timedelta(days=365 * 2))
-        daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=datetime(2019, 1, 1) - timedelta(days=365 * 2))
+        daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=datetime.now() - timedelta(days=365 * 2))
         aktuell = float(self.data['einsatzkraefte'])
         vorjahr = float(daten_vorperiode.einsatzk)
         differenz = ((100 * aktuell) / vorjahr) - 100
@@ -267,23 +262,6 @@ class FFW(api.Form):
             if la <= 5:
                 self.flash(u'Bitte tragen Sie eine Begründung für die Abweichung zum letzten Budgetantrag ein.')
                 return
-
-
-
-        #else:
-        #    self.flash(u'Wir haben KEINE Abweichung....')
-        #    return
-            
-
-        print "#########################################"
-        print data
-        print "#########################################"
-        print self.data
-        print "#########################################"
-        print abweichung
-        print "#########################################"
-
-        print "test"
         from ukhvoucher.utils import send_mail
         adr = self.request.principal.getAddress()
         acc = self.request.principal.getAccount()
@@ -315,7 +293,6 @@ class FFW(api.Form):
             'plz': adr.zip_code,
             'ort': adr.city.strip(),
             'datum': data.get('datum'),
-            #'datum': '03.03.2019',  # ------>  NUR TEST
         }
         doc.render(context)
         filename = '/tmp/Budgetantrag_FFW_' + adr.name1.encode('utf-8').strip() + ' ' + adr.name2.encode('utf-8').strip() + ' ' + adr.name3.encode('utf-8').strip() + '.docx'
@@ -331,11 +308,11 @@ class FFW(api.Form):
             budget_vj=data.get('last_budget'),
             grund=begruendung,
             #datum=data.get('datum'),
-            #datum=datetime.now().strftime('%Y-%m-%d'),
-            datum='2019-03-03',  # ------>  NUR TEST
+            datum=datetime.now().strftime('%Y-%m-%d'),
+            #datum='2019-03-03',  # ------>  NUR TEST
         )
         session = get_session('ukhvoucher')
-        kto_alt = getKto(self.request.principal.oid, session=session) 
+        kto_alt = getKto(self.request.principal.oid, session=session)
         if kto_alt:
             #kto_alt.iban = data.get('iban').replace(' ', ''),
             #kto_alt.bank = data.get('bank'),
@@ -344,7 +321,6 @@ class FFW(api.Form):
             session.delete(kto_alt)
             session.flush()
             #kto_alt.user_id=self.request.principal.oid,
-        
         kto = FWKto(
             user_id=self.request.principal.oid,
             iban=data.get('iban').replace(' ', ''),
@@ -354,8 +330,8 @@ class FFW(api.Form):
         )
         session.add(kto)
         entry = JournalEntry(
-            #date=datetime.now().strftime('%Y-%m-%d'),
-            date='2019-03-03',  # ------>  NUR TEST
+            date=datetime.now().strftime('%Y-%m-%d'),
+            #date='2019-03-03',  # ------>  NUR TEST
             userid=self.request.principal.id,
             action=u"Feuerwehrbudget angelegt.",
             oid=self.request.principal.oid,

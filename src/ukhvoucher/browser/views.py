@@ -437,33 +437,63 @@ class Migration(uvclight.Page):
     def render(self):
         session = get_session('ukhvoucher')
         from ukhvoucher import models
-        #query = session.query(models.Address, models.Account).filter(models.Address.oid == models.Account.oid)
+        query = session.query(models.Address, models.Account).filter(models.Address.oid == models.Account.oid)
+        print "Migration User"
         #print query.count()
         #for adr, account in query.all():
-        #    adr.user_login = account.login
+        #    adr.user_login = int(account.login)
         #    adr.user_az = account.az
-        #    adr.user_id = str(account.oid)
+        #    adr.user_id = account.oid
         #    print adr
-        #print "Migration der Gutscheine"
+        print "Migration der Gutscheine"
+        #session.flush()
         #query = session.query(models.Voucher, models.Account).filter(models.Voucher.user_id == models.Account.oid)
         #print query.count()
         #for vou, account in query.all():
-        #    print vou.user_login
-        #    print vou.user_az
-        #    print vou.user_id
-            #vou.user_login = account.login
-            #vou.user_az = account.az
-            #import pdb; pdb.set_trace()
-        #print "Migration FWBudget Datum"
+        #    vou.user_login = int(account.login)
+        #    vou.user_az = account.az
+        print "Migration FWBudget Datum"
         #query = session.query(models.FWBudget)
         #for budget in query.all():
         #    dd = budget.datum
         #    budget.datum = "%s-%s-%s" %(dd[6:10], dd[3:5], dd[0:2])
-        query = session.query(models.Voucher)
-        i = 1
-        a = open('/tmp/test.csv', 'w')
+        #import pdb; pdb.set_trace()
+        print "Zuordnugn Datum"
+        #query = session.query(models.Voucher, models.JournalEntry).filter(
+        #        models.JournalEntry.oid == models.Voucher.invoice_id,
+        #        models.Voucher.status == "gebucht",
+        #        models.JournalEntry.action == 'Neue Zuordnung angelegt')
+        #i = 1
+        #for vou, je in query.all():
+        #    vou.modification_date = je.date
+
+        # Zuordnungen DAtuem
+        #query = session.query(models.Voucher, models.JournalEntry).filter(
+        #        models.JournalEntry.oid == models.Voucher.invoice_id,
+        #        models.Voucher.status == "gebucht",
+        #        models.JournalEntry.action == 'Zuordnung')
+        #i = 1
+        #for vou, je in query.all():
+        #    vou.modification_date = je.date
+        #    i += 1
+        # Zuordnungen DAtuem
+        #query = session.query(models.Voucher, models.JournalEntry).filter(
+        #        models.JournalEntry.oid == models.Voucher.user_id,
+        #        models.Voucher.status == "ungültig",
+        #        models.JournalEntry.action.like('%Berechtigungsscheine gesperrt%'))
+        #i = 1
+        #for vou, je in query.all():
+        #    vou.modification_date = je.date
+        #    i += 1
+        #print i
+        from datetime import datetime
+        #query = session.query(models.Voucher).filter( models.Voucher.status == "ungültig", models.Voucher.modification_date==datetime(2018,12,10))
+        #print query.count()
+        #for vou in query.all():
+        #    vou.modification_date = vou.creation_date 
+        query = session.query(models.Voucher).filter( models.Voucher.status == "erstellt", models.Voucher.modification_date==datetime(2018,12,10))
+        print query.count()
         for vou in query.all():
-            dd = u"%s,%s,%s,%s,%s\n" %(i, vou.creation_date, vou.modification_date, vou.status[0:3], vou.generation.date)
-            a.write(dd)
-            i += 1
-        a.close()
+            vou.modification_date = vou.creation_date 
+        #print i
+        #a.close()

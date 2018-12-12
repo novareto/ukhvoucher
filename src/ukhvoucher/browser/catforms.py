@@ -213,8 +213,8 @@ class CalculateInsert(Action):
             return FAILURE
 
         def insert(form, amount):
-            #now = datetime.datetime.now()
-            now = datetime.datetime(2019,02,02)
+            now = datetime.datetime.now()
+            #now = datetime.datetime(2019,02,02)
             principal = form.request.principal
             session = get_session('ukhvoucher')
             kat = form._iface.getName()

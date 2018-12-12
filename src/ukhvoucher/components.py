@@ -289,8 +289,8 @@ class ExternalPrincipal(Principal):
         session = get_session("ukhvoucher")
         from .vocabularies import get_default_abrechnungszeitraum
 
-        default_zeitraum = get_default_abrechnungszeitraum(zeitpunkt=datetime.datetime(2019, 1, 1))
-        #default_zeitraum = get_default_abrechnungszeitraum()
+        #default_zeitraum = get_default_abrechnungszeitraum(zeitpunkt=datetime.datetime(2019, 1, 1))
+        default_zeitraum = get_default_abrechnungszeitraum.now()
         from ukhvoucher import log
         def log(v):
             print v
