@@ -422,7 +422,8 @@ class AskForVouchers(Form):
                 user=str(self.context.oid),
                 user_az=self.context.az,
                 user_login=self.context.login,
-                uoid=oid
+                uoid=oid,
+                autor=self.request.principal.id,
             )
 
             for idx in range(number):

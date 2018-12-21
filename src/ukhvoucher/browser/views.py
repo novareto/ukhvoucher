@@ -491,9 +491,12 @@ class Migration(uvclight.Page):
         #print query.count()
         #for vou in query.all():
         #    vou.modification_date = vou.creation_date 
-        query = session.query(models.Voucher).filter( models.Voucher.status == "erstellt", models.Voucher.modification_date==datetime(2018,12,10))
-        print query.count()
-        for vou in query.all():
-            vou.modification_date = vou.creation_date 
+        #query = session.query(models.Voucher).filter( models.Voucher.status == "erstellt", models.Voucher.modification_date==datetime(2018,12,10))
+        #print query.count()
+        #for vou in query.all():
+        #    vou.modification_date = vou.creation_date 
+        #GENERATION
+        for gen in session.query(models.Generation).all():
+            gen.autor = gen.user
         #print i
         #a.close()

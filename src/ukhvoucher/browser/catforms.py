@@ -128,7 +128,6 @@ class KontingentValidator(object):
                       'schulstandorte', 'einsatzkraefte', 'betreuer']:
                 if data.get(x) is not None:
                     if data.get(x) <= 0:
-                        print x, data.get(x)
                         self.errors.append(Error(FEHLER04, identifier="form",),)
                         return self.errors
             if len(data) == 3:
@@ -244,8 +243,8 @@ class CalculateInsert(Action):
                 date=now.strftime('%Y-%m-%d'),
                 type=form._iface.getName(),
                 data=json.dumps(data),
-                #user=user_oid,
-                user=userid,  # geändert !!! es wurde die user_oid geschrieben, das hat zu fehlern im pdf geführt... 05.11.2018 mseibert
+                user=user_oid,
+                autor=userid,  # geändert !!! es wurde die user_oid geschrieben, das hat zu fehlern im pdf geführt... 05.11.2018 mseibert
                 user_az=az,
                 user_login=login,
                 uoid=oid
@@ -492,10 +491,6 @@ class K7Form(KGBaseForm):
         if rundung != '0':
             mitarbeiter = mitarbeiter + 1
         return mitarbeiter
-
-    def update(self):
-        print "UPDATE FORM"
-        print self.request.form
 
 
 class K8Form(KGBaseForm):

@@ -62,6 +62,7 @@ class StatistikNeu(uvclight.Form):
     uvclight.context(interface.Interface)
     require('manage.vouchers')
     template = uvclight.get_template('statistik.cpt', __file__)
+    allvouchers = []
 
     fields = uvclight.Fields(IStatForm)
 
@@ -110,58 +111,117 @@ class StatistikNeu(uvclight.Form):
         sheet = workbook.add_worksheet(u'Berechtigungsscheine')
         sheet.set_landscape()
         sheet.set_column(1, 1, 55)
-        sheet.set_column(2, 10, 14)
+        #sheet.set_column(2, 10, 14)
+        sheet.set_column(2, 11, 14)
         sheet.write('A1', 'Datum der Abfrage: %s' % datetime.now().strftime('%d.%m.%Y'), bold)
         sheet.merge_range('A2:B2', 'Abfragezeitraum: %s - %s' %(self.data.get('von', ''), self.data.get('bis', '')), bold)
         sheet.merge_range('A3:B3', 'Kontingente', merge_format)
-        sheet.merge_range('A15:B15', 'Summe', merge_format)
-        sheet.merge_range('C3:F3', 'Zahl der Berechtigungsscheine', merge_format)
-        sheet.merge_range('G3:I3', 'Gesamtzahl der \n Berechtigungsscheine', merge_format_w)
-        sheet.merge_range('J3:K3', 'Ausgaben', merge_format)
+        sheet.merge_range('A16:B16', 'Summe', merge_format)
+        #sheet.merge_range('C3:F3', 'Zahl der Berechtigungsscheine', merge_format)
+        #sheet.merge_range('G3:I3', 'Gesamtzahl der \n Berechtigungsscheine', merge_format_w)
+        #sheet.merge_range('J3:K3', 'Ausgaben', merge_format)
+        sheet.merge_range('C3:G3', 'Zahl der Berechtigungsscheine', merge_format)
+        sheet.merge_range('H3:J3', 'Gesamtzahl der \n Berechtigungsscheine', merge_format_w)
+        sheet.merge_range('K3:L3', 'Ausgaben', merge_format)
         sheet.write('A4', 'Gruppe', border_f)
         sheet.write('B4', u'Bezeichnung', border_f)
         sheet.write('C4', 'erstellt', border_f)
         sheet.write('D4', 'manuell \n erstellt', wrap)
         sheet.write('E4', 'gebucht', border_f)
         sheet.write('F4', u'ungültig', border_f)
-        sheet.write('G4', u'beantragte BS', border_f)
-        sheet.write('H4', u'ohne ungültig', border_f)
-        sheet.write('I4', 'erstellt + \n manuell erstellt', wrap)
-        sheet.write('J4', 'gebucht', border_f)
-        sheet.write('K4', 'erstellt + \n manuell erstellt', wrap)
-        sheet.write('L2', u'Lehrgangsgebühren', bold)
+        #sheet.write('G4', u'beantragte BS', border_f)
+        #sheet.write('H4', u'ohne ungültig', border_f)
+        #sheet.write('I4', 'erstellt + \n manuell erstellt', wrap)
+        #sheet.write('J4', 'gebucht', border_f)
+        #sheet.write('K4', 'erstellt + \n manuell erstellt', wrap)
+        #sheet.write('L2', u'Lehrgangsgebühren', bold)
+        sheet.write('G4', u'abgelaufene BS', border_f)
+        sheet.write('H4', u'beantragte BS', border_f)
+        sheet.write('I4', u'ohne ungültig', border_f)
+        sheet.write('J4', 'erstellt + \n manuell erstellt', wrap)
+        sheet.write('K4', 'gebucht', border_f)
+        sheet.write('L4', 'erstellt + \n manuell erstellt', wrap)
+        sheet.write('M2', u'Lehrgangsgebühren', bold)
         sheet.merge_range('A18:B18', u'Kontingente für Beschäftigte', gray)
         sheet.merge_range('A19:B19', u'Kontingente für Kinderbetreuung', green)
         #import pdb; pdb.set_trace()
         i = 0
         for k, v in natsorted(self.statdata.items()):
-            sheet.write(4+i, 0, k, border)
-            sheet.write(4+i, 1, v['title'], border)
-            sheet.write(4+i, 2, v.get('erstellt', 0), border)
-            sheet.write(4+i, 3, v.get('manuell', 0), border)
-            sheet.write(4+i, 4, v.get('gebucht', 0), border)
-            sheet.write(4+i, 5, v.get(u'ung\xfcltig', 0), border)
-            sheet.write(4+i, 6, v.get(u'total', 0), border)
-            sheet.write_formula(4+i, 7, '=C%s+D%s+E%s' % (5+i, 5+i, 5+i), border ) #=C5+D5+E5 ### am 11.05.2017 geaendert -F entfernt
-            sheet.write_formula(4+i, 8, '=C%s+D%s' % (5+i, 5+i), border ) #=C5+D5
-            sheet.write_formula(4+i, 9, '=E%s*J2' % (5+i), border) # =E5*J2
-            sheet.write_formula(4+i, 10, '=H%s*J2' % (5+i), border) # =E5*J2
+            sheet.write(int(k[1:])+3, 0, k, border)
+            sheet.write(int(k[1:])+3, 1, v['title'], border)
+            sheet.write(int(k[1:])+3, 2, v.get('erstellt', 0), border)
+            sheet.write(int(k[1:])+3, 3, v.get('manuell', 0), border)
+            sheet.write(int(k[1:])+3, 4, v.get('gebucht', 0), border)
+            sheet.write(int(k[1:])+3, 5, v.get(u'ung\xfcltig', 0), border)
+            #sheet.write(4+i, 6, v.get(u'total', 0), border)
+            #sheet.write_formula(4+i, 7, '=C%s+D%s+E%s' % (5+i, 5+i, 5+i), border ) #=C5+D5+E5 ### am 11.05.2017 geaendert -F entfernt
+            #sheet.write_formula(4+i, 8, '=C%s+D%s' % (5+i, 5+i), border ) #=C5+D5
+            #sheet.write_formula(4+i, 9, '=E%s*J2' % (5+i), border) # =E5*J2
+            #sheet.write_formula(4+i, 10, '=H%s*J2' % (5+i), border) # =E5*J2
+            sheet.write(int(k[1:])+3, 6, 0, border) ### seibert 13.12.2018 Platzhalter abgelaufene BS
+            sheet.write(int(k[1:])+3, 7, v.get(u'total', 0), border)
+            sheet.write_formula(int(k[1:])+3, 8, '=C%s+D%s+E%s' % (int(k[1:])+4, int(k[1:])+4, int(k[1:])+4), border ) #=C5+D5+E5 ### am 11.05.2017 geaendert -F entfernt
+            sheet.write_formula(int(k[1:])+3, 9, '=C%s+D%s' % (int(k[1:])+4, int(k[1:])+4), border ) #=C5+D5
+            sheet.write_formula(int(k[1:])+3, 10, '=E%s*J2' % (int(k[1:])+4), border) # =E5*J2
+            sheet.write_formula(int(k[1:])+3, 11, '=H%s*J2' % (int(k[1:])+4), border) # =E5*J2
             i += 1
-        sheet.write_formula(14, 2, '=sum(C5:C14)', sum_f)
-        sheet.write_formula(14, 3, '=sum(D5:D14)', sum_f)
-        sheet.write_formula(14, 4, '=sum(E5:E14)', sum_f)
-        sheet.write_formula(14, 5, '=sum(F5:F14)', sum_f)
-        sheet.write_formula(14, 6, '=sum(G5:G14)', sum_f)
-        sheet.write_formula(14, 7, '=sum(H5:H14)', sum_f)
-        sheet.write_formula(14, 8, '=sum(I5:I14)', sum_f)
-        sheet.write_formula(14, 9, '=sum(J5:J14)', sum_f)
-        sheet.write_formula(14, 10, '=sum(K5:K14)', sum_f)
-        sheet.conditional_format('A5:K6', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
-        sheet.conditional_format('A8:K10', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
-        sheet.conditional_format('A14:K14', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
-        sheet.conditional_format('A7:K7', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': green})
-        sheet.conditional_format('A11:K13', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': green})
+        sheet.write_formula(15, 2, '=sum(C5:C15)', sum_f)
+        sheet.write_formula(15, 3, '=sum(D5:D15)', sum_f)
+        sheet.write_formula(15, 4, '=sum(E5:E15)', sum_f)
+        sheet.write_formula(15, 5, '=sum(F5:F15)', sum_f)
+        sheet.write_formula(15, 6, '=sum(G5:G15)', sum_f)
+        sheet.write_formula(15, 7, '=sum(H5:H15)', sum_f)
+        sheet.write_formula(15, 8, '=sum(I5:I15)', sum_f)
+        sheet.write_formula(15, 9, '=sum(J5:J15)', sum_f)
+        sheet.write_formula(15, 10, '=sum(K5:K15)', sum_f)
+        sheet.write_formula(15, 11, '=sum(L5:L15)', sum_f)
+        #sheet.conditional_format('A5:L6', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
+        #sheet.conditional_format('A8:L10', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
+        #sheet.conditional_format('A14:L14', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
+        #sheet.conditional_format('A7:L7', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': green})
+        #sheet.conditional_format('A11:L13', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': green})
+        for k, v in natsorted(self.statdata.items()):
+            print k
+            if k == 'K1':
+                sheet.conditional_format('A5:L5', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
+            if k == 'K2':
+                sheet.conditional_format('A6:L6', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
+            if k == 'K3':
+                sheet.conditional_format('A7:L7', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': green})
+            if k == 'K4':
+                sheet.conditional_format('A8:L8', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
+            if k == 'K5':
+                sheet.conditional_format('A9:L9', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
+            if k == 'K6':
+                sheet.conditional_format('A10:L10', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
+            if k == 'K7':
+                sheet.conditional_format('A11:L11', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': green})
+            if k == 'K8':
+                sheet.conditional_format('A12:L12', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': green})
+            if k == 'K9':
+                sheet.conditional_format('A13:L13', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': green})
+            if k == 'K10':
+                sheet.conditional_format('A14:L14', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
+            if k == 'K11':
+                sheet.conditional_format('A15:L15', {'type': 'cell', 'criteria': '>=', 'value': 0, 'format': gray})
         sheet.set_row(2, 30)
+        if self.allvouchers:
+            i = 1 
+            sheet = workbook.add_worksheet(u'Alle Gutscheine')
+            sheet.write(0, 0, "Erstelldatum")
+            sheet.write(0, 1, "Modifikations Datum")
+            sheet.write(0, 2, "Status")
+            sheet.write(0, 3, "BS-ID")
+            sheet.write(0, 4, "Kategorie")
+            sheet.write(0, 5, "Info")
+            for voucher in self.allvouchers:
+                sheet.write(i, 0, voucher.creation_date.strftime('%d.%m.%Y'))
+                sheet.write(i, 1, voucher.modification_date.strftime('%d.%m.%Y'))
+                sheet.write(i, 2, voucher.status)
+                sheet.write(i, 3, voucher.oid)
+                sheet.write(i, 4, voucher.displayKat)
+                sheet.write(i, 5, voucher.displayData)
+                i+=1
         workbook.close()
         return f
 
@@ -221,6 +281,8 @@ class StatistikNeu(uvclight.Form):
         q = session.query(models.Voucher)
         if data['oid'] and data['oid'] is not NO_VALUE:
             q = q.filter(models.Voucher.user_id == data['oid'])
+            self.allvouchers = q.all()
+
         queryNew = self.filterCreation(q, data)
 
         ret = {}
@@ -259,7 +321,7 @@ class StatistikNeu(uvclight.Form):
                         von = data['von']
                         if not von:
                             von = '31.12.2027'
-                        if voucher.creation_date >= datetime.strptime(von, '%d.%m.%Y') and voucher.creation_date <= datetime.strptime(bis, '%d.%m.%Y'):
+                        if voucher.creation_date >= datetime.strptime(von, '%d.%m.%Y').date() and voucher.creation_date <= datetime.strptime(bis, '%d.%m.%Y').date():
                             if voucher.generation.data == '"Manuelle Erzeugung"':
                                 if ret[vcat]['manuell'] > 0:
                                     ret[vcat]['manuell'] -= 1

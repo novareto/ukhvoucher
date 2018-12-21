@@ -491,6 +491,7 @@ class Generation(Base):
     user_az = Column('user_az', String)
     user_login = Column('user_login', String())
     uoid = Column('oid', Integer)
+    autor = Column('autor', String(20))
     voucher = relationship("Voucher", backref=backref('generation'))
 
     __table_args__ = (ForeignKeyConstraint(

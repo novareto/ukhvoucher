@@ -12,9 +12,10 @@
         </ul>
     </div>
     <table tal:define="nadr request.principal.getAddress()">
+
         <tr>
-            <th></th>
-            <th></th>
+            <th>OID</th>
+            <th><span tal:content="nadr.oid"/></th>
         </tr>
         <tr>
             <td width="100px">
@@ -159,7 +160,7 @@
         <tr tal:repeat="voucher vouchers" tal:attributes="class repeat['voucher']">
             <td tal:content="voucher.oid"></td>
             <td tal:content="voucher.creation_date"></td>
-            <td tal:content="voucher.generation.user"></td>
+            <td tal:content="voucher.generation.autor"></td>
             <td tal:content="voucher.status"></td>
             <td tal:content="voucher.displayKat"></td>
             <td tal:content="voucher.displayData"></td>
