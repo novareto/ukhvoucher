@@ -64,7 +64,7 @@ class PDF(uvclight.Page):
         for voucher in principal.getVouchers(cat=self.request.form.get('cat')):
             from ukhvoucher.apps import USERS
             if voucher.generation.user.strip() not in USERS.keys():
-                account = self.getAccount(voucher.generation.user)
+                account = self.getAccount(voucher.generation.user_login or voucher.generation.autor.strip())
             if voucher.status.strip() == CREATED or voucher.status.strip() == MANUALLY_CREATED:
             #if voucher.status.strip() == CREATED:
                 pz = pz + 1

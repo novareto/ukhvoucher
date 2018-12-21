@@ -66,7 +66,7 @@ class UserRootIndexBase(object):
 
     def get_principal(self):
         return self.request.principal
-    
+
     def update(self):
         ukhvouchers.need()
 
@@ -157,7 +157,7 @@ class AdminRootIndex(uvclight.Page):
                 'iban': kto.iban,
                 'verw_zweck': kto.verw_zweck,
                 'betreuer': budget.jugendf,
-                'grund': budget.grund,
+                'grund': budget.grund or '',
                 'bank': kto.bank}
         return data
 
@@ -355,7 +355,7 @@ class ContainerIndex(uvclight.Page):
 
         for col in self.context.listing_attrs:
             value = getattr(item, col.identifier, col.defaultValue)
-            
+
             if col.identifier in relations:
                 relation = self.relation(col.identifier, value)
                 yield col.identifier, [{
@@ -438,7 +438,7 @@ class Migration(uvclight.Page):
         session = get_session('ukhvoucher')
         from ukhvoucher import models
         query = session.query(models.Address, models.Account).filter(models.Address.oid == models.Account.oid)
-        print "Migration User"
+        #print "Migration User"
         #print query.count()
         #for adr, account in query.all():
         #    adr.user_login = int(account.login)
@@ -472,6 +472,7 @@ class Migration(uvclight.Page):
         #        models.JournalEntry.oid == models.Voucher.invoice_id,
         #        models.Voucher.status == "gebucht",
         #        models.JournalEntry.action == 'Zuordnung')
+        #print query.count()
         #i = 1
         #for vou, je in query.all():
         #    vou.modification_date = je.date
@@ -485,18 +486,19 @@ class Migration(uvclight.Page):
         #for vou, je in query.all():
         #    vou.modification_date = je.date
         #    i += 1
-        #print i
+        #    print i
         from datetime import datetime
-        #query = session.query(models.Voucher).filter( models.Voucher.status == "ungültig", models.Voucher.modification_date==datetime(2018,12,10))
+        #query = session.query(models.Voucher).filter( models.Voucher.status == "ungültig", models.Voucher.modification_date==datetime(2018,12,21))
         #print query.count()
         #for vou in query.all():
-        #    vou.modification_date = vou.creation_date 
-        #query = session.query(models.Voucher).filter( models.Voucher.status == "erstellt", models.Voucher.modification_date==datetime(2018,12,10))
-        #print query.count()
-        #for vou in query.all():
-        #    vou.modification_date = vou.creation_date 
+        #    vou.modification_date = vou.creation_date
+
+        query = session.query(models.Voucher).filter( models.Voucher.status == "erstellt", models.Voucher.modification_date==datetime(2018,12,21))
+        print query.count()
+        for vou in query.all():
+            vou.modification_date = vou.creation_date
         #GENERATION
-        for gen in session.query(models.Generation).all():
-            gen.autor = gen.user
+        #for gen in session.query(models.Generation).all():
+        #    gen.autor = gen.user
         #print i
         #a.close()

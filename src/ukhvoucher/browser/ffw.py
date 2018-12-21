@@ -76,7 +76,7 @@ class AT(api.Page):
             'einsatzkraefte': budget.einsatzk,
             'datum': budget.datum,
             'betrag': betrag,
-            'grund': budget.grund,
+            'grund': budget.grund or '',
             'iban': kto.iban,
             'verw_zweck': kto.verw_zweck,
             'betreuer': budget.jugendf,

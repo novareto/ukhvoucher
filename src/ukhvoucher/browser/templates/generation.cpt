@@ -11,7 +11,7 @@
 </fieldset>
 
 <fieldset>
- <legend> Information zur Kategorie </legend>
+ <legend> Information zur Charge </legend>
  <p tal:content="context.displayKat"/>
  <p tal:content="string: Anzahl: ${len(viewlet.context.generation.voucher)}"/>
 </fieldset>

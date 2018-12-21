@@ -10,7 +10,7 @@
     </tr>
 
     <tr tal:repeat="gen view.getGenerations()">
-      <td tal:content="gen.user"> </td>
+      <td tal:content="gen.autor"> </td>
       <td tal:content="gen.type"> </td>
       <td tal:content="gen.date"> </td>
       <td tal:content="len(gen.voucher)"> </td>

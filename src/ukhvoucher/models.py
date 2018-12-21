@@ -122,7 +122,7 @@ class Address(Base, Location):
 class JournalEntry(Base, Location):
     __schema__ = IJournalEntry
     __label__ = "Journal Entry"
-    
+
     #__tablename__ = 'Z1EHRJRN_T'
     __tablename__ = TABLENAMES['journal']
     if schema:
@@ -130,7 +130,7 @@ class JournalEntry(Base, Location):
 
     jid = Column('jrnoid', Integer, primary_key=True)
     date = Column('jrn_dat', DateTime)
-    action = Column('aktion', String(20))
+    action = Column('aktion', StrippedString)
     userid = Column('user_id', String(30))
     note = Column('text', String(500))
     oid = Column('oid', Integer)
@@ -147,7 +147,7 @@ class JournalEntry(Base, Location):
     def widget_arrangements(fields):
         fields['jid'].readonly = True
 
-    
+
 class FWBudget(Base):
     __tablename__ = TABLENAMES['budget']
     if schema:
@@ -242,7 +242,7 @@ class Category(Base, Location):
     @property
     def title(self):
         return "Kontingent %s" % self.oid
-    
+
     # search attributes
     search_attr = "oid"
     searchable_attrs = ("oid",)
@@ -283,7 +283,7 @@ class Account(Base, Location):
     def title(self):
         return "Benutzerkennung: %s, (OID der Einrichtung: %s)" % (
             self.login, self.oid)
-    
+
     @property
     def categories(self):
         session = get_session('ukhvoucher')
@@ -363,7 +363,7 @@ class Voucher(Base, Location):
     @property
     def title(self):
         return "Berechtigungsschein %s" % self.oid
-    
+
     # search attributes
     search_attr = "oid"
     searchable_attrs = ("oid", "status", 'user_id')
@@ -468,7 +468,7 @@ class Invoice(Base, Location):
     @property
     def title(self):
         return "Zuordnung %s" % self.oid
-    
+
     search_attr = "oid"
     #search_attr = "field.oid"
     searchable_attrs = ("oid", "reason")
@@ -619,7 +619,7 @@ class Journal(SQLContainer):
         'jid', 'date', 'userid')
 
     search_fields = uvclight.Fields(IJournalEntry)
-    
+
     def key_reverse(self, obj):
         return str(obj.jid)
 

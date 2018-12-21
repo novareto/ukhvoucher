@@ -1,0 +1,46 @@
+<form metal:define-macro="editform" action="." novalidate="novalidate" tal:attributes="action view.action_url; id view.__class__.__name__" method="post"
+      enctype="multipart/form-data" role="form">
+  <h2 tal:condition="view.label" tal:content="view.label">Label</h2>
+  <p tal:condition="view.description"
+     tal:content="view.description">Description</p>
+
+   <p class="alert-message block-message"
+      tal:condition="view.status"
+      tal:content="view.status">Status</p>
+
+        <div class="alert alert-danger"
+          tal:condition="view.errors">
+           <div tal:condition="view.formErrors"
+               tal:repeat="error view.formErrors">
+               <p tal:condition="error.title != ' '"> <b tal:condition="hasattr(view, 'getErrorField')" tal:content="view.getErrorField(error)">: </b> &nbsp;   <span i18n:translate="" tal:content="structure error.title" /> </p>
+           </div>
+       </div>
+
+
+  <fieldset metal:define-macro="form-fieldset">
+    <legend tal:condition="hasattr(view, 'legend')" tal:content="view.legend"> </legend>
+    <div class="form-group" tal:condition="view.fieldWidgets">
+      <tal:widgets repeat="widget view.fieldWidgets">
+	<div class="form-group"
+             tal:condition="widget.isVisible()"
+             tal:attributes="id 'field-' + widget.htmlId();
+	                     class widget.error and 'form-group error' or 'form-group'">
+	  <label class="control-label" for="#" tal:attributes="for widget.htmlId()"> 
+            <span tal:content="structure widget.title"> </span> <span tal:condition="widget.required"> * </span> 
+	  </label>
+	  <p class="help-block" tal:condition="widget.description" tal:content="structure widget.description" tal:attributes="for widget.htmlId()"></p>
+	  <div class="input controls" metal:define-macro="wfield-inline">
+            <tal:widget metal:define-macro="field-inline" tal:content="structure widget.render()" />
+            <span class="help-inline" tal:condition="widget.error" tal:content="widget.error.title"> Error </span>
+	  </div>
+	</div>
+      </tal:widgets>
+    </div>
+    <div class="form-actions" tal:condition="view.actionWidgets">
+      <span class="action" tal:repeat="widget view.actionWidgets">
+          <tal:widget  metal:define-macro="action-inline" tal:content="structure widget.render()" />
+      </span>
+    </div>
+  </fieldset>
+</form>
+

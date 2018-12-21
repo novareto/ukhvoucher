@@ -25,6 +25,20 @@ from .. import _, resources, DISABLED, CREATED, MANUALLY_CREATED
 from ..apps import UserRoot
 
 
+from ukhtheme.uvclight import IDGUVRequest
+from dolmen.forms.base.interfaces import IForm
+from cromlech.browser import ITemplate
+from uvc.api.api import get_template
+from grokcore.component import adapter, implementer
+
+
+@adapter(IForm, IDGUVRequest)
+@implementer(ITemplate)
+def bootstrap_form_template(context, request):
+    """default template for the menu"""
+    return get_template('form.cpt', __file__)
+
+
 MULTI = set()
 
 MULTI_DISABLED = set((
@@ -120,7 +134,7 @@ class CreateModel(Form):
         if isinstance(self.context, Addresses):
             if data.get('oid') == '':
                 data.pop('oid')
-            data['oid'] = getNextAccount() 
+            data['oid'] = getNextAccount()
         if isinstance(self.context, Invoices):
             if data.get('oid') == '':
                 data.pop('oid')
@@ -429,7 +443,7 @@ class AskForVouchers(Form):
             for idx in range(number):
                 voucher = Voucher(
                     #creation_date=datetime.now().strftime('%Y-%m-%d'),
-                    creation_date=now.strftime('%Y-%m-%d'),  # TEST 05.11.2018 Mseibert 
+                    creation_date=now.strftime('%Y-%m-%d'),  # TEST 05.11.2018 Mseibert
                     status=MANUALLY_CREATED,
                     cat = data['kategorie'],
                     user_id=self.context.oid,

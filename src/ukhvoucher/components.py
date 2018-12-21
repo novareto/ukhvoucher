@@ -290,7 +290,7 @@ class ExternalPrincipal(Principal):
         from .vocabularies import get_default_abrechnungszeitraum
 
         #default_zeitraum = get_default_abrechnungszeitraum(zeitpunkt=datetime.datetime(2019, 1, 1))
-        default_zeitraum = get_default_abrechnungszeitraum.now()
+        default_zeitraum = get_default_abrechnungszeitraum()
         from ukhvoucher import log
         def log(v):
             print v
@@ -361,5 +361,5 @@ class AdminPrincipal(ExternalPrincipal):
         session = get_session("ukhvoucher")
         query = session.query(models.JournalEntry).filter(
             models.JournalEntry.oid == self.oid
-        ).order_by(models.JournalEntry.date.desc())
+        ).order_by(models.JournalEntry.jid.desc())
         return query.all()
