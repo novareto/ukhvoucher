@@ -590,7 +590,10 @@ class Kontakt(uvclight.Form):
         acuname = acu.vname + ' ' + acu.nname
         acutel = acu.vorwahl.strip() + ' ' + acu.phone.strip()
         text = MT % (adrname, adrstrasse, adrplzort, data[u'betreff'], data[u'text'], acuname, acutel, acu.email)
-        send_mail('extranet@ukh.de', ('portal-erste-hilfe@ukh.de',), u"Kontaktformular Erste Hilfe", text=text)
+        if data[u'betreff'] == u'Materialbestellung':
+            send_mail('extranet@ukh.de', ('ukh@ukh.de',), u"Kontaktformular Erste Hilfe", text=text)
+        else:
+            send_mail('extranet@ukh.de', ('portal-erste-hilfe@ukh.de',), u"Kontaktformular Erste Hilfe", text=text)
         self.flash(u'Ihre Nachricht wurde an die Unfallkasse Hessen gesendet.')
         self.redirect(self.application_url())
 

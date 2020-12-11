@@ -217,17 +217,16 @@ class MenuVoucher(BaseNavMenu):
 #    title = "Adressen"
 
 
-
-class MenuStat(BaseNavMenu):
-    uvclight.order(5)
-    attribute = "statistik"
-    title = "Statistik"
+#class MenuStat(BaseNavMenu):
+#    uvclight.order(5)
+#    attribute = "statistik"
+#    title = "Statistik"
 
 
 class MenuStatNew(BaseNavMenu):
     uvclight.order(5)
     attribute = "statistikneu"
-    title = "Statistik Neu"
+    title = "Statistik"
 
 
 class Journal(BaseNavMenu):

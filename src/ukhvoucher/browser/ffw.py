@@ -219,9 +219,9 @@ class FFW(api.Form):
     def getOldData(self):
 
         abweichung = False
-        #daten_vorperiode = getData(oid=self.request.principal.oid)
-        #daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=FAKE_DATE - timedelta(days=365 * 2))
         daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=datetime.now() - timedelta(days=365 * 2))
+        if daten_vorperiode is None:
+            return abweichung
         aktuell = float(self.data['einsatzkraefte'])
         vorjahr = float(daten_vorperiode.einsatzk)
         differenz = ((100 * aktuell) / vorjahr) - 100
@@ -244,24 +244,25 @@ class FFW(api.Form):
             return
         abweichung = False
         daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=datetime.now() - timedelta(days=365 * 2))
-        aktuell = float(self.data['einsatzkraefte'])
-        vorjahr = float(daten_vorperiode.einsatzk)
-        differenz = ((100 * aktuell) / vorjahr) - 100
-        if differenz > 10 or differenz < -10:
-            abweichung = True
-        aktuell = float(self.data['betreuer'])
-        vorjahr = float(daten_vorperiode.jugendf)
-        differenz = ((100 * aktuell) / vorjahr) - 100
-        if differenz > 10 or differenz < -10:
-            abweichung = True
-        # ##################################################
-        # Was machen wir.... ?????
-        # ##################################################
-        if abweichung is True:
-            la = len(data['begr'])
-            if la <= 5:
-                self.flash(u'Bitte tragen Sie eine Begründung für die Abweichung zum letzten Budgetantrag ein.')
-                return
+        if daten_vorperiode is not None:
+            aktuell = float(self.data['einsatzkraefte'])
+            vorjahr = float(daten_vorperiode.einsatzk)
+            differenz = ((100 * aktuell) / vorjahr) - 100
+            if differenz > 10 or differenz < -10:
+                abweichung = True
+            aktuell = float(self.data['betreuer'])
+            vorjahr = float(daten_vorperiode.jugendf)
+            differenz = ((100 * aktuell) / vorjahr) - 100
+            if differenz > 10 or differenz < -10:
+                abweichung = True
+            # ##################################################
+            # Was machen wir.... ?????
+            # ##################################################
+            if abweichung is True:
+                la = len(data['begr'])
+                if la <= 5:
+                    self.flash(u'Bitte tragen Sie eine Begründung für die Abweichung zum letzten Budgetantrag ein.')
+                    return
         from ukhvoucher.utils import send_mail
         adr = self.request.principal.getAddress()
         acc = self.request.principal.getAccount()
@@ -298,7 +299,9 @@ class FFW(api.Form):
         filename = '/tmp/Budgetantrag_FFW_' + adr.name1.encode('utf-8').strip() + ' ' + adr.name2.encode('utf-8').strip() + ' ' + adr.name3.encode('utf-8').strip() + '.docx'
         doc.save(filename)
         text = u"Für das Mitglied %s %s %s hat %s %s folgenden Budgetantrag gestellt." % (adr.name1.strip(), adr.name2.strip(), adr.name3.strip(), acc.vname.strip(), acc.nname.strip())
-        send_mail('extranet@ukh.de', ('b.svejda@ukh.de', 'portal-erste-hilfe@ukh.de'), u"Budgetantrag Erste-Hilfe-Feuerwehr", text=text, files=(filename,))
+        send_mail('extranet@ukh.de', ('portal-erste-hilfe@ukh.de',), u"Budgetantrag Erste-Hilfe-Feuerwehr", text=text, files=(filename,))
+        # Frau svejda zum 04.2. entfernt.
+        #send_mail('extranet@ukh.de', ('b.svejda@ukh.de', 'portal-erste-hilfe@ukh.de'), u"Budgetantrag Erste-Hilfe-Feuerwehr", text=text, files=(filename,))
         #send_mail('extranet@ukh.de', ('m.seibert@ukh.de',), u"Budgetantrag Erste-Hilfe-Feuerwehr", text=text, files=(filename,))
         budget = FWBudget(
             user_id=self.request.principal.oid,
@@ -307,9 +310,7 @@ class FFW(api.Form):
             budget=data.get('betrag'),
             budget_vj=data.get('last_budget'),
             grund=begruendung,
-            #datum=data.get('datum'),
             datum=datetime.now().strftime('%Y-%m-%d'),
-            #datum='2019-03-03',  # ------>  NUR TEST
         )
         session = get_session('ukhvoucher')
         kto_alt = getKto(self.request.principal.oid, session=session)

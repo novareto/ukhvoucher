@@ -1,3 +1,4 @@
+
 $(document).ready(function() {
 
     $('form#DisableVouchers select').select2({
@@ -44,6 +45,7 @@ $(document).ready(function() {
     $('input#form-field-lehrkraefte').mask('9999');
     $('input#form-field-von').mask('99.99.9999', {placeholder:"tt.mm.jjjj"});
     $('input#form-field-bis').mask('99.99.9999', {placeholder:"tt.mm.jjjj"});
+    $('input#form-field-abis').mask('99.99.9999', {placeholder:"tt.mm.jjjj"});
     //$('input#form-field-iban').mask('**99-9999-9999-9999-9999-99', {placeholder:"de99 9999 9999 9999 9999 99"});
     $('input#form-field-iban').inputmask({
         mask: 'aa99 9999 9999 9999 9999 99'

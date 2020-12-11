@@ -3,11 +3,13 @@
 		 categories view.categories">
   <h1> Willkommen im Erste-Hilfe-Portal der Unfallkasse Hessen</h1>
 
+  <!--
   <br>
   <font color="red">
     <p><b>Bitte beachten Sie, dass die aktuell gültigen Berechtigungsscheine für Erste-Hilfe-Lehrgänge nur bis 31.12.2018 zum Ausdruck zur Verfügung stehen.</b></p>
     <p><b>Ab 01.01.2019 können nur noch die neu angeforderten Berechtigungsscheine für den Zeitraum 2019/2020 ausgedruckt und verwendet werden.</b></p>
   </font>
+  -->
 
   <h1 class="lead"> Antrag auf Kostenübernahme für Erste-Hilfe-Lehrgänge </h1>
   <p> Sie können für folgende Kontingente (K) Berechtigungsscheine anfordern. </p>
