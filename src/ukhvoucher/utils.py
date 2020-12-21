@@ -44,7 +44,7 @@ class Application(Publication):
 
 queue_path = "/tmp/mq"
 
-mailer_object = SMTPMailer("10.64.33.17", 25, force_tls=False)
+mailer_object = SMTPMailer("10.64.33.17", 25, force_tls=False, no_tls=True)
 
 
 def mailer():

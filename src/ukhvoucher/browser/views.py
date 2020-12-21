@@ -29,6 +29,7 @@ from ..resources import ukhcss
 from ..resources import ukhvouchers, masked_input
 from .batch import get_dichotomy_batches
 from .ffw import getData, getKto
+from fuzzywuzzy import fuzz
 
 
 cache = GenericCache(maxsize=5000)
@@ -37,6 +38,8 @@ cache = GenericCache(maxsize=5000)
 def principal_marshaller(func, view, principal):
     return repr((func.__name__, view.__name__, principal.oid))
 
+
+import heapq
 
 class SearchUnternehmen(uvclight.JSON):
     uvclight.name('search_unternehmen')

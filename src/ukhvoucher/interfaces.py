@@ -167,9 +167,17 @@ HK11 = u"""
 <p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
 """
 
+HK13 = u"""
+<h2>K13: Kindertageseinrichtungen</h2>
+<h4><u>Kindergruppen:</u></h4>
+<p>Bitte tragen Sie ein, wie viele Kindergruppen in Ihren Einrichtungen  maximal gleichzeitig betrieben werden.
+   Beispiel: 4 Vormittagsgruppen und 2 Nachmittagsgruppen sind maximal 4 Gruppen gleichzeitig.</p>
+<p>Felder mit <b>*</b> sind Pflichtfelder, diese müssen gefüllt werden.</p>
+"""
+
 RESTBUDGET = u"""
-<p>Bitte tragen Sie die Höhe des in 2017/18 nicht benötigten Budgets ein.
-   Noch vorhandenes Budget wird Ihnen auf den Folgezeitraum 2019/20 angerechnet.</p>
+<p>Bitte tragen Sie die Höhe des in 2019/20 nicht benötigten Budgets ein.
+   Noch vorhandenes Budget wird Ihnen auf den Folgezeitraum 2021/22 angerechnet.</p>
 <p>Bitte denken Sie daran, dass Sie ggf. noch Geld für noch nicht abgerechnete Erste-Hilfe-Lehrgänge aus dem Vorjahr benötigen.
    Geben Sie uns deshalb hier lediglich die Höhe des nicht mehr benötigten Budgets aus dem letzten Antragszeitraum an.</p>
 <p><b>Beispiel:</b></p>
@@ -188,15 +196,15 @@ def get_oid(context):
     rcc = []
     session = get_session('ukhvoucher')
     for x in session.query(Address):
-        rc.append(SimpleTerm(int(x.oid), x.oid, "%s - %s - %s %s %s" % (x.oid, x.mnr, x.name1, x.name2, x.name3)))
+        rc.append(SimpleTerm(int(x.oid), x.oid, "%s - %s - %s %s %s %s %s" % (x.oid, x.mnr, x.name1, x.name2, x.name3, x.zip_code, x.street)))
         rcc.append(int(x.oid))
     @ram.cache(lambda *args: time() // (600 * 60))
     def getValue():
         res = []
         for x in session.query(AddressTraeger):
-            res.append(SimpleTerm(int(x.oid), x.oid, "%s - %s - %s %s %s" % (x.oid, x.mnr, x.name1, x.name2, x.name3)))
+            res.append(SimpleTerm(int(x.oid), x.oid, "%s - %s - %s %s %s %s %s" % (x.oid, x.mnr, x.name1, x.name2, x.name3, x.zip_code, x.street)))
         for x in session.query(AddressEinrichtung):
-            res.append(SimpleTerm(int(x.oid), x.oid, "%s - %s - %s %s %s" % (x.oid, x.mnr, x.name1, x.name2, x.name3)))
+            res.append(SimpleTerm(int(x.oid), x.oid, "%s - %s - %s %s %s %s %s" % (x.oid, x.mnr, x.name1, x.name2, x.name3, x.zip_code, x.street)))
         return res
     for term in getValue():
         if term.value not in rcc:
@@ -291,6 +299,7 @@ def get_kategorie(context):
         SimpleTerm(K9.getName(), K9.getName(), K9.getDoc()),
         SimpleTerm(K10.getName(), K10.getName(), K10.getDoc()),
         SimpleTerm(K11.getName(), K11.getName(), K11.getDoc()),
+        SimpleTerm(K13.getName(), K13.getName(), K13.getDoc()),
         ]
     return SimpleVocabulary(rc)
 
@@ -562,6 +571,11 @@ class ICategory(Interface):
 
     kat11 = schema.Bool(
         title=_(u"Kat 11"),
+        required=True,
+    )
+
+    kat13 = schema.Bool(
+        title=_(u"Kat 13"),
         required=True,
     )
 
@@ -935,6 +949,22 @@ class K11(Interface):
     taggedValue('infolink',
                 'http://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016_NEU/UKH_K11_Erste-Hilfe_in_Gesundheitsdiensten.pdf')
     taggedValue('descr', HK11)
+
+
+class K13(Interface):
+    u"""Kindertageseinrichtungen (BGW) (K13)"""
+
+    gruppen = schema.Int(
+        title=_(u"Anzahl der Kindergruppen"),
+    )
+
+    bestaetigung = schema.Bool(
+        title = _(u"Bestätigung:"),
+    )
+
+    taggedValue('infolink',
+                'https://www.ukh.de/fileadmin/ukh.de/Erste_Hilfe/Erste_Hilfe_PDF_2016_NEU/UKH_K13_Erste-Hilfe_in_Kindertageseinrichtungen__in_freier_Traegerschaft.pdf')
+    taggedValue('descr', HK13)
 
 
 class IVoucherSearch(Interface):

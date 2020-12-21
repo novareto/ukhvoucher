@@ -11,7 +11,7 @@ from plone.memoize import ram
 from profilehooks import profile
 from sqlalchemy import and_
 from ukhvoucher import models, log
-from ukhvoucher.interfaces import K1, K2, K3, K4, K5, K6, K7, K8, K9, K10, K11
+from ukhvoucher.interfaces import K1, K2, K3, K4, K5, K6, K7, K8, K9, K10, K11, K13
 from ul.auth import Principal
 
 from .interfaces import IAccount, IVoucher
@@ -159,6 +159,8 @@ class ExternalPrincipal(Principal):
                     cat.add(K10)
                 if category.kat11:
                     cat.add(K11)
+                if category.kat13:
+                    cat.add(K13)
                 return cat
 
             return createCategory(category)
@@ -205,6 +207,28 @@ class ExternalPrincipal(Principal):
             and b.enrea1  in(%s) and b.enrea2 in(%s) and b.enrea3 = 'N'""" % (
                 enrea1,
                 enrea2,
+            )
+        res = session.execute(sql).fetchall()
+        return [x[0].strip() for x in res]
+
+    def sql_bgw(self, enrea1, enrea2, enroid):
+        umgebung = TABLENAMES["sqlbase"]
+        session = get_session("ukhvoucher")
+        if umgebung == "test":
+            sql = """SELECT  TRGMNR FROM tstcusadat.mitrg1aa a, tstcusadat.mienr1aa b
+            WHERE A.TRGRCD = b.Enroid
+            and b.enrea1  in(%s) and b.enrea2 in(%s) and b.enroid in(%s) and b.enrea3 = 'N'""" % (
+                enrea1,
+                enrea2,
+                enroid,
+            )
+        if umgebung == "prod":
+            sql = """SELECT  TRGMNR FROM educusadat.mitrg1aa a, educusadat.mienr1aa b
+            WHERE A.TRGRCD = b.Enroid
+            and b.enrea1  in(%s) and b.enrea2 in(%s) and b.enroid in(%s) and b.enrea3 = 'N'""" % (
+                enrea1,
+                enrea2,
+                enroid,
             )
         res = session.execute(sql).fetchall()
         return [x[0].strip() for x in res]
@@ -283,14 +307,19 @@ class ExternalPrincipal(Principal):
             self.sql_schulen("3", "2")
             log("%s Schule" % origmnr)
             cat = OrderedSet([K7])
+        elif mnr in ("3.1."):
+            self.sql_bgw("3", "1", "930002585")
+            log("%s Kita" % origmnr)
+            cat = OrderedSet([K13])
         return cat
 
     def getVouchers(self, cat=None):
         session = get_session("ukhvoucher")
         from .vocabularies import get_default_abrechnungszeitraum
-
-        #default_zeitraum = get_default_abrechnungszeitraum(zeitpunkt=datetime.datetime(2019, 1, 1))
         default_zeitraum = get_default_abrechnungszeitraum()
+        # TEST2021 #####################################################################################
+        #default_zeitraum = get_default_abrechnungszeitraum(zeitpunkt=datetime.datetime(2021, 1, 1))
+        # ##############################################################################################
         from ukhvoucher import log
         def log(v):
             print v

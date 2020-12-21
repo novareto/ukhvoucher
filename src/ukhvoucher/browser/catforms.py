@@ -8,7 +8,7 @@ from ukhvoucher import CREATED
 from ukhvoucher.apps import UserRoot
 from ukhvoucher.models import Voucher, Generation
 from ukhvoucher.interfaces import IUserLayer
-from ukhvoucher.interfaces import K1, K2, K3, K4, K5, K6, K7, K8, K9, K10, K11
+from ukhvoucher.interfaces import K1, K2, K3, K4, K5, K6, K7, K8, K9, K10, K11, K13
 
 from dolmen.forms.base.markers import FAILURE
 from dolmen.forms.base import Action, SuccessMarker, Actions
@@ -140,7 +140,7 @@ class KontingentValidator(object):
                         if mitarbeiter < standorte:
                             self.errors.append(Error(FEHLER01a, identifier="form",),)
                             return self.errors
-                # K3
+                # K3 / K13 ???
                 if data.get('kitas'):
                     kitas = data.get('kitas')
                     gruppen = data.get('gruppen')
@@ -213,7 +213,9 @@ class CalculateInsert(Action):
 
         def insert(form, amount):
             now = datetime.datetime.now()
-            #now = datetime.datetime(2019,02,02)
+            # TEST2021 #####################################################################################
+            #now = datetime.datetime(2021,02,02)
+            # ##############################################################################################
             principal = form.request.principal
             session = get_session('ukhvoucher')
             kat = form._iface.getName()
@@ -630,3 +632,17 @@ class K11Form(KGBaseForm):
                 kontingent = mindestmenge_2_je_standort
             kontingent2 = kontingent
         return kontingent1 + kontingent2
+
+
+class K13Form(KGBaseForm):
+    # ##############################################################################
+    # # Kontingentgruppe 13 (K13) - Kindertageseinrichtungen                       #
+    # # Berechnung:                                                                #
+    # # Gruppen: Eingabe = Ausgabe                                                 #
+    # ##############################################################################
+    _iface = K13
+    label = u""
+    dataValidators = [KontingentValidator]
+
+    def calculate(self, gruppen, bestaetigung):
+        return gruppen

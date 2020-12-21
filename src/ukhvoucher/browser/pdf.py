@@ -130,6 +130,8 @@ class PDF(uvclight.Page):
                     kattext = u'10 (K10) - Freiwillige Feuerwehren'
                 elif ikg == 'K11':
                     kattext = u'11 (K11) - Gesundheitsdienste'
+                elif ikg == 'K13':
+                    kattext = u'13 (K13) - Kindertageseinrichtungen'
                 else:
                     kattext = u''
                 c.setFillColor(black)
@@ -156,20 +158,19 @@ class PDF(uvclight.Page):
                     c.drawString(2.5 * cm, y * cm, u'Lehrgangsgebühren für die Erste-Hilfe-Ausbildung werden nicht übernommen.')
                     y = y - 1.3
                 elif ikg == 'K9':
-                    # Geändert am 10.11.2017
-                    # Text angepasst wie K3
                     c.drawString(3.0 * cm, y * cm, u'-    Erste-Hilfe-Aus- oder Fortbildung oder')
                     y = y - 0.6
                     c.drawString(3.0 * cm, y * cm, u'-    Erste-Hilfe-Schulung in Bildungs- und Betreuungseinrichtungen für Kinder')
                     y = y - 0.6
                     c.drawString(2.5 * cm, y * cm, u'im Sinne des DGUV Grundsatzes 304-001')
                     y = y - 1.9
-                    #c.drawString(2.5 * cm, y * cm, u'Erste-Hilfe-Aus- oder Fortbildung im Sinne des DGUV Grundsatzes 304-001.')
-                    #y = y - 1.2
-                    #c.drawString(2.5 * cm, y * cm, u'Lehrgangsgebühren für die Erste-Hilfe-Schulung in Bildungs-')
-                    #y = y - 0.6
-                    #c.drawString(2.5 * cm, y * cm, u'und Betreuungseinrichtungen für Kinder werden nicht übernommen.')
-                    #y = y - 1.3
+                elif ikg == 'K13':
+                    c.drawString(3.0 * cm, y * cm, u'-    Erste-Hilfe-Aus- oder Fortbildung oder')
+                    y = y - 0.6
+                    c.drawString(3.0 * cm, y * cm, u'-    Erste-Hilfe-Schulung in Bildungs- und Betreuungseinrichtungen für Kinder')
+                    y = y - 0.6
+                    c.drawString(2.5 * cm, y * cm, u'im Sinne des DGUV Grundsatzes 304-001')
+                    y = y - 1.9
                 else:
                     c.drawString(2.5 * cm, y * cm, u'Erste-Hilfe-Aus- oder Fortbildung im Sinne des DGUV Grundsatzes 304-001.')
                     y = y - 3.1
@@ -183,8 +184,10 @@ class PDF(uvclight.Page):
                 y = y - 0.6
                 if jahr <= '2018':
                     c.drawString(2.5 * cm, y * cm, u'Gültigkeit für einen Lehrgang zwischen 01.01.2017 und 31.12.2018')
-                if jahr >= '2019':
+                if jahr == '2019' or jahr == '2020':
                     c.drawString(2.5 * cm, y * cm, u'Gültigkeit für einen Lehrgang zwischen 01.01.2019 und 31.12.2020')
+                if jahr == '2021' or jahr == '2022':
+                    c.drawString(2.5 * cm, y * cm, u'Gültigkeit für einen Lehrgang zwischen 01.01.2021 und 31.12.2022')
                 y = y - 0.6
                 c.drawString(2.5 * cm, y * cm, u'Der Berechtigungsschein ist spätestens bei Lehrgangsteilnahme der ermächtigten Stelle')
                 y = y - 0.6
@@ -195,14 +198,10 @@ class PDF(uvclight.Page):
                 barcode = code128.Code128(barcode_value, barWidth = 0.4 * mm, barHeight = 9 * mm)
                 #barcode = code128.Code128(barcode_value, barWidth = 0.2 * mm, barHeight = 10 * mm)
                 barcode.drawOn(c, 19 * mm, 90 * mm)
-
-
                 y = 8.5
                 c.drawString(2.5 * cm, y * cm, 'Nummer des Berechtigungsscheins:')
                 y = y - 0.6
                 c.drawString(2.5 * cm, y * cm, barcode_value)
-
-
                 #Ansprechpartner
                 telnummer = account.vorwahl.strip() + ' ' + account.phone.strip()
                 titel = account.titel.strip()
@@ -273,10 +272,6 @@ class PDF(uvclight.Page):
         return tmp.read()
 
 
-
-
-
-
 class PDFOnlyBarcode(uvclight.Page):
     uvclight.layer(IUserLayer)
     uvclight.context(UserRoot)
@@ -311,6 +306,7 @@ class PDFOnlyBarcode(uvclight.Page):
         LK9 = []
         LK10 = []
         LK11 = []
+        LK13 = []
         for voucher in principal.getVouchers(cat=self.request.form.get('cat')):
             #if voucher.status.strip() == CREATED:
             if voucher.status.strip() == CREATED or voucher.status.strip() == MANUALLY_CREATED:
@@ -336,8 +332,12 @@ class PDFOnlyBarcode(uvclight.Page):
                     LK10.append(str(voucher.oid))
                 elif str(voucher.cat.strip()) == "K11":
                     LK11.append(str(voucher.oid))
+                elif str(voucher.cat.strip()) == "K13":
+                    LK13.append(str(voucher.oid))
 
-        for bcode in [['K1', LK1], ['K2', LK2], ['K3', LK3], ['K4', LK4], ['K5', LK5], ['K6', LK6], ['K7', LK7], ['K8', LK8], ['K9', LK9], ['K10', LK10], ['K11', LK11]]:
+        for bcode in [['K1', LK1], ['K2', LK2], ['K3', LK3], ['K4', LK4], ['K5', LK5],
+                      ['K6', LK6], ['K7', LK7], ['K8', LK8], ['K9', LK9], ['K10', LK10],
+                      ['K11', LK11], ['K13', LK13]]:
             x = 2
             x1 = 2.6
             y = 24

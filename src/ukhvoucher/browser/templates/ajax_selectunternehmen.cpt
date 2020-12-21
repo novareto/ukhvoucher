@@ -24,13 +24,14 @@ $("#select_unternehmen select").select2({
     tags: false,
     multiple: false,
     language: "de",
-    tokenSeparators: [',', ' '],
+    tokenSeparators: [',', ''],
     minimumInputLength: 2,
     minimumResultsForSearch: 100,
     ajax: {
         url: '<tal:url replace="'%s/search_unternehmen' % view.application_url()" />',
         dataType: "json",
         type: "GET",
+        delay: 250,
         data: function (params) {
 
             var queryParameters = {

@@ -31,7 +31,10 @@ def getData(oid, zeitpunkt=None):
         default_zeitraum = get_default_abrechnungszeitraum(zeitpunkt)
     else:
         default_zeitraum = get_default_abrechnungszeitraum()
-    print "default zeitraum:", default_zeitraum
+        # TEST2021 #####################################################################################
+        #import datetime
+        #default_zeitraum = get_default_abrechnungszeitraum(zeitpunkt=datetime.datetime(2021, 1, 1))
+        # ##############################################################################################
     q = session.query(FWBudget).filter(
         FWBudget.user_id == oid,
         FWBudget.datum >= default_zeitraum.von,
@@ -99,7 +102,7 @@ class InfoDownload(api.View):
         return response
 
     def render(self):
-        info_file = "%s/%s" % (PATH, 'ffw_info.pdf')
+        info_file = "%s/%s" % (PATH, 'ffw_info_2021.pdf')
         with open(info_file, 'rb') as info:
             return info.read()
 
@@ -160,18 +163,22 @@ class FFWForm(api.Form):
         datum = strftime("%d.%m.%Y", localtime())
         data['datum'] = datum
         jahr = strftime("%Y", localtime())
+        # TEST2021 #####################################################################################
+        #jahr = '2021'
+        # ##############################################################################################
         if jahr == "2017" or jahr == "2018":
             verw_zweck = "Erste-Hilfe-Budget 2017/2018"
+            betrag = (float(data['einsatzkraefte']) * 0.1 + float(data['betreuer'])) * (30.75 + 6.15)
         if jahr == "2019" or jahr == "2020":
             verw_zweck = "Erste-Hilfe-Budget 2019/2020"
+            betrag = (float(data['einsatzkraefte']) * 0.1 + float(data['betreuer'])) * (32.80 + 6.55)
+        if jahr == "2021" or jahr == "2022":
+            verw_zweck = "Erste-Hilfe-Budget 2021/2022"
+            betrag = (float(data['einsatzkraefte']) * 0.1 + float(data['betreuer'])) * (35.00 + 12.00 + 6.99)
         data['verw_zweck'] = verw_zweck
         #data['last_budget'] = "0,0"
         rep = data['last_budget'].replace(',', '.')
         data['last_budget'] = rep
-        # Beträge 2017/2018
-        #betrag = (float(data['einsatzkraefte']) * 0.1 + float(data['betreuer'])) * (30.75 + 6.15)
-        # Beträge 2019/2020
-        betrag = (float(data['einsatzkraefte']) * 0.1 + float(data['betreuer'])) * (32.80 + 6.55)
         zahlbetrag = betrag - float(data['last_budget'])
         if float(data['last_budget']) > float(betrag):
             self.flash(u'Achtung! Stimmen die Angaben zum Restbudget?', type="error")
@@ -217,9 +224,11 @@ class FFW(api.Form):
         self.data = json.loads(session['ffw'])
 
     def getOldData(self):
-
         abweichung = False
         daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=datetime.now() - timedelta(days=365 * 2))
+        # TEST2021 #####################################################################################
+        #daten_vorperiode = getData(oid=self.request.principal.oid, zeitpunkt=datetime(2021,1,1) - timedelta(days=365 * 2))
+        # ##############################################################################################
         if daten_vorperiode is None:
             return abweichung
         aktuell = float(self.data['einsatzkraefte'])
@@ -311,6 +320,9 @@ class FFW(api.Form):
             budget_vj=data.get('last_budget'),
             grund=begruendung,
             datum=datetime.now().strftime('%Y-%m-%d'),
+            # TEST2021 #####################################################################################
+            #datum='2021-03-03',
+            # ##############################################################################################
         )
         session = get_session('ukhvoucher')
         kto_alt = getKto(self.request.principal.oid, session=session)
@@ -332,7 +344,9 @@ class FFW(api.Form):
         session.add(kto)
         entry = JournalEntry(
             date=datetime.now().strftime('%Y-%m-%d'),
-            #date='2019-03-03',  # ------>  NUR TEST
+            # TEST2021 #####################################################################################
+            #date='2021-03-03',
+            # ##############################################################################################
             userid=self.request.principal.id,
             action=u"Feuerwehrbudget angelegt.",
             oid=self.request.principal.oid,

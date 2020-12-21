@@ -68,7 +68,7 @@ class Categories(uvclight.Viewlet):
         categories = self.context.categories
         for category in categories:
             values += [(kid, getattr(category, kid))
-                       for kid in ('kat1', 'kat2', 'kat3', 'kat4', 'kat5', 'kat6', 'kat7', 'kat8', 'kat9', 'kat10', 'kat11')]
+                       for kid in ('kat1', 'kat2', 'kat3', 'kat4', 'kat5', 'kat6', 'kat7', 'kat8', 'kat9', 'kat10', 'kat11', 'kat13')]
         if not values:
             return u"Keine Kontingente"
         return "Zugeordnete Kontingente: %s" % ', '.join(
@@ -225,7 +225,7 @@ class MenuVoucher(BaseNavMenu):
 
 class MenuStatNew(BaseNavMenu):
     uvclight.order(5)
-    attribute = "statistikneu"
+    attribute = "statistiksuperneu"
     title = "Statistik"
 
 

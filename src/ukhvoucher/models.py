@@ -238,6 +238,7 @@ class Category(Base, Location):
     kat9 = Column('kat9', Boolean)
     kat10 = Column('kat10', Boolean)
     kat11 = Column('kat11', Boolean)
+    kat13 = Column('kat13', Boolean)
 
     @property
     def title(self):
@@ -438,6 +439,8 @@ class Voucher(Base, Location):
             dat = u'K10 - Freiwillige Feuerwehren'
         elif self.cat.strip() == 'K11':
             dat = u'K11 - Gesundheitsdienste'
+        elif self.cat.strip() == 'K13':
+            dat = u'K13 - Kitas'
         return dat
 
     def zeitraum(self):
@@ -601,7 +604,7 @@ class Categories(SQLContainer):
     model = Category
     listing_attrs = uvclight.Fields(Category.__schema__).select(
         'oid', 'kat1', 'kat2', 'kat3', 'kat4', 'kat5',
-        'kat6', 'kat7', 'kat8', 'kat9', 'kat10', 'kat11')
+        'kat6', 'kat7', 'kat8', 'kat9', 'kat10', 'kat11', 'kat13')
 
     def key_reverse(self, obj):
         return str(obj.oid)

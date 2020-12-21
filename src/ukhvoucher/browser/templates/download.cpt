@@ -14,7 +14,7 @@
 <div tal:condition ="data['grund'].strip() != ''">
   <br>
   <p>
-    Die Antragsdaten für den Zeitraum 2019/2020 weichen um 10 % oder mehr vom vorhergehenden Budgetantrag ab.
+    Die Antragsdaten für den Zeitraum 2021/2022 weichen um 10 % oder mehr vom vorhergehenden Budgetantrag ab.
   </p>
 
   <p>
@@ -30,7 +30,7 @@
 <p>
 Basierend auf den aktuell gültigen Gebühren* ergibt sich ein Betrag von <font color="red"><b tal:content="data['betrag']"> </b> € </font> zur
 Durchführung von Erste-Hilfe-Lehrgängen für 10 % der aktiven Einsatzkräfte sowie für
-jede/n Betreuer/in für die Kalenderjahre 2019 und 2020.
+jede/n Betreuer/in für die Kalenderjahre 2021 und 2022.
 </p>
 
 <p>
